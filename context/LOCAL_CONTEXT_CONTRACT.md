@@ -8,7 +8,7 @@
 
 ### 1. Account / Project instructions
 Хранят:
-- универсальный Base Prompt v2;
+- canonical universal Base Prompt;
 - общие пользовательские предпочтения, которые относятся ко всем задачам данного Project;
 - правило поиска project bootstrap и local context.
 
