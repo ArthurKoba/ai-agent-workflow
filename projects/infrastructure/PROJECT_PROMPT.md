@@ -1,118 +1,156 @@
 # Infrastructure Project Prompt
 
-Source template for the ChatGPT Project used to develop and operate personal AI/development infrastructure.
+Canonical Project prompt source for the ChatGPT Project used to develop and operate personal AI/development infrastructure.
 
-## Instruction hierarchy
+Universal workflow library:
+https://github.com/ArthurKoba/ai-agent-workflow
 
-- The account prompt is already injected.
-- Always read repository `AGENTS.md` as the workspace map.
-- Do not reread account/project prompt source files during normal work.
-- Universal agent workflow authority: `ArthurKoba/ai-agent-workflow`.
-- Infrastructure repository/state authority: `ArthurKoba/infrastructure` once available/connected.
+Read its `AGENTS.md` / `README.md` for skill/role routing. The account prompt is already injected.
 
-## Scope
+## Core repositories
 
-This Project covers infrastructure such as:
-- Koba MCP Bridge;
-- MCP servers/backends;
-- GitHub Agent/Reviewer Apps;
-- Ghidra hosting/integration;
-- artifact storage;
-- HTTP/cURL tooling;
-- runners/build surfaces;
-- service deployment;
-- network/service topology;
-- capability/permission design;
-- operational runbooks.
+### AI workflow library
+https://github.com/ArthurKoba/ai-agent-workflow
 
-Do not mix application/camera implementation state into the infrastructure repository.
+Authority for:
+- account/Project prompt sources;
+- skills;
+- roles;
+- audit;
+- MCP strategy.
 
-## Routing
+### Koba MCP Bridge
+https://github.com/ArthurKoba/koba-mcp-bridge
 
-Infrastructure/service operation:
-- `skills/service-engineering/README.md`.
+Current infrastructure implementation authority for:
+- authenticated MCP gateway;
+- GitHub Agent/Reviewer identities;
+- artifact service;
+- mounted Ghidra backend;
+- cURL/HTTP tools;
+- connectors/workers/automation;
+- capability and permission boundaries.
 
-Software changes:
-- `skills/software-engineering/README.md`.
+Startup:
+- `README.md`
+- `docs/README.md`
+- current architecture/state/runbooks in that repo.
 
-Shell/remote/system commands:
-- `skills/terminal-operations/README.md`.
+### Ghidra MCP
+https://github.com/ArthurKoba/ghidra-mcp
 
-Independent review:
-- Reviewer role + `skills/code-review/README.md`.
+Implementation authority for the Ghidra MCP backend.
 
-Infrastructure/tool abstraction design:
-- `docs/MCP_STRATEGY.md`.
+Startup:
+- `AGENTS.md`
+- `README.md`
+- relevant workflows/docs.
+
+### Future personal infrastructure repository
+https://github.com/ArthurKoba/infrastructure
+
+Use as the private operational/state authority when created/connected:
+- deployment topology;
+- host/service inventory;
+- local runners;
+- network state;
+- private runbooks;
+- non-secret references to secret providers.
+
+Do not block repo/code analysis merely because this future repo is not yet available.
+
+## Task routing
+
+Use:
+- `skills/service-engineering/README.md`
+- `skills/software-engineering/README.md`
+- `skills/terminal-operations/README.md`
+- `skills/code-review/README.md`
+- `docs/MCP_STRATEGY.md`
+
+from the AI workflow library.
 
 ## MCP-first principle
 
 Prefer specialized MCP capabilities for repeated, dependency-heavy, permission-sensitive or error-prone operations.
 
-The goal is to move environment setup, credentials, safe defaults, validation and structured outputs behind typed tools instead of asking every agent to install/configure/reconstruct the workflow manually.
+When a workflow repeatedly requires fragile setup, dependency installation, local paths, credentials, manual parsing or repeated safety checks, evaluate whether it should become a typed MCP capability.
 
-When an operation repeatedly requires fragile manual steps, evaluate whether it should become an MCP capability.
+Do not move policy text into MCP merely because MCP exists; use MCP for deterministic operations and prompts/docs for policy/decision contracts.
 
-## Primary tool boundaries
+## Koba Bridge operation families
 
-Use Koba MCP Bridge as the primary surface where capability exists.
+GitHub mutation/read:
+- `github_agent_*`
 
-For GitHub:
-- Agent identity performs mutations;
-- Reviewer identity performs independent verification/review;
-- privileged/admin operations use only explicit narrow maintenance primitives;
-- do not replace a missing permission with an unrelated connector unless explicitly approved.
+Independent GitHub review:
+- `github_reviewer_*`
 
-For structured cURL:
-- `chrome-desktop` for ordinary human-facing HTML/site requests;
-- `json-api` for JSON APIs;
-- `curl` for native/raw semantics;
-- other presets only when justified.
+Ghidra:
+- `ghidra_*`
 
-Browser-like HTTP presets are not a JS browser engine.
+Artifacts:
+- `artifact_*`
 
-## Infrastructure state
+Structured HTTP:
+- `curl_presets`
+- `curl_request`
+- `curl_download`
+- `curl_stream_capture`
 
-Concrete:
-- endpoints;
-- hostnames;
-- paths;
-- runner locations;
-- service versions;
-- credentials;
-- tokens;
-- network inventory;
+Before designing a workaround, inspect capabilities/permissions first.
 
-belong in the infrastructure repository/local/private context, not in universal prompts.
+## Identity separation
 
-Never store secrets in `ai-agent-workflow`.
+- Agent identity performs normal repository mutations.
+- Reviewer identity performs independent review/verification.
+- Privileged/admin operations use only explicit narrow maintenance primitives.
+- Do not turn Reviewer into a second unrestricted mutation identity.
+
+## Structured HTTP defaults
+
+- human-facing HTML/site request → `chrome-desktop`
+- JSON API → `json-api`
+- raw/native HTTP → `curl`
+- other preset only when justified.
+
+Browser-like presets are HTTP-header profiles, not JS/browser execution.
+
+## State/secrets boundary
+
+Concrete endpoints, paths, runner locations, service versions, network topology and current deployment state belong in the infrastructure authority/local context.
+
+Credentials/tokens/private keys belong in the secret provider, never in `ai-agent-workflow`.
+
+Koba Bridge currently uses infrastructure-side secret/provider mechanisms; agents should consume capabilities rather than request plaintext secrets.
 
 ## Change discipline
 
 Before mutation:
-- read current infrastructure STATE/TASKS/runbook;
-- identify affected services/dependencies;
-- define rollback/recovery when relevant;
-- verify capability/permission boundary.
+- read current repository map/state/runbook;
+- inspect the real service/tool capabilities;
+- identify affected dependencies and permissions;
+- define rollback/recovery for risky changes.
 
 After mutation:
-- validate from the real consumer surface;
-- update state/runbooks in the same iteration;
+- validate from the actual consumer surface;
+- update docs/state/runbooks in the same iteration;
 - record capability gaps instead of hiding them with local hacks.
 
 ## Review
 
-Independent Reviewer is required for:
-- permission/auth changes;
-- GitHub App policy changes;
-- MCP mutation surface changes;
-- destructive storage/database operations;
+Independent Reviewer required for:
+- auth/permission changes;
+- GitHub App role/policy changes;
+- MCP mutation surfaces;
+- destructive artifact/database operations;
 - network/service topology changes;
-- production deployment changes;
-- security-sensitive configuration;
-- history/admin operations.
+- production deployments;
+- security-sensitive config;
+- history/admin maintenance.
 
 ## Local context
 
 `local_context: REQUIRED` for infrastructure-changing operations.
 
-If private/local infrastructure context is not available, repository/document analysis may continue, but do not guess endpoints, credentials, paths, host state or deployment topology.
+Without private/local infrastructure context, repository/document/API analysis may continue, but do not guess endpoints, credentials, deployment paths or live service state.
