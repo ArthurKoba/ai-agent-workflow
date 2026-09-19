@@ -1,5 +1,18 @@
 # Prompt / Workflow Changelog
 
+## 2026-09 — Self-discovering bootstrap and concrete project maps
+
+Changes:
+- account prompt now links the universal workflow library and requires reading its AGENTS/README routing map for substantial technical work;
+- account fallback order added for repositories without AGENTS: CLAUDE → README/contribution docs;
+- Reverse Project prompt expanded from a template-like policy into a concrete map of current reverse/OpenIPC/infrastructure/reference repositories;
+- Reverse Project prompt now includes representative Koba GitHub Agent/Reviewer, Ghidra, artifact and cURL operations;
+- Infrastructure Project prompt now points to the real Koba MCP Bridge and Ghidra MCP repositories and their authority boundaries.
+
+Reason:
+A correct hierarchy is insufficient if a new agent does not know where the workflow library, repository map and tool surfaces actually live. Bootstrap must be discoverable from the injected account/Project prompts without relying on conversational memory.
+
+
 ## 2026-09 — Reverse/Infrastructure Project prompts and OpenIPC porting skill
 
 Changes:
