@@ -1,5 +1,14 @@
 # Agent System Evolution
 
+## Provenance
+
+The first large evidence base for this evolution was the ANJIA AJL33PQ0866 / FH8626V100 reverse-and-porting project:
+
+`ArthurKoba/anjia-ajl33pq0866-fh8626v100-reverse`
+
+Its detailed technical chronology remains in that project. This file keeps only the generalized operating-model evolution, strengths, weaknesses and automation/quality effects.
+
+
 ## 1 — Chat-centric manual workflow
 Model: agent proposes; user runs commands, transfers files/context, remembers state.
 

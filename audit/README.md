@@ -30,3 +30,8 @@ Prefer:
 - skill rule when domain-reusable;
 - account rule only when broadly universal;
 - MCP/tooling change when the core problem is deterministic execution rather than reasoning.
+
+
+## Cross-project registry
+
+Use `SOURCE_REGISTRY.md` to record which projects/history batches have already been aggregated and where their detailed chronology remains.
