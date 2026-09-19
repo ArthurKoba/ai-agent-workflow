@@ -35,3 +35,8 @@ Prefer:
 ## Cross-project registry
 
 Use `SOURCE_REGISTRY.md` to record which projects/history batches have already been aggregated and where their detailed chronology remains.
+
+
+## Detailed case studies
+
+The first full dataset is retained under `case-studies/fh8626/`. Use it as evidence/provenance, not as the current universal runtime policy.
