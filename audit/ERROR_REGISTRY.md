@@ -62,4 +62,12 @@ Mitigation: Reviewer role/identity.
 Agent installs/reimplements workflows instead of using the project’s specialized MCP/tool.
 Mitigation: primary-tool policy + capability-gap reporting.
 
+## E-016 — Fabricated certainty under insufficient evidence
+Agent lacks enough information to support a required conclusion but continues by inventing an answer, contract, path or causal explanation.
+Mitigation: bounded evidence work → explicit unknown → alternate evidence path or stop boundary. Never convert missing information into confident prose.
+
+## E-017 — Unresolved contradiction is ignored
+Conflicting user requirements, documentation, source facts or acceptance criteria are left unresolved while implementation proceeds as if they were compatible.
+Mitigation: resolve material contradictions before planning/acceptance; during implementation track non-blocking contradictions explicitly and stop only when they threaten correctness, safety or acceptance validity.
+
 Add a new class only when root cause or mitigation is materially different.

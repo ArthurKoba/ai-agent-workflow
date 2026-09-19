@@ -35,3 +35,12 @@ Do not collapse source/build/hardware/product acceptance.
 
 ## B-015 — Fail closed on unknown capability
 Unknown ABI/feature/tool behavior must be explicit, not silent success.
+
+## B-016 — Fail closed on insufficient evidence
+When evidence cannot support the required conclusion, maximize grounded progress, state the unknown explicitly and change evidence path rather than inventing certainty.
+
+## B-017 — Contradiction ledger with severity
+Contradictions are tracked deliberately. Material planning/acceptance contradictions block progress; implementation-time contradictions may be deferred only when they are non-blocking and recorded for closure.
+
+## B-018 — Autonomous execution with scoped progress
+Continue independently as far as tools/evidence/permissions allow. Report progress by milestone and remaining scope; percentages are approximate and must name their denominator.
