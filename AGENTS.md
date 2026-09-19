@@ -1,42 +1,47 @@
 # AGENTS.md
 
-This repository is the authority for reusable AI engineering workflow rules.
+Mandatory workspace map for agents working in this repository.
 
-## Startup
+## Important
 
-Before changing workflow rules, read:
+Do **not** reread `prompts/ACCOUNT_PROMPT.md` or a project prompt as a runtime prerequisite.
 
-1. `README.md`
-2. `prompts/BASE_PROMPT.md`
-3. `context/LOCAL_CONTEXT_CONTRACT.md`
-4. `roles/ROLE_MODEL.md`
-5. the relevant file under `workflows/`
+Those are source templates for account/project configuration and are assumed to be injected by the harness already.
 
-## Scope
+Read them only when the task is to design, audit or update prompts.
 
-Keep this repository project-neutral.
+## Start
 
-Do not add:
-- project-specific IPs, hostnames, absolute local paths or temporary target state;
-- credentials/tokens/private keys;
-- hardware-specific facts that only apply to one product;
-- active state/tasks from another repository.
+1. Read `README.md`.
+2. Identify your role from `roles/README.md`.
+3. Select the task module from `skills/README.md`.
+4. If changing the agent system itself, also read `audit/README.md` and `docs/SYSTEM_ARCHITECTURE.md`.
+5. If touching tooling/MCP/infrastructure strategy, read `docs/MCP_STRATEGY.md`.
 
-Generalize a lesson before adding it here.
+## Routing
 
-## Change discipline
+- implementation/refactoring → `skills/software-engineering/README.md`
+- independent review → `skills/code-review/README.md`
+- shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations/README.md`
+- service/deployment/infrastructure operations → `skills/service-engineering/README.md`
+- embedded reverse/bring-up → `skills/hardware-reverse/README.md`
+- chat/workflow/prompt audit → `skills/workflow-audit/README.md`
 
-- Prefer editing the existing rule over adding a duplicate.
-- Keep account-level rules short.
-- Put domain-specific behavior in a workflow module, not in the account prompt.
-- Do not turn one incident into a universal rule without a clear reusable rationale.
-- If a rule depends on local machine state, put the contract in `context/` and the actual value outside tracked Git.
-- Significant changes require an independent Reviewer pass according to `roles/ROLE_MODEL.md`.
+## Rules
 
-## Validation
+- Keep this repository project-neutral.
+- Do not store project IPs, hostnames, GPIO maps, active SHAs or machine-specific paths.
+- Do not store credentials/tokens/private keys.
+- Put task-specific rules in skills, not account prompt.
+- Put environment values in local context, not universal prompts.
+- Prefer editing an existing rule over adding a duplicate.
+- Significant changes require an independent Reviewer pass.
+- Generalize a lesson here only when it is reusable beyond one project.
 
-A workflow change is complete only when:
-- the affected documents agree with each other;
-- the rule has a clear layer: account / base / role / context / module;
-- no project-specific secrets or transient values leaked into the universal layer;
-- Reviewer findings are resolved or explicitly documented.
+## Depth
+
+Preferred hierarchy:
+
+`account → project → skill`
+
+A skill may contain a small internal map, but avoid recursive prompt trees.

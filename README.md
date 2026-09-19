@@ -1,39 +1,74 @@
 # AI Agent Workflow
 
-Personal engineering workflow for AI agents.
+Universal operating system for AI engineering agents.
 
-This repository stores **project-neutral** rules and reusable workflow contracts. It is intentionally separate from individual hardware/software projects.
+This repository stores reusable agent hierarchy, skills, roles, audit rules and system-evolution knowledge. It is not a project repository and not an infrastructure inventory.
 
-## Start here
+## Runtime hierarchy
 
-1. [AGENTS.md](AGENTS.md)
-2. [Base prompt](prompts/BASE_PROMPT.md)
-3. [Account-level prompt](prompts/ACCOUNT_PROMPT.md)
-4. [Local context contract](context/LOCAL_CONTEXT_CONTRACT.md)
-5. [Role model](roles/ROLE_MODEL.md)
-6. Relevant workflow modules under `workflows/`
+There are only three instruction layers.
 
-## What belongs here
+### Level 0 — Account prompt
+Injected by the account/harness for every conversation.
 
-- universal agent behavior;
-- engineering state/validation rules;
-- Implementer / Reviewer / Orchestrator responsibilities;
-- reusable workflow modules;
-- local-context templates;
-- generalized lessons that apply across projects.
+Source template: `prompts/ACCOUNT_PROMPT.md`.
 
-## What does not belong here
+Contains only universal behavior. No project names, MCP products, IPs, paths, GPIO, branch SHAs or task-specific methods.
 
-- project-specific IP addresses or paths;
-- credentials/secrets;
-- camera/board GPIO maps;
-- temporary branch SHAs;
-- one project’s current state/tasks;
-- generated binaries or evidence blobs;
-- project-specific chronology.
+### Level 1 — Project prompt
+Injected by the selected Project/workspace.
 
-Those belong in the relevant project repository, local context, or dedicated infrastructure/evidence storage.
+Template: `prompts/PROJECT_PROMPT_TEMPLATE.md`.
 
-## Status
+Defines project authorities, primary tools/MCP, local-context policy and validation ownership.
 
-The repository is being bootstrapped from a long-running hardware reverse/porting workflow audit. The imported rules are **working canonical**, not frozen forever. Changes should remain small, reviewable and justified by concrete engineering failures or improvements.
+### Level 2 — Task / skill
+Loaded only for the current task.
+
+Map: `skills/README.md`.
+
+Do not create deeper instruction chains unless there is a real need. Three meaningful layers are the intended maximum.
+
+## AGENTS.md is a map, not another prompt
+
+`AGENTS.md` is always read when entering this repository.
+
+It routes the agent to the relevant role, skill, audit or architecture document. It must not require rereading account/project prompts; those are assumed already injected by the harness.
+
+## Repository map
+
+- `prompts/` — account/project source templates.
+- `skills/` — task-specific modules.
+- `roles/` — Implementer / Reviewer / Orchestrator.
+- `context/` — local-context contract/templates.
+- `docs/` — system architecture and MCP strategy.
+- `audit/` — recurring error/best-practice aggregation.
+- `history/` — evolution of the agent system.
+
+## Placement rule
+
+A rule belongs at the highest layer that is truly universal, but no higher.
+
+Examples:
+- do not guess current state → account;
+- use a specific MCP in one project → project;
+- shell/UART formatting → terminal skill;
+- Ghidra reverse methodology → hardware-reverse skill;
+- independent review behavior → role model.
+
+## Infrastructure
+
+Concrete MCP servers, GitHub Apps, HTTP presets, runners, artifact stores, network topology and operational runbooks belong in a separate infrastructure authority.
+
+This repository stores the strategy for using such infrastructure, not its live inventory.
+
+See `docs/MCP_STRATEGY.md`.
+
+## Continuous improvement
+
+See:
+- `history/EVOLUTION.md`
+- `audit/README.md`
+- `audit/ERROR_REGISTRY.md`
+- `audit/BEST_PRACTICES.md`
+- `audit/PROMPT_CHANGELOG.md`
