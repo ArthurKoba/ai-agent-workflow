@@ -1,5 +1,18 @@
 # Prompt / Workflow Changelog
 
+## 2026-09 — Reverse/Infrastructure Project prompts and OpenIPC porting skill
+
+Changes:
+- added a broad Reverse Engineering Project prompt that treats ANJIA/FH8626 as the main current OpenIPC case, not the entire Reverse scope;
+- added an Infrastructure Project prompt with MCP-first, service-state, permission and independent-review rules;
+- added a dedicated OpenIPC porting/migration/contribution skill;
+- moved OpenIPC-specific repository ownership, recovery, Builder/Firmware/Linux/streamer/U-Boot contribution discipline below the account layer;
+- extended the account prompt only with universal hierarchy/AGENTS routing and primary-tool-surface behavior.
+
+Reason:
+Reverse, infrastructure and OpenIPC porting need different project/task context, while the account prompt must remain universal and portable.
+
+
 Track why the agent system changed.
 
 ## 2026-09 — Account prompt: uncertainty, contradictions and autonomous progress
