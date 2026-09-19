@@ -1,140 +1,73 @@
-# Local / Project Context Contract
+# Local Context Contract
 
-Статус: `WORKING_DRAFT`.
+Local context is **dynamic environment state**, not a prompt layer.
 
-Назначение: отделить универсальные правила поведения агента от environment-specific данных, которые нельзя зашивать в общий base prompt.
+The instruction hierarchy remains:
 
-## Рекомендуемая раскладка
+`account → project → skill`
 
-### 1. Account / Project instructions
-Хранят:
-- canonical universal Base Prompt;
-- общие пользовательские предпочтения, которые относятся ко всем задачам данного Project;
-- правило поиска project bootstrap и local context.
+Local context supplies values those layers may reference.
 
-Не должны хранить:
-- временный target IP;
-- текущий PID/owner;
-- случайный checkout path;
-- быстро меняющийся branch SHA;
-- одноразовый hardware state.
+## What belongs here
 
-### 2. Repository `AGENTS.md`
-Хранит:
-- project/repository-specific startup order;
-- authority files;
-- ownership boundaries;
-- contribution/tool policy;
-- указание, нужен ли local context;
-- ссылки на `STATE.md`, `TASKS.md`, process/runbook docs.
+Examples:
+- workspace root;
+- downloads/artifact locations;
+- target control lane;
+- target address;
+- file-transfer method;
+- toolchain path;
+- authoritative local build surface;
+- current boot mode;
+- active owner/process;
+- locally available tools.
 
-Не должен хранить приватные credentials и локальные секреты.
+Do not put project history here.
 
-### 3. `STATE.md` / `TASKS.md`
-Хранят:
-- динамический current engineering state;
-- active refs;
-- current gates/blockers;
-- доказанные hardware facts;
-- actionable next work.
+Avoid credentials/tokens/private keys when possible; use dedicated secret storage.
 
-### 4. Local context override
-Рекомендуемое имя: `LOCAL_AGENT_CONTEXT.md`.
+## Storage
 
-Файл **не должен коммититься в публичный source repository**. Его можно:
-- держать локально и gitignore;
-- передавать через Project instructions/files;
-- генерировать из локального bootstrap;
-- предоставлять через доверенный connector/tool.
+Recommended runtime file:
 
-Коммитить можно только шаблон:
-`LOCAL_AGENT_CONTEXT.example.md`.
+`LOCAL_AGENT_CONTEXT.md`
 
-## Что может содержать local context
+It should normally be untracked/private or supplied by the Project/harness/tooling.
 
-Только environment-specific данные, например:
+Tracked repositories may contain only a template:
 
-- `workspace_root: <local path>`
-- `downloads_root: <local path>`
-- `target_control_lane: <UART/SSH/...>`
-- `target_address: <current address>`
-- `file_transfer_method: <scp/tftp/...>`
-- `toolchain_path: <local path>`
-- `authoritative_build_surface: <owner WSL / CI / ...>`
-- `artifact_storage: <local/external location>`
-- `current_target_boot_mode: <state>`
-- `current_owner_process: <state>`
-- `local_tool_availability: <facts>`
+`LOCAL_AGENT_CONTEXT.example.md`
 
-Не хранить там пароли/tokens/private keys, если можно избежать этого.
+## Project declaration
 
-## Startup contract
-
-Repository/project bootstrap должен явно объявить одно из:
+Project/repository bootstrap declares:
 
 - `local_context: REQUIRED`
 - `local_context: OPTIONAL`
 - `local_context: NOT_USED`
 
-Если local context REQUIRED и файл/источник недоступен, агент обязан до environment-specific действий сообщить:
+If REQUIRED context is unavailable, report degraded-start once before environment-dependent work:
 
-> Local execution context не найден. Я могу продолжить repository/source analysis, но не буду угадывать локальные пути, target address, transport или build environment. Environment-dependent шаги будут менее надёжны до предоставления контекста.
+> Local execution context is unavailable. I can continue repository/source analysis, but I will not guess local paths, target addresses, transport or build environment.
 
-После этого агент не должен повторять предупреждение в каждом сообщении.
-
-Если local context OPTIONAL — работать дальше без предупреждения, пока реально не понадобится отсутствующий параметр.
+Do not repeat this warning in every message.
 
 ## Precedence
 
-При конфликте:
+When values conflict:
 
-1. прямое текущее указание пользователя;
-2. фактическое live state/tool/repository evidence;
-3. repository `AGENTS.md` / project rules;
-4. `STATE.md` / `TASKS.md`;
-5. local context override;
-6. старые handoff/chat summaries;
-7. model memory/assumption.
+1. direct current user instruction;
+2. live tool/repository/target evidence;
+3. injected project/account rules;
+4. repository state/tasks;
+5. local context;
+6. historical handoff/summary;
+7. memory/assumption.
 
-Machine-specific значение никогда не должно побеждать свежий фактический state только потому, что было сохранено раньше.
+A saved machine-specific value never overrides fresher live evidence merely because it was written earlier.
 
-## Template: LOCAL_AGENT_CONTEXT.example.md
+## Design goal
 
-```md
-# Local agent context
+Machine-specific state can change without rewriting universal prompts or polluting source history.
 
-status: CURRENT
-updated: <date/time>
-
-## Workspace
-workspace_root: <path>
-downloads_root: <path>
-artifact_root: <path>
-
-## Build
-authoritative_build_surface: <description>
-toolchain_path: <path or unavailable>
-
-## Target
-target_control_lane: <UART/SSH/...>
-target_address: <address or unavailable>
-file_transfer_method: <method>
-boot_mode: <state>
-active_owner: <process/state>
-
-## Local tools
-<tool>: <available/unavailable + notes>
-
-## Notes
-Only current environment facts. No project history here.
-```
-
-## Почему это лучше hardcoded base prompt
-
-Base prompt остаётся переносимым между Windows/WSL/Linux, разными камерами и другими hardware projects.
-
-Project-specific contracts живут рядом с кодом и версионируются.
-
-Machine-specific state можно менять без загрязнения Git/history.
-
-Если local context пропал, failure видимый и fail-closed: агент сообщает об ухудшенном контексте и перестаёт галлюцинировать пути/IP.
+Missing local context becomes visible and fail-closed instead of producing guessed paths/IPs.
