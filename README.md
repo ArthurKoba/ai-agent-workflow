@@ -37,7 +37,8 @@ It routes the agent to the relevant role, skill, audit or architecture document.
 
 ## Repository map
 
-- `prompts/` — account/project source templates.
+- `prompts/` — account-level and generic Project prompt source templates.
+- `projects/` — ready Project prompt sources for major workspaces.
 - `skills/` — task-specific modules.
 - `roles/` — Implementer / Reviewer / Orchestrator.
 - `context/` — local-context contract/templates.

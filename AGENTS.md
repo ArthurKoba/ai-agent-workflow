@@ -25,6 +25,7 @@ Read them only when the task is to design, audit or update prompts.
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations/README.md`
 - service/deployment/infrastructure operations → `skills/service-engineering/README.md`
 - embedded reverse/bring-up → `skills/hardware-reverse/README.md`
+- OpenIPC migration/porting/contribution → `skills/openipc-porting/README.md`
 - chat/workflow/prompt audit → `skills/workflow-audit/README.md`
 
 ## Rules
