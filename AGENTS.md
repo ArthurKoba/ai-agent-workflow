@@ -10,6 +10,10 @@ Those are source templates for account/project configuration and are assumed to 
 
 Read them only when the task is to design, audit or update prompts.
 
+## Hard startup gate
+
+For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the first implementation/mutation/human-operated command block. Do not claim a map/skill was read unless it was actually retrieved or injected into the current context.
+
 ## Start
 
 1. Read `README.md`.
@@ -23,6 +27,7 @@ Read them only when the task is to design, audit or update prompts.
 - implementation/refactoring → `skills/software-engineering/README.md`
 - independent review → `skills/code-review/README.md`
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations/README.md`
+- any task that emits human-operated commands → `skills/terminal-operations/README.md` (mandatory)
 - service/deployment/infrastructure operations → `skills/service-engineering/README.md`
 - embedded reverse/bring-up → `skills/hardware-reverse/README.md`
 - OpenIPC migration/porting/contribution → `skills/openipc-porting/README.md`

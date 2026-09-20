@@ -1,5 +1,11 @@
 # Terminal / Remote Operations
 
+## Mandatory trigger
+
+Load this skill before emitting any human-operated shell/PowerShell/WSL/SSH/UART/bootloader command block. This is a hard routing rule, not an optional optimization.
+
+If command-format rules were just violated or the user reports they were forgotten, reload this skill before issuing the next command block.
+
 Use for shell, PowerShell, WSL, SSH, UART, bootloader or remote command execution.
 
 ## Lanes
@@ -18,7 +24,9 @@ Do not silently switch lanes.
 - each command on its own physical line;
 - explicit `cd` before cwd-dependent commands;
 - avoid ordinary `&&`, `;` and backslash continuation when separate lines are clearer;
-- group proven routine commands, but stop at real decision boundaries.
+- group proven routine commands, but stop at real decision boundaries;
+- do not combine separate decision boundaries merely to reduce the number of code blocks;
+- do not split one proven routine stage into one-code-block-per-command noise.
 
 ## Minimal targets
 Do not assume GNU coreutils, Python, `file`, full shell features, SSH/SFTP or writable storage.

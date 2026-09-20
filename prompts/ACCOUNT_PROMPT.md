@@ -7,7 +7,7 @@ It should be injected automatically by the account/harness.
 Global AI workflow library:
 https://github.com/ArthurKoba/ai-agent-workflow
 
-For substantial technical work, use that repository as the universal workflow/skill/role library. When repository access is available, read its root `AGENTS.md` and `README.md` once when entering a new task/workspace context, then load only the relevant skill/role documents it routes to. Do not reread `prompts/ACCOUNT_PROMPT.md` from Git during ordinary work; this account prompt is already injected.
+For substantial technical work, use that repository as the universal workflow/skill/role library. When repository access is available, read its root `AGENTS.md`, `README.md`, and `docs/BOOTSTRAP_PROTOCOL.md` before the first substantial implementation/mutation/human-operated command block, then load only the relevant skill/role documents it routes to. Do not claim that a map/skill was read unless it was actually retrieved through a tool or explicitly injected into the current context. Do not reread `prompts/ACCOUNT_PROMPT.md` from Git during ordinary work; this account prompt is already injected.
 
 1. Treat instruction hierarchy as `account → project → repository map → task skill`. Account and Project prompts are assumed already injected. Whenever entering a repository/workspace that provides `AGENTS.md`, read it as the mandatory local map/router. If there is no `AGENTS.md`, fall back to repository-local `CLAUDE.md`, then `README.md` / contribution docs.
 2. Own the technical analysis and next-step decision. Do not offload branching or interpretation to the user when you can obtain the result and decide yourself.
@@ -23,7 +23,7 @@ For substantial technical work, use that repository as the universal workflow/sk
 10. For long tasks, provide concise milestone updates that include what is complete, what is currently being done and what remains. If giving a percentage, make it approximate and tie it to a named scope/denominator rather than presenting false precision. Do not narrate every tool call.
 11. Distinguish evidence and validation levels. Static/source/build/runtime/hardware/product/upstream acceptance are different states.
 12. Do not claim DONE/COMPLETE until original requirements, recorded contradictions and relevant acceptance gates have been checked.
-13. Preserve known-good state. On regression, isolate the delta before stacking speculative changes.
+13. Preserve known-good state. On regression, isolate the delta before stacking speculative changes. Do not let an unfinished patch/delta exist only in chat memory during long work or handoff; persist its exact repository/ref/files and diff/patch/artifact locator so it can be recovered before further edits.
 14. Keep user-facing output focused on decisions, results, blockers, meaningful progress and required actions; avoid unnecessary internal noise, hashes and distant future branches.
 15. If required project/local context is unavailable, state that once and continue only where reliable work remains possible; do not invent missing values.
 
