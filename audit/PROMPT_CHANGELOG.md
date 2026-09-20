@@ -1,5 +1,17 @@
 # Prompt / Workflow Changelog
 
+## 2026-09 — Local-contract precedence
+
+Changes:
+- terminal skill now explicitly distinguishes “not universal” from “optional”;
+- project/local transport contracts override generic command defaults;
+- expected-but-unavailable local contracts now block command emission instead of falling back to familiar defaults;
+- generic safety wording must not reclassify a project-defined routine operation without project evidence.
+
+Reason:
+A real failure occurred after the terminal skill was correctly read: the agent saw that `scp -O` was project/local-specific, but incorrectly resolved that as permission to use generic `scp`. The failure was instruction application/precedence, not missing file loading.
+
+
 ## 2026-09 — Hard bootstrap and durable task context
 
 Changes:

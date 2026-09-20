@@ -40,3 +40,20 @@ Avoid long multiline pasted scripts, complex quoting and fragile loops. Prefer a
 
 ## Safety
 Before destructive commands confirm lane, target, current state and recovery/rollback when relevant.
+
+
+## Local contract precedence
+
+A generic/default command pattern must never silently override a known project/local transport or execution contract.
+
+Examples:
+- if the project/local context defines legacy SCP with `scp -O`, use that exact contract;
+- if the project defines a normal firmware-update procedure as routine operation, do not relabel it as exceptional/destructive merely from a generic safety template.
+
+Before emitting a command:
+1. check whether repository/project/local context defines a transport or operation-specific contract;
+2. if defined, that local contract overrides the generic default;
+3. if the local contract is expected but cannot be recovered, stop at that boundary and report the missing context;
+4. do **not** fall back to a familiar/default command merely because the universal skill does not encode the project-specific flag.
+
+“Not universal” means “resolve from project/local context”, not “ignore the rule”.

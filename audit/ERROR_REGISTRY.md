@@ -78,4 +78,9 @@ Mitigation: hard bootstrap gate; a document counts as loaded only when actually 
 An unfinished patch, diff, generated file set or validation state is not persisted to repository/artifact/task state and is lost after context growth, handoff or restart.
 Mitigation: durable Task Context with exact repo/ref/files + diff/patch/artifact locator + applied/validation state before long continuation or handoff.
 
+## E-020 — Generic default overrides a known local contract
+Agent reads the universal rule correctly but resolves “project/local-specific” as permission to use a generic default instead of restoring the actual local contract.
+Example: using modern `scp` after reading that the required legacy `scp -O` belongs to project/local context.
+Mitigation: explicit local-contract precedence; expected-but-unavailable local contract blocks command emission rather than triggering fallback to generic defaults.
+
 Add a new class only when root cause or mitigation is materially different.

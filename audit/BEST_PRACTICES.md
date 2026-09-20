@@ -51,3 +51,7 @@ A workflow map/skill is considered loaded only when actually retrieved or inject
 
 ## B-020 — Durable Task Context
 Long-running work externalizes objective, acceptance, active ref, known-good state, active patch/delta identity, latest result, blockers and next decision boundary. Patch continuity must not depend on chat memory.
+
+
+## B-021 — Local contract beats generic default
+Universal skills define the class of operation; project/local context defines concrete transport, flags and operational classification. When a local contract exists, it wins. Missing local context is a blocker, not a reason to fall back to a familiar default.
