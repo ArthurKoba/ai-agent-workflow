@@ -44,3 +44,10 @@ Contradictions are tracked deliberately. Material planning/acceptance contradict
 
 ## B-018 — Autonomous execution with scoped progress
 Continue independently as far as tools/evidence/permissions allow. Report progress by milestone and remaining scope; percentages are approximate and must name their denominator.
+
+
+## B-019 — Observable bootstrap
+A workflow map/skill is considered loaded only when actually retrieved or injected. Substantial work has a startup gate before implementation/mutation/operator commands.
+
+## B-020 — Durable Task Context
+Long-running work externalizes objective, acceptance, active ref, known-good state, active patch/delta identity, latest result, blockers and next decision boundary. Patch continuity must not depend on chat memory.

@@ -70,4 +70,12 @@ Mitigation: bounded evidence work → explicit unknown → alternate evidence pa
 Conflicting user requirements, documentation, source facts or acceptance criteria are left unresolved while implementation proceeds as if they were compatible.
 Mitigation: resolve material contradictions before planning/acceptance; during implementation track non-blocking contradictions explicitly and stop only when they threaten correctness, safety or acceptance validity.
 
+## E-018 — Claimed context load without evidence
+Agent says AGENTS/skill/prompt was read or accounted for, but there is no actual retrieval/injected context and behavior immediately violates that file.
+Mitigation: hard bootstrap gate; a document counts as loaded only when actually retrieved or injected. Never use conversational acknowledgement as proof of loading.
+
+## E-019 — Volatile patch/delta exists only in chat memory
+An unfinished patch, diff, generated file set or validation state is not persisted to repository/artifact/task state and is lost after context growth, handoff or restart.
+Mitigation: durable Task Context with exact repo/ref/files + diff/patch/artifact locator + applied/validation state before long continuation or handoff.
+
 Add a new class only when root cause or mitigation is materially different.

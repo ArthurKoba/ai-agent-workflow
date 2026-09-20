@@ -1,5 +1,19 @@
 # Prompt / Workflow Changelog
 
+## 2026-09 — Hard bootstrap and durable task context
+
+Changes:
+- added `docs/BOOTSTRAP_PROTOCOL.md` as a hard startup gate for substantial technical work;
+- added `templates/TASK_CONTEXT.md` for recoverable long-running state;
+- made terminal skill mandatory before any human-operated command block;
+- prohibited claiming AGENTS/skill files were read without actual retrieval/injection evidence;
+- added patch/delta continuity requirements so unfinished work is not stored only in chat memory;
+- opened Koba MCP Bridge issue #60 for a typed `workflow_bootstrap` / workflow-context capability.
+
+Reason:
+Agents continued to violate command and context rules despite those rules existing in prompts/docs. The missing layer was observability/enforcement: “read and follow” remained a soft conversational request, and active patch state remained vulnerable to context loss.
+
+
 ## 2026-09 — Self-discovering bootstrap and concrete project maps
 
 Changes:
