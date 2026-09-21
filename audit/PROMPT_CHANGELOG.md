@@ -1,5 +1,17 @@
 # Prompt / Workflow Changelog
 
+## 2026-09 — Pre-send hard-constraint compliance
+
+Changes:
+- terminal skill now requires a final compliance pass before any human-operated command response;
+- bootstrap protocol distinguishes “skill loaded” from “draft complies with skill”;
+- account prompt now states that active hard Project/repository/skill constraints outrank response-completeness and end-to-end planning goals;
+- added E-021 / B-022 for loaded-rule displacement during answer generation.
+
+Reason:
+A real failure occurred even though the terminal skill was correctly loaded and understood. While composing the answer, the agent optimized for “give the full path to finished firmware” and displaced the explicit decision-boundary rule. The missing layer was final output compliance, not context loading.
+
+
 ## 2026-09 — Local-contract precedence
 
 Changes:

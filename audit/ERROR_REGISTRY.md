@@ -83,4 +83,8 @@ Agent reads the universal rule correctly but resolves “project/local-specific�
 Example: using modern `scp` after reading that the required legacy `scp -O` belongs to project/local context.
 Mitigation: explicit local-contract precedence; expected-but-unavailable local contract blocks command emission rather than triggering fallback to generic defaults.
 
+## E-021 — Hard constraint displaced by a competing response objective
+Agent correctly reads and understands an active rule, but while composing the answer optimizes for another goal (for example “give the full end-to-end path”) and violates the loaded hard constraint (for example “stop at the first real decision boundary”).
+Mitigation: explicit pre-send compliance gate. Hard Project/skill constraints outrank completeness, compactness, convenience and end-to-end planning goals.
+
 Add a new class only when root cause or mitigation is materially different.

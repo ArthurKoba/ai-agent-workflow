@@ -87,3 +87,14 @@ For substantial work, a short startup update may state:
 - current decision boundary.
 
 Do not dump the whole checklist or pretend verification that did not happen.
+
+
+## Pre-send compliance
+
+Loading the correct map/skill is necessary but not sufficient.
+
+Before emitting an action governed by an active skill, perform a final compliance check against that skill's hard constraints.
+
+Do not let a secondary response objective such as completeness, compactness, end-to-end planning, or convenience override an explicit STOP / MUST / decision-boundary rule.
+
+If a draft response conflicts with an active hard constraint, the hard constraint wins and the draft must be rewritten before sending.

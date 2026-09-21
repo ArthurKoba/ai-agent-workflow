@@ -57,3 +57,20 @@ Before emitting a command:
 4. do **not** fall back to a familiar/default command merely because the universal skill does not encode the project-specific flag.
 
 “Not universal” means “resolve from project/local context”, not “ignore the rule”.
+
+
+## Pre-send compliance gate
+
+Before sending any human-operated command response, perform one final compliance pass against the active terminal skill and project/local contract.
+
+Check at minimum:
+- does the response stop at the next real decision boundary;
+- did a completeness/end-to-end optimization accidentally add later dependent steps;
+- are all commands in the correct execution lane;
+- are required local transport flags/options preserved;
+- are separate decision boundaries kept separate;
+- are proven routine steps grouped without turning into microstep noise.
+
+Hard skill/project constraints outrank response-completeness, convenience, compactness, or “give the whole path now” goals.
+
+If the draft violates a hard constraint, rewrite the draft before sending it.

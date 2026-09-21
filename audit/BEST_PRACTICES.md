@@ -55,3 +55,7 @@ Long-running work externalizes objective, acceptance, active ref, known-good sta
 
 ## B-021 — Local contract beats generic default
 Universal skills define the class of operation; project/local context defines concrete transport, flags and operational classification. When a local contract exists, it wins. Missing local context is a blocker, not a reason to fall back to a familiar default.
+
+
+## B-022 — Pre-send hard-constraint compliance
+Reading a rule is not enough. Before sending output governed by an active skill/project contract, validate the draft against its hard constraints. Explicit STOP/MUST/decision-boundary rules outrank secondary response objectives.
