@@ -74,3 +74,19 @@ Check at minimum:
 Hard skill/project constraints outrank response-completeness, convenience, compactness, or “give the whole path now” goals.
 
 If the draft violates a hard constraint, rewrite the draft before sending it.
+
+
+## WSL environment isolation
+
+WSL is a separate execution lane even when it inherits environment from Windows.
+
+Windows environment leakage can make Linux-native build systems fail or select the wrong tools. In particular, Windows `PATH` entries such as `/mnt/c/Program Files/...` may contain spaces and are invalid for build systems such as Buildroot.
+
+For Linux-native build/toolchain work inside WSL:
+1. check whether the build contract requires a Linux-clean environment;
+2. if yes, do not rely on inherited Windows `PATH`;
+3. use the project-defined Linux-only `PATH`, then run `hash -r` before the build;
+4. do not silently keep Windows toolchain/program directories in the active build environment;
+5. prefer a Linux filesystem workspace rather than a Windows-mounted source tree when the build system/toolchain is known to depend on normal Linux filesystem semantics.
+
+A Windows-integrated WSL shell is not the same thing as a clean Linux build environment.

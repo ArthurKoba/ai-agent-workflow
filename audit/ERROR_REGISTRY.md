@@ -87,4 +87,8 @@ Mitigation: explicit local-contract precedence; expected-but-unavailable local c
 Agent correctly reads and understands an active rule, but while composing the answer optimizes for another goal (for example “give the full end-to-end path”) and violates the loaded hard constraint (for example “stop at the first real decision boundary”).
 Mitigation: explicit pre-send compliance gate. Hard Project/skill constraints outrank completeness, compactness, convenience and end-to-end planning goals.
 
+## E-022 — Host environment leaks into an isolated build lane
+A WSL/container/Linux-native build inherits host environment entries that are invalid or unsafe for the build system. Example: Windows `PATH` entries under `/mnt/c/Program Files/...` reach Buildroot, which rejects PATH values containing spaces.
+Mitigation: explicit build-lane environment isolation; restore the known Linux-only PATH, reset shell command hashing, and keep Linux-native builds on the intended Linux workspace/toolchain surface.
+
 Add a new class only when root cause or mitigation is materially different.

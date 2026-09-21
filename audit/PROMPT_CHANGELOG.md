@@ -1,5 +1,16 @@
 # Prompt / Workflow Changelog
 
+## 2026-09 — WSL / Buildroot environment isolation
+
+Changes:
+- terminal skill now treats inherited Windows environment as a possible WSL lane contamination;
+- OpenIPC porting skill now requires a Buildroot/WSL preflight using the project-defined Linux-only PATH and `hash -r`;
+- added E-022 / B-023 for host environment leakage into Linux-native build lanes.
+
+Reason:
+A real OpenIPC Builder run failed before build/archive because WSL inherited Windows PATH entries including `/mnt/c/Program Files/...`; Buildroot correctly rejected PATH containing spaces. The failure was environment-boundary loss, not source failure.
+
+
 ## 2026-09 — Pre-send hard-constraint compliance
 
 Changes:

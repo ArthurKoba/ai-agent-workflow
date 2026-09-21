@@ -182,3 +182,19 @@ OpenIPC porting is not complete merely because:
 - the device appears in Builder.
 
 Completion is defined by the project acceptance surface: boot/update/recovery, kernel, media, device functions, selected runtime variants, reproducible build integration and the intended upstream/contribution state.
+
+
+## Buildroot / WSL preflight
+
+OpenIPC Firmware/Builder builds use Buildroot and should run in a clean Linux build environment.
+
+When the owner build surface is WSL:
+- treat WSL as a Linux build lane, not as a Windows shell with Linux commands;
+- before Buildroot/OpenIPC build commands, ensure `PATH` does not contain inherited Windows entries such as `/mnt/c/.../Program Files/...`;
+- use the project/local Linux-only `PATH` contract and run `hash -r` before starting the build;
+- keep the working tree/output/toolchain on a Linux filesystem when practical;
+- do not diagnose a Buildroot `PATH contains spaces/TAB/newline` failure as a source/build-system defect before checking Windows→WSL environment leakage.
+
+If the project has already established a canonical clean WSL build `PATH`, reuse that exact contract instead of inventing a new one for each camera/build.
+
+This preflight is part of the build lane and should be applied before retrying a failed Buildroot build caused by environment contamination.
