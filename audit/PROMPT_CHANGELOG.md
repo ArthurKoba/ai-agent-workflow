@@ -1,5 +1,17 @@
 # Prompt / Workflow Changelog
 
+## 2026-09 — Browser-first web routing with cURL fallback
+
+Changes:
+- removed explicit cURL preset selection from Reverse and Infrastructure Project prompts;
+- ordinary web research now uses the built-in browser/search path first;
+- Koba MCP cURL is the required fallback when browser/search is insufficient or direct HTTP/download/stream access is needed;
+- preset selection is omitted unless a non-default request profile is explicitly required.
+
+Reason:
+Koba cURL now has a safe production default, so Project prompts should describe when to use cURL, not duplicate transport defaults that are already enforced by the tool.
+
+
 ## 2026-09 — WSL / Buildroot environment isolation
 
 Changes:

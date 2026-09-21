@@ -282,19 +282,15 @@ Use immutable artifact operations when bytes/files should persist outside chat:
 
 Prefer artifact IDs over inventing shared filesystem paths.
 
-### Structured HTTP/cURL
-Use:
-- `curl_presets`
+### Web / HTTP access
+For ordinary web research, documentation lookup and public information, use the built-in browser/search path first.
+
+If the built-in browser/search path is insufficient, blocked, cannot retrieve the needed response, or the task requires direct HTTP/download/stream access, use Koba MCP cURL:
 - `curl_request`
 - `curl_download`
 - `curl_stream_capture`
 
-Defaults:
-- ordinary human-facing HTML/site requests → `chrome-desktop`
-- JSON APIs → `json-api`
-- raw/native semantics → `curl`
-
-Browser-like presets reproduce HTTP headers only; they are not a JavaScript/browser engine.
+Do not specify a cURL preset unless the task explicitly requires a non-default request profile.
 
 ## 9. Execution model
 

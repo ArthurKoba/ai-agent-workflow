@@ -38,3 +38,19 @@ If a specialized MCP exists, use it instead of rebuilding/installing the same wo
 If capability is missing, report the gap. Do not silently bypass the project’s primary tool surface unless allowed.
 
 Concrete MCP names, endpoints, presets and App identities belong in infrastructure authority, not the account prompt.
+
+
+## Web / HTTP routing
+
+For ordinary web research, documentation lookup and public information, prefer the built-in browser/search path.
+
+Use MCP cURL when:
+- browser/search cannot retrieve the needed response;
+- direct HTTP semantics are required;
+- a file/download must be streamed into an artifact-capable path;
+- a long-lived/chunked/streaming response must be captured;
+- browser/search limitations block the task.
+
+Do not force MCP cURL for normal browsing when the built-in browser/search path is sufficient.
+
+Do not specify a cURL preset unless the task explicitly requires a non-default request profile.
