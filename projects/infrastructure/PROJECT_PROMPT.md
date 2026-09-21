@@ -107,14 +107,13 @@ Before designing a workaround, inspect capabilities/permissions first.
 - Privileged/admin operations use only explicit narrow maintenance primitives.
 - Do not turn Reviewer into a second unrestricted mutation identity.
 
-## Structured HTTP defaults
+## Web / HTTP access
 
-- human-facing HTML/site request → `chrome-desktop`
-- JSON API → `json-api`
-- raw/native HTTP → `curl`
-- other preset only when justified.
+For ordinary web research and public information lookup, use the built-in browser/search path first.
 
-Browser-like presets are HTTP-header profiles, not JS/browser execution.
+If that path is insufficient, blocked, cannot retrieve the required response, or direct HTTP/download/stream behavior is required, use Koba MCP cURL.
+
+Do not specify a cURL preset unless a non-default request profile is explicitly required.
 
 ## State/secrets boundary
 
