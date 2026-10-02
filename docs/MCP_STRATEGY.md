@@ -37,7 +37,15 @@ If a specialized MCP exists, use it instead of rebuilding/installing the same wo
 
 If capability is missing, report the gap. Do not silently bypass the project’s primary tool surface unless allowed.
 
-Concrete MCP names, endpoints, presets and App identities belong in infrastructure authority, not the account prompt.
+Concrete endpoints, installation IDs, credentials and transient infrastructure values belong in infrastructure authority, not the account prompt. Stable role aliases may be documented when they define an agent workflow contract.
+
+## GitHub identity separation
+
+Where the GitHub integration exposes both standard identities, keep mutation and approval separate:
+- writer alias `koba-ai-agent`: repository writes, working branches, commits, issues, pull requests and requested revisions;
+- reviewer alias `koba-ai-reviewer`: independent review and final pull-request merge.
+
+The writer does not merge its own PR. The reviewer does not modify the implementation under review. Reserved/default branch protection is treated as a workflow boundary, not bypassed through another transport.
 
 
 ## Web / HTTP routing
