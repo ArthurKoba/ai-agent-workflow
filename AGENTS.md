@@ -33,6 +33,15 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 - OpenIPC migration/porting/contribution → `skills/openipc-porting/README.md`
 - chat/workflow/prompt audit → `skills/workflow-audit/README.md`
 
+## GitHub writer/reviewer identity contract
+
+When both GitHub App identities are available:
+- `koba-ai-agent` is the writer/Implementer identity. It may create working branches, commits, issues and pull requests, update its PR branch, and respond to review findings.
+- `koba-ai-reviewer` is the independent Reviewer identity. It reads the proposed diff and current authority, submits review state, and is the only identity that merges pull requests into reserved/default branches.
+- The writer must not merge its own pull request. The reviewer must not edit the implementation under review; requested changes return to the writer for a new revision.
+- Reserved/default branches such as `main`/`master` are not direct-mutation targets for the writer. Use `writer branch -> PR -> reviewer review -> reviewer merge` unless a repository explicitly has no review surface or the tool authority says otherwise.
+- Account aliases are stable selectors; concrete App IDs, installation IDs and credentials remain infrastructure state and do not belong in this repository.
+
 ## Rules
 
 - Keep this repository project-neutral.
