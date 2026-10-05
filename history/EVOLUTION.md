@@ -88,3 +88,11 @@ Audio Rush had accumulated reusable reverse-analysis terminology, evidence state
 Those concepts now live under `skills/hardware-reverse/` as conditional modules. Device-specific firmware/board contracts remain in the Audio Rush repository, while the universal skill owns behavior-analysis vocabulary, evidence/proof semantics and persistent project/session/program lifecycle.
 
 Automation/quality effect: reverse-analysis agents across projects can use one terminology/evidence model without project-local copies, and session/worker failures are less likely to be misread as lost analysis state.
+
+## 11 — Context-efficient engineering and staged specialist passes
+
+Large project maps and mandatory current-state/rule bundles were identified as a quality problem: they consume context before the agent knows which subsystem or quality dimension matters, and they encourage documentation to mirror implementation details already available in source.
+
+The workflow now treats context budget as an explicit engineering constraint. `context-engineering` defines compact repository maps, shared-contract ownership, code-as-implementation-authority, just-in-time rule loading and staged specialist passes for implementation, architecture, package/import boundaries, consistency, API/contracts, persistence/performance and code-quality/style.
+
+Automation/quality effect: agents spend more context on the current decision, backend/frontend can synchronize through one shared contract authority, and later refactoring/review agents can load only the concern-specific rules needed for their pass.

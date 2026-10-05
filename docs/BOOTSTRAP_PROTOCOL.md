@@ -19,6 +19,8 @@ Before the first implementation/mutation/human-operated command block:
 6. read current state/tasks/authority documents required by the repository map;
 7. establish the current Task Context.
 
+The repository map should keep this mandatory set intentionally small. Additional architecture/language/database/frontend/operations modules are loaded just in time when the task crosses their decision boundary; do not preload unrelated rule families merely because they exist.
+
 Do not proceed past this gate by merely claiming that the files were read.
 
 A document counts as loaded only if:

@@ -42,6 +42,14 @@ Examples:
 
 Avoid mandatory chains where an agent must load unrelated modules before acting.
 
+## Progressive context disclosure
+
+Context size is an architectural constraint. Repository maps and skill routers should minimize mandatory startup context and route the agent to additional authorities only when the current task crosses their boundary.
+
+Documentation should preserve durable contracts, ownership and navigation; source code remains the authority for ordinary implementation detail. Avoid giant mandatory current-state documents that mirror the codebase.
+
+For the full operating model, use `../skills/context-engineering/README.md`.
+
 ## Maximum depth
 Prefer `account → project → skill`.
 

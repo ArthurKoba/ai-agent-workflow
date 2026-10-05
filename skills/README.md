@@ -11,6 +11,7 @@ Load only the module matching the current task.
 - deployment/services/infrastructure operations → `service-engineering/README.md`
 - embedded firmware/hardware reverse → `hardware-reverse/README.md`
 - OpenIPC migration/porting/contribution → `openipc-porting/README.md`
+- context-efficient documentation/bootstrap/multi-agent workflow design → `context-engineering/README.md`
 - workflow/chat/prompt audit → `workflow-audit/README.md`
 
 Skills may reference another skill when a task genuinely crosses domains. Avoid loading the full library by default.
