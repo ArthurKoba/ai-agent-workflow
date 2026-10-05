@@ -35,6 +35,7 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 - service/deployment/infrastructure operations → `skills/service-engineering/README.md`
 - embedded reverse/bring-up → `skills/hardware-reverse/README.md`
 - OpenIPC migration/porting/contribution → `skills/openipc-porting/README.md`
+- context-efficient documentation/bootstrap/multi-agent workflow design → `skills/context-engineering/README.md`
 - chat/workflow/prompt audit → `skills/workflow-audit/README.md`
 
 ## GitHub writer/reviewer identity contract

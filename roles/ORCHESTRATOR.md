@@ -2,11 +2,12 @@
 
 Use when several agents, repositories or non-trivial work slices must be coordinated.
 
-Role describes coordination responsibility; task-domain rules still come from the relevant skills.
+Role describes coordination responsibility; task-domain rules still come from the relevant skills. For documentation/context architecture or staged multi-pass agent workflows, also load `../skills/context-engineering/README.md`.
 
 ## Responsibilities
 
 - establish objective, acceptance criteria, authorities and current known-good state;
+- treat context budget as a design constraint: give each slice only the authorities/skills needed for its current decision;
 - split work into non-overlapping slices with explicit owners/dependencies;
 - keep shared contracts and cross-repository facts in their natural authority;
 - track blockers/contradictions and resolve material conflicts before dependent work;
