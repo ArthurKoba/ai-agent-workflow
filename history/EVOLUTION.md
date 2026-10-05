@@ -75,7 +75,7 @@ Avoid adding prompt depth unless the three-layer hierarchy genuinely cannot expr
 
 Mature project-level engineering rules were generalized into reusable, project-neutral skill modules instead of remaining duplicated inside one product/infrastructure repository.
 
-Added conditional software/backend modules for Clean Architecture/DDD, Python, package APIs, PostgreSQL, observability and aiogram-dialog; frontend modules for Vue/TypeScript, FSD, UI and table architecture; a Git commit workflow; persistent knowledge-base/Obsidian graph guidance; skill-authoring/context-maintenance contracts; and a richer Orchestrator role.
+Added conditional software/backend modules for Clean Architecture/DDD, Python, package APIs, PostgreSQL, observability and aiogram-dialog; frontend modules for Vue/TypeScript, FSD, UI and table architecture; a Git commit workflow, skill-authoring/context-maintenance contracts and a richer Orchestrator role.
 
 Project-specific commands, versions, product names, runtime values and temporary testing policies remain below the universal layer. Large specialist documents are conditional modules routed by a small skill entry point rather than mandatory startup context.
 

@@ -965,7 +965,7 @@ Artifact preflight недостаточен: после загрузки общ�
 - `roles/` — orchestrator vs executor/reverse agent;
 - `ops/` — WSL/OpenIPC/stock/build/hardware protocols;
 - `runtime/` — implemented vs missing behavior;
-- `roadmap/` — priorities/gates;
+- issue/work-item tracker — priorities/gates;
 - `history/` — decisions/work/expensive operations;
 - `knowledge/`, `reverse/`, `reference/`, `evidence/`, `source/`, `tools/`.
 

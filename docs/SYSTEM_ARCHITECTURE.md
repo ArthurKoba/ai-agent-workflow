@@ -38,7 +38,6 @@ A skill may route to conditional modules or a focused subskill when the task dom
 Examples:
 - `software-engineering` routes to Python, DDD, PostgreSQL and observability only when relevant;
 - `frontend-engineering` routes to Vue/TypeScript, FSD, UI and table modules;
-- `knowledge-base` may route to optional Obsidian graph maintenance.
 
 Avoid mandatory chains where an agent must load unrelated modules before acting.
 

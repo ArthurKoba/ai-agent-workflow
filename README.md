@@ -39,7 +39,7 @@ It routes the agent to the relevant role, skill, audit or architecture document.
 
 - `prompts/` — account-level and generic Project prompt source templates.
 - `projects/` — ready Project prompt sources for major workspaces.
-- `skills/` — task-specific modules, including software/backend, frontend, Git, knowledge-base, terminal, service, reverse and review workflows.
+- `skills/` — task-specific modules, including software/backend, frontend, Git, context-engineering, terminal, service, reverse and review workflows.
 - `roles/` — Implementer / Reviewer / Orchestrator.
 - `context/` — local-context contract/templates.
 - `docs/` — system architecture and MCP strategy.
