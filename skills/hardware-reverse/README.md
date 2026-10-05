@@ -1,5 +1,9 @@
 # Hardware Reverse / Embedded Bring-up
 
+## Sub-map
+- behavior-analysis vocabulary, evidence states and proof levels → `behavior-analysis.md`
+- persistent analysis project/session/program lifecycle → `analysis-project-lifecycle.md`
+
 ## Evidence-first
 - Do not restart reverse if an existing corpus/contract answers the question.
 - Prefer one authoritative searchable corpus over repeated target extraction.
