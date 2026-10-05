@@ -80,3 +80,11 @@ Added conditional software/backend modules for Clean Architecture/DDD, Python, p
 Project-specific commands, versions, product names, runtime values and temporary testing policies remain below the universal layer. Large specialist documents are conditional modules routed by a small skill entry point rather than mandatory startup context.
 
 Automation/quality effect: reusable engineering knowledge is available across projects without turning one project's infrastructure repository into a second global prompt authority.
+
+## 10 — Shared behavior-analysis vocabulary and project lifecycle
+
+Audio Rush had accumulated reusable reverse-analysis terminology, evidence states, proof-level semantics and persistent Analysis project/session recovery rules inside its repository-local `AGENTS.md`.
+
+Those concepts now live under `skills/hardware-reverse/` as conditional modules. Device-specific firmware/board contracts remain in the Audio Rush repository, while the universal skill owns behavior-analysis vocabulary, evidence/proof semantics and persistent project/session/program lifecycle.
+
+Automation/quality effect: reverse-analysis agents across projects can use one terminology/evidence model without project-local copies, and session/worker failures are less likely to be misread as lost analysis state.
