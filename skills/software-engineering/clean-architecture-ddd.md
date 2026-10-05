@@ -29,12 +29,12 @@ Clean Architecture разделяет систему так, чтобы бизн
 - HTTP;
 - БД;
 - ORM;
-- Telegram/API clients;
+- messaging/API clients;
 - frameworks;
 - фоновые процессы;
 - конкретные SDK.
 
-Практический смысл: можно менять PostgreSQL, SQLAlchemy, Telegram SDK или web framework без переписывания домена и use cases.
+Практический смысл: можно менять PostgreSQL, SQLAlchemy, messaging SDK или web framework без переписывания домена и use cases.
 
 ## 2. Слои
 
@@ -61,7 +61,7 @@ Domain layer не должен знать про:
 - SQLAlchemy;
 - PostgreSQL;
 - HTTP;
-- Telegram;
+- messaging platform;
 - outbox;
 - event bus;
 - unit of work;
@@ -119,7 +119,7 @@ Application layer может содержать:
 - event bus registry;
 - outbox dispatcher.
 
-Application layer знает про абстракции, но не должен зависеть от конкретной БД, ORM, Telegram SDK или web framework.
+Application layer знает про абстракции, но не должен зависеть от конкретной БД, ORM, messaging SDK или web framework.
 
 Пример:
 
@@ -169,7 +169,7 @@ Repository implementation не должна протекать в application la
 - PostgreSQL;
 - asyncpg;
 - Redis/RabbitMQ/Kafka и другие message brokers;
-- Telegram SDK;
+- messaging SDK;
 - Docker;
 - CLI entrypoint;
 - worker runner;
@@ -287,7 +287,7 @@ InviteActivationPolicy
 ```text
 CanActivateInviteCode
 CanReceiveNotification
-CanSendStaffMessage
+CanSendOperatorMessage
 ```
 
 Specification не обязательна для каждого `if`. Она нужна, когда условие стало самостоятельным понятием.
@@ -327,7 +327,7 @@ Domain event не является командой.
 Плохо:
 
 ```text
-SendTelegramMessage
+SendExternalMessage
 CreateNotification
 ```
 
@@ -361,7 +361,7 @@ Application service не должен:
 
 - содержать сложные доменные правила;
 - напрямую работать с SQLAlchemy session;
-- отправлять Telegram внутри бизнес-транзакции;
+- отправлять сообщения во внешний канал внутри бизнес-транзакции;
 - вызывать другой application service;
 - знать детали JSONB/ORM/HTTP.
 
@@ -412,7 +412,7 @@ event_uuid
 Хорошо:
 
 ```text
-telegram_user_id
+external_user_id
 inviter_invite_code
 ```
 
@@ -518,7 +518,7 @@ async with uow_factory() as uow:
 ```text
 add(user)
 get_by_uuid(user_uuid)
-get_by_telegram_user_id(telegram_user_id)
+get_by_external_user_id(external_user_id)
 ```
 
 Он не описывает, как именно это сделано в SQL.
@@ -532,8 +532,8 @@ Repository implementation живет во внешнем слое.
 Примеры:
 
 ```text
-TelegramGateway
-PaymentGateway
+MessagingGateway
+ProviderGateway
 EmailGateway
 StorageGateway
 ```
@@ -757,8 +757,8 @@ Middleware не должно содержать бизнес-сценарий.
 Примеры:
 
 ```text
-LoggingTelegramGateway
-RetryingTelegramGateway
+LoggingMessagingGateway
+RetryingMessagingGateway
 MetricsUserRepository
 CachedQueryHandler
 ```
@@ -772,7 +772,7 @@ Decorator хорош, когда нужно добавить техническ�
 Пример:
 
 ```text
-Telegram SDK -> TelegramGateway
+Messaging SDK -> MessagingGateway
 SQLAlchemy -> UserRepository
 ```
 
@@ -926,7 +926,7 @@ NotificationService
   -> создать Notification с type/status/source/idempotency_key/payload
 
 NotificationWorker
-  -> отправить pending/retry notifications через TelegramGateway
+  -> отправить pending/retry notifications через MessagingGateway
 ```
 
 Смысл:
@@ -943,11 +943,11 @@ NotificationWorker
 
 Внешний API обычно не дает строгий exactly-once.
 
-Например, при отправке в Telegram возможна ситуация:
+Например, при отправке во внешний канал возможна ситуация:
 
 ```text
 запрос ушел
-Telegram создал сообщение
+внешний provider принял/создал сообщение
 ответ потерялся по timeout
 worker считает попытку неуспешной
 retry может создать дубль во внешней системе
@@ -1034,7 +1034,7 @@ composition root создает RegisterUserService с нужными ports/coll
 9. Внешние API не вызывать внутри бизнес-транзакции.
 10. Технические uuid генерируются системой, а не приходят в command без причины.
 11. Внутренние identifiers называть `uuid` / `*_uuid`, не `id` / `*_id`.
-12. `id` допустим для внешних контрактов вроде `telegram_user_id`, `request_id`, `operation_id`, `source_id`.
+12. `id` допустим для внешних контрактов вроде `external_user_id`, `request_id`, `operation_id`, `source_id`.
 13. Pydantic использовать на границах, домен держать независимым от transport/persistence formats.
 14. Не добавлять паттерн только потому, что он существует в Clean Architecture.
 15. Добавлять архитектурный элемент тогда, когда он защищает границу, инвариант, идемпотентность или уменьшает реальное дублирование.
@@ -1064,5 +1064,5 @@ NotificationWorker — application worker/service
 
 SqlAlchemy repositories — infrastructure adapters
 SqlAlchemyUnitOfWork — infrastructure adapter
-TelegramGateway implementation — infrastructure adapter
+MessagingGateway implementation — infrastructure adapter
 ```
