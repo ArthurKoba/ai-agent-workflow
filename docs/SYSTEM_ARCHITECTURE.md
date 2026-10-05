@@ -32,6 +32,16 @@ Dynamic facts such as active SHA, PID, IP, boot mode and current artifact belong
 ## Infrastructure is not prompt
 MCP servers, Apps, runners, artifact stores, presets and credentials belong in infrastructure authority. Project prompt only selects which infrastructure to use.
 
+## Skill internals
+A skill may route to conditional modules or a focused subskill when the task domain is large. Those modules are not extra global instruction layers: they are loaded only through the selected task skill.
+
+Examples:
+- `software-engineering` routes to Python, DDD, PostgreSQL and observability only when relevant;
+- `frontend-engineering` routes to Vue/TypeScript, FSD, UI and table modules;
+- `knowledge-base` may route to optional Obsidian graph maintenance.
+
+Avoid mandatory chains where an agent must load unrelated modules before acting.
+
 ## Maximum depth
 Prefer `account → project → skill`.
 

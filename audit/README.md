@@ -7,6 +7,8 @@ May include exported chats, handoffs, issue/review history, failed builds/tests,
 
 Raw material stays with its source project/archive. This repository stores generalized conclusions.
 
+For changes to the workflow library itself, also follow `CONTEXT_MAINTENANCE.md`.
+
 ## Cycle
 1. collect a bounded source batch;
 2. assign neutral source IDs;

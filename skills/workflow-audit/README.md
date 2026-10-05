@@ -1,6 +1,6 @@
 # Workflow Audit Skill
 
-Canonical audit procedure lives at `../../audit/README.md`.
+Canonical audit procedure lives at `../../audit/README.md`; workflow-library edits additionally use `../../audit/CONTEXT_MAINTENANCE.md`.
 
 Use it when:
 - reviewing chat/project history;
