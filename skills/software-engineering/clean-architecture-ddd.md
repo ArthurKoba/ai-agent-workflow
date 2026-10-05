@@ -72,10 +72,10 @@ Domain layer не должен знать про:
 
 ```text
 User
-ReferralRelation
-ReferralRegistered
-ReferralRelationFactory
-ReferralActivationPolicy
+InviteRelation
+InviteRegistered
+InviteRelationFactory
+InviteActivationPolicy
 Notification
 NotificationType
 NotificationStatus
@@ -126,11 +126,11 @@ Application layer знает про абстракции, но не должен
 ```text
 RegisterUserService
 RegisterOrGetUserService
-ActivateReferralService
+ActivateInviteService
 UserRegistrationCollaborator
-ReferralRegistrationCollaborator
+InviteRegistrationCollaborator
 NotificationService
-CreateNotificationOnReferralRegistered
+CreateNotificationOnInviteRegistered
 OutboxDispatcher
 EventDeliveryWorker
 NotificationWorker
@@ -191,7 +191,7 @@ Frameworks and drivers — детали доставки и исполнения
 
 ```text
 User
-ReferralRelation
+InviteRelation
 Notification
 ```
 
@@ -212,7 +212,7 @@ Value object обычно:
 ```text
 Email
 Money
-ReferralCodeValue
+InviteCodeValue
 NotificationIdempotencyKey
 NotificationType
 NotificationStatus
@@ -270,7 +270,7 @@ Policy удобна, когда правило:
 Пример:
 
 ```text
-ReferralActivationPolicy
+InviteActivationPolicy
   -> можно ли активировать код
   -> повторная активация того же кода это no-op или ошибка
   -> можно ли активировать другой код при существующей связи
@@ -285,7 +285,7 @@ ReferralActivationPolicy
 Пример:
 
 ```text
-CanActivateReferralCode
+CanActivateInviteCode
 CanReceiveNotification
 CanSendStaffMessage
 ```
@@ -307,7 +307,7 @@ Factory не должна сохранять объект в БД.
 Пример:
 
 ```text
-ReferralRelationFactory.create_relation(...)
+InviteRelationFactory.create_relation(...)
 ```
 
 ### Domain Event
@@ -317,7 +317,7 @@ ReferralRelationFactory.create_relation(...)
 Он должен называться в прошедшем времени или как совершившийся факт:
 
 ```text
-ReferralRegistered
+InviteRegistered
 UserCreated
 NotificationQueued
 ```
@@ -334,7 +334,7 @@ CreateNotification
 Хорошо:
 
 ```text
-ReferralRegistered
+InviteRegistered
 ```
 
 Событие говорит "что произошло", а не "что теперь надо сделать".
@@ -378,7 +378,7 @@ Application service может использовать:
 
 ```text
 RegisterUserService
-ActivateReferralService
+ActivateInviteService
 ```
 
 ### Interactor
@@ -403,7 +403,7 @@ Command должен содержать данные от вызывающей �
 
 ```text
 user_uuid
-referral_relation_uuid
+invite_relation_uuid
 event_uuid
 ```
 
@@ -413,7 +413,7 @@ event_uuid
 
 ```text
 telegram_user_id
-inviter_referral_code
+inviter_invite_code
 ```
 
 если это реальные входные данные сценария.
@@ -467,7 +467,7 @@ Collaborator уместен, когда:
 
 ```text
 UserRegistrationCollaborator
-ReferralRegistrationCollaborator
+InviteRegistrationCollaborator
 NotificationService
 ```
 
@@ -488,8 +488,8 @@ NotificationService
 
 ```text
 создать User
-создать ReferralRelation
-записать ReferralRegistered в outbox
+создать InviteRelation
+записать InviteRegistered в outbox
 commit одной транзакцией
 ```
 
@@ -674,8 +674,8 @@ Outbox — не сама шина. Это durable source of events.
 Пример:
 
 ```text
-ReferralRegistered
-  -> CreateNotificationOnReferralRegistered
+InviteRegistered
+  -> CreateNotificationOnInviteRegistered
   -> AccrueBonus
   -> UpdateStats
 ```
@@ -806,7 +806,7 @@ Facade не должен скрывать важные бизнес-решени
 Пример:
 
 ```text
-Telegram update/payment provider event
+webhook/provider event
   -> ACL translator
   -> internal command/event/value object
 ```
@@ -818,9 +818,9 @@ Telegram update/payment provider event
 Примеры:
 
 ```text
-new_referral:{inviter_user_uuid}:{invited_user_uuid}
-broadcast:{broadcast_uuid}:{recipient_user_uuid}:{channel}
-system_message:{operation_id}:{recipient_user_uuid}
+new_invite:{inviter_user_uuid}:{invited_user_uuid}
+delivery_batch:{batch_uuid}:{recipient_uuid}:{channel}
+system_message:{operation_id}:{recipient_uuid}
 ```
 
 Idempotency key должен отражать бизнес-смысл уникальности операции.
@@ -909,17 +909,17 @@ RETURNING d.*;
 
 ## 8. Notifications как пример разделения concerns
 
-Referral-сценарий не должен напрямую отправлять Telegram и не должен сам собирать notification payload.
+Invite-сценарий не должен напрямую отправлять сообщение во внешний канал и не должен сам собирать notification payload.
 
 Правильное разделение:
 
 ```text
-ReferralRegistrationCollaborator
-  -> создать ReferralRelation
-  -> добавить ReferralRegistered в outbox
+InviteRegistrationCollaborator
+  -> создать InviteRelation
+  -> добавить InviteRegistered в outbox
 
-CreateNotificationOnReferralRegistered
-  -> получить ReferralRegistered
+CreateNotificationOnInviteRegistered
+  -> получить InviteRegistered
   -> вызвать NotificationService
 
 NotificationService
@@ -931,7 +931,7 @@ NotificationWorker
 
 Смысл:
 
-- referral отвечает за реферальную связь;
+- invitation context отвечает за invitation relation;
 - event фиксирует факт;
 - notification module решает, какое уведомление создать;
 - worker занимается доставкой;
@@ -1044,17 +1044,17 @@ composition root создает RegisterUserService с нужными ports/coll
 ```text
 RegisterUserService — application service / use case
 RegisterOrGetUserService — application service / use case
-ActivateReferralService — application service / use case
+ActivateInviteService — application service / use case
 
 UserRegistrationCollaborator — application collaborator
-ReferralRegistrationCollaborator — application collaborator
+InviteRegistrationCollaborator — application collaborator
 NotificationService — application collaborator notification-модуля
 
-ReferralRelationFactory — domain factory
-ReferralActivationPolicy — domain policy
-ReferralRelation — domain entity
-ReferralRegistered — domain event
-ReferralCodeGenerator / ReferralCodeResolver — application ports для формата referral code
+InviteRelationFactory — domain factory
+InviteActivationPolicy — domain policy
+InviteRelation — domain entity
+InviteRegistered — domain event
+InviteCodeGenerator / InviteCodeResolver — application ports для формата invite code
 
 OutboxRepository — application port
 EventBus registry — application event bus registry

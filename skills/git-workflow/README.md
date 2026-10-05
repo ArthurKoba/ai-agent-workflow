@@ -105,7 +105,7 @@ Footer используется для метаданных:
 Breaking change отмечать явно:
 
 ```text
-feat(api)!: rename subscription status field
+feat(api)!: rename order status field
 
 BREAKING CHANGE: API clients must read `status` instead of `state`.
 ```
