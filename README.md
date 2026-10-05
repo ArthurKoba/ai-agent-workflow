@@ -39,11 +39,11 @@ It routes the agent to the relevant role, skill, audit or architecture document.
 
 - `prompts/` — account-level and generic Project prompt source templates.
 - `projects/` — ready Project prompt sources for major workspaces.
-- `skills/` — task-specific modules.
+- `skills/` — task-specific modules, including software/backend, frontend, Git, knowledge-base, terminal, service, reverse and review workflows.
 - `roles/` — Implementer / Reviewer / Orchestrator.
 - `context/` — local-context contract/templates.
 - `docs/` — system architecture and MCP strategy.
-- `audit/` — recurring error/best-practice aggregation.
+- `audit/` — recurring error/best-practice aggregation and context-maintenance protocol.
 - `history/` — evolution of the agent system.
 
 ## Placement rule
@@ -73,3 +73,5 @@ See:
 - `audit/ERROR_REGISTRY.md`
 - `audit/BEST_PRACTICES.md`
 - `audit/PROMPT_CHANGELOG.md`
+- `audit/CONTEXT_MAINTENANCE.md`
+- `docs/SKILL_AUTHORING.md`

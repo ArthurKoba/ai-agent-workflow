@@ -70,3 +70,13 @@ with AGENTS as router, external state authority, local context outside prompts, 
 Improve task routing, MCP coverage, automated evidence ingestion, review quality and audit aggregation.
 
 Avoid adding prompt depth unless the three-layer hierarchy genuinely cannot express the need.
+
+## 9 — Reusable engineering skill library
+
+Mature project-level engineering rules were generalized into reusable, project-neutral skill modules instead of remaining duplicated inside one product/infrastructure repository.
+
+Added conditional software/backend modules for Clean Architecture/DDD, Python, package APIs, PostgreSQL, observability and aiogram-dialog; frontend modules for Vue/TypeScript, FSD, UI and table architecture; a Git commit workflow; persistent knowledge-base/Obsidian graph guidance; skill-authoring/context-maintenance contracts; and a richer Orchestrator role.
+
+Project-specific commands, versions, product names, runtime values and temporary testing policies remain below the universal layer. Large specialist documents are conditional modules routed by a small skill entry point rather than mandatory startup context.
+
+Automation/quality effect: reusable engineering knowledge is available across projects without turning one project's infrastructure repository into a second global prompt authority.

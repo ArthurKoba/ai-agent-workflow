@@ -19,12 +19,16 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 1. Read `README.md`.
 2. Identify your role from `roles/README.md`.
 3. Select the task module from `skills/README.md`.
-4. If changing the agent system itself, also read `audit/README.md` and `docs/SYSTEM_ARCHITECTURE.md`.
-5. If touching tooling/MCP/infrastructure strategy, read `docs/MCP_STRATEGY.md`.
+4. If changing the agent system itself, also read `audit/README.md`, `audit/CONTEXT_MAINTENANCE.md` and `docs/SYSTEM_ARCHITECTURE.md`.
+5. If creating/restructuring skills, also read `docs/SKILL_AUTHORING.md`.
+6. If touching tooling/MCP/infrastructure strategy, read `docs/MCP_STRATEGY.md`.
 
 ## Routing
 
-- implementation/refactoring → `skills/software-engineering/README.md`
+- implementation/refactoring/backend/Python/PostgreSQL → `skills/software-engineering/README.md`
+- frontend/Vue/TypeScript/FSD/UI/tables → `skills/frontend-engineering/README.md`
+- Git commit/message work → `skills/git-workflow/README.md`
+- persistent knowledge-base/wiki/Obsidian work → `skills/knowledge-base/README.md`
 - independent review → `skills/code-review/README.md`
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations/README.md`
 - any task that emits human-operated commands → `skills/terminal-operations/README.md` (mandatory)
