@@ -3,6 +3,7 @@
 Use for services, deployment, networking, hosts, runtime maintenance and infrastructure-facing work.
 
 ## Sub-map
+- Docker/Compose/container packaging → `docker-compose.md`
 - terminal/remote execution → `../terminal-operations/README.md`
 - infrastructure/tooling architecture → `../../docs/MCP_STRATEGY.md`
 - source/config changes → `../software-engineering/README.md`
