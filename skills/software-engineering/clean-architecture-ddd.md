@@ -29,12 +29,12 @@ Clean Architecture разделяет систему так, чтобы бизн
 - HTTP;
 - БД;
 - ORM;
-- Telegram/API clients;
+- messaging/API clients;
 - frameworks;
 - фоновые процессы;
 - конкретные SDK.
 
-Практический смысл: можно менять PostgreSQL, SQLAlchemy, Telegram SDK или web framework без переписывания домена и use cases.
+Практический смысл: можно менять PostgreSQL, SQLAlchemy, messaging SDK или web framework без переписывания домена и use cases.
 
 ## 2. Слои
 
@@ -61,7 +61,7 @@ Domain layer не должен знать про:
 - SQLAlchemy;
 - PostgreSQL;
 - HTTP;
-- Telegram;
+- messaging platform;
 - outbox;
 - event bus;
 - unit of work;
@@ -72,10 +72,10 @@ Domain layer не должен знать про:
 
 ```text
 User
-ReferralRelation
-ReferralRegistered
-ReferralRelationFactory
-ReferralActivationPolicy
+InviteRelation
+InviteRegistered
+InviteRelationFactory
+InviteActivationPolicy
 Notification
 NotificationType
 NotificationStatus
@@ -119,18 +119,18 @@ Application layer может содержать:
 - event bus registry;
 - outbox dispatcher.
 
-Application layer знает про абстракции, но не должен зависеть от конкретной БД, ORM, Telegram SDK или web framework.
+Application layer знает про абстракции, но не должен зависеть от конкретной БД, ORM, messaging SDK или web framework.
 
 Пример:
 
 ```text
 RegisterUserService
 RegisterOrGetUserService
-ActivateReferralService
+ActivateInviteService
 UserRegistrationCollaborator
-ReferralRegistrationCollaborator
+InviteRegistrationCollaborator
 NotificationService
-CreateNotificationOnReferralRegistered
+CreateNotificationOnInviteRegistered
 OutboxDispatcher
 EventDeliveryWorker
 NotificationWorker
@@ -169,7 +169,7 @@ Repository implementation не должна протекать в application la
 - PostgreSQL;
 - asyncpg;
 - Redis/RabbitMQ/Kafka и другие message brokers;
-- Telegram SDK;
+- messaging SDK;
 - Docker;
 - CLI entrypoint;
 - worker runner;
@@ -191,7 +191,7 @@ Frameworks and drivers — детали доставки и исполнения
 
 ```text
 User
-ReferralRelation
+InviteRelation
 Notification
 ```
 
@@ -212,7 +212,7 @@ Value object обычно:
 ```text
 Email
 Money
-ReferralCodeValue
+InviteCodeValue
 NotificationIdempotencyKey
 NotificationType
 NotificationStatus
@@ -270,7 +270,7 @@ Policy удобна, когда правило:
 Пример:
 
 ```text
-ReferralActivationPolicy
+InviteActivationPolicy
   -> можно ли активировать код
   -> повторная активация того же кода это no-op или ошибка
   -> можно ли активировать другой код при существующей связи
@@ -285,9 +285,9 @@ ReferralActivationPolicy
 Пример:
 
 ```text
-CanActivateReferralCode
+CanActivateInviteCode
 CanReceiveNotification
-CanSendStaffMessage
+CanSendOperatorMessage
 ```
 
 Specification не обязательна для каждого `if`. Она нужна, когда условие стало самостоятельным понятием.
@@ -307,7 +307,7 @@ Factory не должна сохранять объект в БД.
 Пример:
 
 ```text
-ReferralRelationFactory.create_relation(...)
+InviteRelationFactory.create_relation(...)
 ```
 
 ### Domain Event
@@ -317,7 +317,7 @@ ReferralRelationFactory.create_relation(...)
 Он должен называться в прошедшем времени или как совершившийся факт:
 
 ```text
-ReferralRegistered
+InviteRegistered
 UserCreated
 NotificationQueued
 ```
@@ -327,14 +327,14 @@ Domain event не является командой.
 Плохо:
 
 ```text
-SendTelegramMessage
+SendExternalMessage
 CreateNotification
 ```
 
 Хорошо:
 
 ```text
-ReferralRegistered
+InviteRegistered
 ```
 
 Событие говорит "что произошло", а не "что теперь надо сделать".
@@ -361,7 +361,7 @@ Application service не должен:
 
 - содержать сложные доменные правила;
 - напрямую работать с SQLAlchemy session;
-- отправлять Telegram внутри бизнес-транзакции;
+- отправлять сообщения во внешний канал внутри бизнес-транзакции;
 - вызывать другой application service;
 - знать детали JSONB/ORM/HTTP.
 
@@ -378,7 +378,7 @@ Application service может использовать:
 
 ```text
 RegisterUserService
-ActivateReferralService
+ActivateInviteService
 ```
 
 ### Interactor
@@ -403,7 +403,7 @@ Command должен содержать данные от вызывающей �
 
 ```text
 user_uuid
-referral_relation_uuid
+invite_relation_uuid
 event_uuid
 ```
 
@@ -412,8 +412,8 @@ event_uuid
 Хорошо:
 
 ```text
-telegram_user_id
-inviter_referral_code
+external_user_id
+inviter_invite_code
 ```
 
 если это реальные входные данные сценария.
@@ -467,7 +467,7 @@ Collaborator уместен, когда:
 
 ```text
 UserRegistrationCollaborator
-ReferralRegistrationCollaborator
+InviteRegistrationCollaborator
 NotificationService
 ```
 
@@ -488,8 +488,8 @@ NotificationService
 
 ```text
 создать User
-создать ReferralRelation
-записать ReferralRegistered в outbox
+создать InviteRelation
+записать InviteRegistered в outbox
 commit одной транзакцией
 ```
 
@@ -518,7 +518,7 @@ async with uow_factory() as uow:
 ```text
 add(user)
 get_by_uuid(user_uuid)
-get_by_telegram_user_id(telegram_user_id)
+get_by_external_user_id(external_user_id)
 ```
 
 Он не описывает, как именно это сделано в SQL.
@@ -532,8 +532,8 @@ Repository implementation живет во внешнем слое.
 Примеры:
 
 ```text
-TelegramGateway
-PaymentGateway
+MessagingGateway
+ProviderGateway
 EmailGateway
 StorageGateway
 ```
@@ -674,8 +674,8 @@ Outbox — не сама шина. Это durable source of events.
 Пример:
 
 ```text
-ReferralRegistered
-  -> CreateNotificationOnReferralRegistered
+InviteRegistered
+  -> CreateNotificationOnInviteRegistered
   -> AccrueBonus
   -> UpdateStats
 ```
@@ -757,8 +757,8 @@ Middleware не должно содержать бизнес-сценарий.
 Примеры:
 
 ```text
-LoggingTelegramGateway
-RetryingTelegramGateway
+LoggingMessagingGateway
+RetryingMessagingGateway
 MetricsUserRepository
 CachedQueryHandler
 ```
@@ -772,7 +772,7 @@ Decorator хорош, когда нужно добавить техническ�
 Пример:
 
 ```text
-Telegram SDK -> TelegramGateway
+Messaging SDK -> MessagingGateway
 SQLAlchemy -> UserRepository
 ```
 
@@ -806,7 +806,7 @@ Facade не должен скрывать важные бизнес-решени
 Пример:
 
 ```text
-Telegram update/payment provider event
+webhook/provider event
   -> ACL translator
   -> internal command/event/value object
 ```
@@ -818,9 +818,9 @@ Telegram update/payment provider event
 Примеры:
 
 ```text
-new_referral:{inviter_user_uuid}:{invited_user_uuid}
-broadcast:{broadcast_uuid}:{recipient_user_uuid}:{channel}
-system_message:{operation_id}:{recipient_user_uuid}
+new_invite:{inviter_user_uuid}:{invited_user_uuid}
+delivery_batch:{batch_uuid}:{recipient_uuid}:{channel}
+system_message:{operation_id}:{recipient_uuid}
 ```
 
 Idempotency key должен отражать бизнес-смысл уникальности операции.
@@ -909,29 +909,29 @@ RETURNING d.*;
 
 ## 8. Notifications как пример разделения concerns
 
-Referral-сценарий не должен напрямую отправлять Telegram и не должен сам собирать notification payload.
+Invite-сценарий не должен напрямую отправлять сообщение во внешний канал и не должен сам собирать notification payload.
 
 Правильное разделение:
 
 ```text
-ReferralRegistrationCollaborator
-  -> создать ReferralRelation
-  -> добавить ReferralRegistered в outbox
+InviteRegistrationCollaborator
+  -> создать InviteRelation
+  -> добавить InviteRegistered в outbox
 
-CreateNotificationOnReferralRegistered
-  -> получить ReferralRegistered
+CreateNotificationOnInviteRegistered
+  -> получить InviteRegistered
   -> вызвать NotificationService
 
 NotificationService
   -> создать Notification с type/status/source/idempotency_key/payload
 
 NotificationWorker
-  -> отправить pending/retry notifications через TelegramGateway
+  -> отправить pending/retry notifications через MessagingGateway
 ```
 
 Смысл:
 
-- referral отвечает за реферальную связь;
+- invitation context отвечает за invitation relation;
 - event фиксирует факт;
 - notification module решает, какое уведомление создать;
 - worker занимается доставкой;
@@ -943,11 +943,11 @@ NotificationWorker
 
 Внешний API обычно не дает строгий exactly-once.
 
-Например, при отправке в Telegram возможна ситуация:
+Например, при отправке во внешний канал возможна ситуация:
 
 ```text
 запрос ушел
-Telegram создал сообщение
+внешний provider принял/создал сообщение
 ответ потерялся по timeout
 worker считает попытку неуспешной
 retry может создать дубль во внешней системе
@@ -1034,7 +1034,7 @@ composition root создает RegisterUserService с нужными ports/coll
 9. Внешние API не вызывать внутри бизнес-транзакции.
 10. Технические uuid генерируются системой, а не приходят в command без причины.
 11. Внутренние identifiers называть `uuid` / `*_uuid`, не `id` / `*_id`.
-12. `id` допустим для внешних контрактов вроде `telegram_user_id`, `request_id`, `operation_id`, `source_id`.
+12. `id` допустим для внешних контрактов вроде `external_user_id`, `request_id`, `operation_id`, `source_id`.
 13. Pydantic использовать на границах, домен держать независимым от transport/persistence formats.
 14. Не добавлять паттерн только потому, что он существует в Clean Architecture.
 15. Добавлять архитектурный элемент тогда, когда он защищает границу, инвариант, идемпотентность или уменьшает реальное дублирование.
@@ -1044,17 +1044,17 @@ composition root создает RegisterUserService с нужными ports/coll
 ```text
 RegisterUserService — application service / use case
 RegisterOrGetUserService — application service / use case
-ActivateReferralService — application service / use case
+ActivateInviteService — application service / use case
 
 UserRegistrationCollaborator — application collaborator
-ReferralRegistrationCollaborator — application collaborator
+InviteRegistrationCollaborator — application collaborator
 NotificationService — application collaborator notification-модуля
 
-ReferralRelationFactory — domain factory
-ReferralActivationPolicy — domain policy
-ReferralRelation — domain entity
-ReferralRegistered — domain event
-ReferralCodeGenerator / ReferralCodeResolver — application ports для формата referral code
+InviteRelationFactory — domain factory
+InviteActivationPolicy — domain policy
+InviteRelation — domain entity
+InviteRegistered — domain event
+InviteCodeGenerator / InviteCodeResolver — application ports для формата invite code
 
 OutboxRepository — application port
 EventBus registry — application event bus registry
@@ -1064,5 +1064,5 @@ NotificationWorker — application worker/service
 
 SqlAlchemy repositories — infrastructure adapters
 SqlAlchemyUnitOfWork — infrastructure adapter
-TelegramGateway implementation — infrastructure adapter
+MessagingGateway implementation — infrastructure adapter
 ```

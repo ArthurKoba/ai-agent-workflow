@@ -4,7 +4,7 @@ Use this module for Dockerfiles, Docker Compose manifests, container runtime con
 
 ## Ownership
 
-- Follow the repository's established orchestrator first. Do not introduce Compose where Kubernetes, Nomad, Coolify-managed templates or another owner is already authoritative.
+- Follow the repository's established orchestrator first. Do not introduce Compose where Kubernetes, Nomad, managed deployment templates or another owner is already authoritative.
 - Use Compose when the project already uses it or when one reproducible multi-container definition is the natural local/service contract.
 - Keep environment-specific hosts, registry coordinates, secrets and deployment topology in project/local context.
 

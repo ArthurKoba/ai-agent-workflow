@@ -97,13 +97,13 @@ T2: returns domain result or raises domain error
 
 Что важно:
 
-- `FOR UPDATE` блокирует найденные строки, а не «пустой результат». Поэтому для сценариев создания зависимой записи нужно блокировать уже существующую родительскую/owner-строку: пользователя, заказ, подписку, broadcast и т.п.
+- `FOR UPDATE` блокирует найденные строки, а не «пустой результат». Поэтому для сценариев создания зависимой записи нужно блокировать уже существующую родительскую/owner-строку: пользователя, заказ или другую существующую родительскую сущность.
 - Захватывать lock нужно в начале транзакционного сценария, до проверки зависимых записей и до принятия бизнес-решения.
 - Вторая транзакция должна дождаться первой, перечитать зависимое состояние после ожидания и пройти обычную доменную ветку: вернуть существующую связь, отказать в изменении, проверить лимит или создать запись, если инвариант всё ещё позволяет.
 - Для такого сценария не использовать `SKIP LOCKED`: он предназначен для очередей и параллельного разбора задач, а не для пользовательских операций, где второй запрос должен увидеть актуальный результат.
 - Репозиторий должен иметь явный метод, например `get_by_uuid_for_update`, чтобы call site показывал блокирующее чтение. Не прятать `FOR UPDATE` в обычный `get_by_uuid`, иначе read-only вызовы начнут неожиданно брать locks.
 - Метод с `FOR UPDATE` вызывать только внутри транзакционной сессии. Вне транзакции lock будет жить слишком коротко и не защитит последующие проверки и запись.
-- Не держать row lock во время внешних запросов, Telegram API, HTTP API или долгих вычислений. Сценарий должен быть коротким: lock -> read/check -> write -> commit.
+- Не держать row lock во время внешних запросов, external HTTP/API calls или долгих вычислений. Сценарий должен быть коротким: lock -> read/check -> write -> commit.
 
 Когда выбрать другой механизм:
 
@@ -226,9 +226,9 @@ ON users (normalized_email);
 ```python
 setup_period_param = bindparam("setup_period", setup_period, type_=Interval())
 result = await session.execute(
-    select(UserDB.uuid).where(
-        UserDB.uuid == user_uuid,
-        UserDB.created_at + setup_period_param >= func.now(),
+    select(RecordDB.uuid).where(
+        RecordDB.uuid == record_uuid,
+        RecordDB.created_at + setup_period_param >= func.now(),
     )
 )
 ```
@@ -236,8 +236,8 @@ result = await session.execute(
 Нежелательно:
 
 ```python
-referral_deadline = user.created_at + REFERRAL_SETUP_PERIOD
-if datetime.now(UTC) > referral_deadline:
+deadline = record.created_at + SETUP_PERIOD
+if datetime.now(UTC) > deadline:
     ...
 ```
 

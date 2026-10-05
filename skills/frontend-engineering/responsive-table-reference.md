@@ -44,8 +44,8 @@
 После изменения shared responsive table полезно отдельно смотреть representative consumers с повышенным риском:
 
 - sessions table;
-- broadcasts table;
-- telegram broadcast messages table;
+- audit events table;
+- delivery attempts table;
 - widgets с плотными filters/toolbars.
 
 ## Источник

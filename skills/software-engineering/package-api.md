@@ -67,10 +67,10 @@ Domain-specific exceptions живут в `_errors.py` того bounded context, 
 Пример:
 
 ```python
-class UserAlreadyBannedError(DomainUserError):
+class OrderAlreadyClosedError(DomainOrderError):
     @classmethod
-    def for_user(cls, user_uuid: UUID) -> Self:
-        msg = f"User is already banned: {user_uuid}"
+    def for_order(cls, order_uuid: UUID) -> Self:
+        msg = f"Order is already closed: {order_uuid}"
         return cls(msg)
 ```
 

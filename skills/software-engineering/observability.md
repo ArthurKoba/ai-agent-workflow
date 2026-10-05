@@ -23,7 +23,7 @@
    boundaries: SQLAlchemy, aiohttp clients, and future FastAPI runtime.
 2. Manual spans should be placed at runtime/application orchestration boundaries:
    worker cycle, event delivery handling, notification operation handling,
-   broadcast preparation, external gateway operations.
+   batch preparation, external gateway operations.
 3. Do not add spans inside domain entities, value objects or domain policies.
 4. Add span attributes only when they are useful for diagnostics. Avoid dumping
    whole payloads, request bodies or domain objects.
@@ -75,7 +75,7 @@ worker_name
 operation
 delivery_uuid
 notification_uuid
-broadcast_uuid
+operation_uuid
 attempts
 max_attempts
 next_retry_at
@@ -124,26 +124,23 @@ logger.info(
 )
 ```
 
-## Payment Logging
+## Sensitive Business Workflows
 
-Payment and subscription flows may use more detailed logs than generic runtime
-flows, but only through dedicated named loggers and structured fields.
+Security-sensitive, financial, identity, entitlement or other high-impact workflows may need richer diagnostics than ordinary request logs. Keep that detail behind dedicated named loggers and bounded structured fields.
 
-Use dedicated logger names:
+Example:
 
 ```python
-payment_logger = logging.getLogger("app.payments")
-subscription_logger = logging.getLogger("app.subscriptions")
+business_logger = logging.getLogger("app.business_operations")
 ```
 
-Payment logs may include diagnostic fields such as:
+Useful diagnostic fields may include:
 
 ```text
-payment_uuid
-subscription_uuid
+operation_uuid
+entity_uuid
 provider
 operation
-provider_payment_id
 external_id
 amount
 currency
@@ -156,30 +153,16 @@ duration_ms
 error_type
 ```
 
-Do not log payment secrets or sensitive payloads:
+Do not log secrets, raw signatures, authorization material, full webhook/request bodies, card/payment credentials or customer-sensitive data that is not required for diagnostics.
 
-```text
-provider secret keys
-signature secrets
-raw signatures
-Authorization headers
-full webhook bodies without redaction
-card data
-customer-sensitive data beyond what the operation needs for diagnostics
-```
+Logs are diagnostics, not the authoritative business record. Durable facts that affect money, access, entitlements, compliance or auditability must live in the owning domain/application persistence or audit trail.
 
-Payment logs are diagnostics, not the financial source of truth. Financially
-important facts must be stored in domain/application persistence such as payment
-ledger, subscription history or audit records. Use logs to investigate runtime
-failures, provider calls, idempotency decisions and status transition conflicts.
+Detailed workflow logging should remain intentional:
 
-Detailed payment logging should remain intentional:
-
-- use `INFO` for important payment lifecycle events and final operation results;
-- use `DEBUG` for provider-specific decisions needed to diagnose bugs;
+- use `INFO` for important lifecycle events and final operation results;
+- use `DEBUG` for implementation/provider decisions needed to diagnose bugs;
 - do not log every successful internal micro-step;
-- route or tune payment logger level separately when needed, for example through
-  a future `PAYMENT_LOG_LEVEL` setting.
+- tune dedicated logger levels separately when operationally useful.
 
 ## Data Safety
 
@@ -191,7 +174,7 @@ JWTs
 passwords
 one-time codes
 TOTP secrets
-raw payment secrets
+raw provider/signature secrets
 full request/response bodies from external APIs unless explicitly scrubbed
 ```
 

@@ -123,7 +123,7 @@ BACK_TO_ACCOUNT_BUTTON_ID = "back_to_account"
 того же dialog context. Данные `dialog_data` и `widget_data` остаются теми же.
 
 ```python
-SwitchTo(Const("Архив"), id="archive", state=SubscriptionsStates.archive)
+SwitchTo(Const("Архив"), id="archive", state=CatalogStates.archive)
 ```
 
 Использовать для:
@@ -136,7 +136,7 @@ SwitchTo(Const("Архив"), id="archive", state=SubscriptionsStates.archive)
 Пример:
 
 ```python
-SwitchTo(Const("Назад"), id="back_to_subscriptions", state=SubscriptionsStates.menu)
+SwitchTo(Const("Назад"), id="back_to_catalog", state=CatalogStates.menu)
 ```
 
 Не использовать `SwitchTo` для перехода в другой `StatesGroup`. Если целевой
@@ -204,11 +204,11 @@ Cancel(Const("Назад"))
 Использовать `Cancel` для кнопки "Назад" на корневом окне дочернего dialog:
 
 ```text
-StaffPanel dialog
-  Start(BroadcastsMenuStates.menu)
+AdminPanel dialog
+  Start(ReportsMenuStates.menu)
 
-BroadcastsMenuStates.menu
-  Cancel("Назад") -> закрыть BroadcastsMenuStates и вернуться в StaffPanelStates
+ReportsMenuStates.menu
+  Cancel("Назад") -> закрыть ReportsMenuStates и вернуться в AdminPanelStates
 ```
 
 Не использовать `Cancel` для возврата с дочернего окна на меню внутри того же
@@ -246,13 +246,13 @@ StartMode.RESET_STACK)`, если ожидается возврат по ист�
 Пример структуры:
 
 ```text
-_dialogs/_staff_panel/_staff_panel.py
-  class StaffPanelStates(StatesGroup)
-  create_staff_panel_dialog()
+_dialogs/_admin/_admin.py
+  class AdminPanelStates(StatesGroup)
+  create_admin_panel_dialog()
 
-_dialogs/_staff_panel/broadcasts/_menu.py
-  class BroadcastsMenuStates(StatesGroup)
-  create_broadcasts_dialog()
+_dialogs/_admin/reports/_menu.py
+  class ReportsMenuStates(StatesGroup)
+  create_reports_dialog()
 ```
 
 Родительский dialog в таком случае импортирует только публичную точку входа
@@ -260,27 +260,27 @@ _dialogs/_staff_panel/broadcasts/_menu.py
 
 ```python
 Start(
-    Const("Рассылки"),
-    id="staff_panel_broadcasts",
-    state=BroadcastsMenuStates.menu,
+    Const("Reports"),
+    id="admin_reports",
+    state=ReportsMenuStates.menu,
 )
 ```
 
 Оба dialog подключаются в результирующий router из `_dialogs.py`:
 
 ```python
-def create_staff_panel_router() -> Router:
-    router = Router(name="presentation.telegram.staff_panel")
+def create_admin_panel_router() -> Router:
+    router = Router(name="presentation.telegram.admin_panel")
     router.include_routers(
-        create_staff_panel_dialog(),
-        create_broadcasts_dialog(),
+        create_admin_panel_dialog(),
+        create_reports_dialog(),
     )
     return router
 ```
 
 Важное ограничение `aiogram-dialog`: все `Window` внутри одного `Dialog` должны
 использовать состояния из одного и того же `StatesGroup`. Поэтому нельзя
-собрать один `Dialog` из окон `StaffPanelStates` и `BroadcastsMenuStates` одновременно.
+собрать один `Dialog` из окон `AdminPanelStates` и `ReportsMenuStates` одновременно.
 
 Если переход идет в другой `StatesGroup`, это другой `Dialog` и нужен `Start`.
 Если переход идет между окнами того же `StatesGroup`, это тот же `Dialog` и
@@ -320,23 +320,23 @@ def create_staff_panel_router() -> Router:
 from typing import Any, cast
 
 
-async def get_partners_data(**kwargs: Any) -> dict[str, str]:
+async def get_profile_data(**kwargs: Any) -> dict[str, str]:
     session = cast(SessionPrincipal, kwargs["session"])
     application_use_cases = cast(ApplicationUseCases, kwargs["application_use_cases"])
 
-    referral_link = await application_use_cases.referrals.get_link.execute(
-        GetReferralLinkQuery(authenticated_user=session)
+    profile_url = await application_use_cases.profile.get_url.execute(
+        GetProfileUrlQuery(authenticated_user=session)
     )
-    return {"referral_link": referral_link.referral_link}
+    return {"profile_url": profile_url.url}
 ```
 
 Использование:
 
 ```python
 Window(
-    Format("Ваша ссылка: {referral_link}"),
-    getter=get_partners_data,
-    state=PartnersStates.menu,
+    Format("Profile: {profile_url}"),
+    getter=get_profile_data,
+    state=ProfileStates.menu,
 )
 ```
 

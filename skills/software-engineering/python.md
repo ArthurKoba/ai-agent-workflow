@@ -55,7 +55,7 @@ from shared._cli import BaseCliUtility
 ## Оформление ошибок и фабрики
 
 - Ошибки должны быть информативными: сообщение должно объяснять конкретную ситуацию, а не только общий факт ошибки.
-- В сообщении ошибки указывать ключевые аргументы сценария: `uuid`, `user_uuid`, `broadcast_uuid`, `status`, `role`, `chat_id` и другие поля, по которым можно понять, что именно не удалось обработать.
+- В сообщении ошибки указывать ключевые аргументы сценария: `uuid`, `entity_uuid`, `status`, `operation`, `request_id` и другие поля, по которым можно понять, что именно не удалось обработать.
 - Не передавать в ошибку полный пользовательский текст, секреты, токены, большие payload или персональные данные без необходимости. Для больших значений использовать длину или технический идентификатор.
 - Для ожидаемых domain/service ошибок создавать отдельные классы ошибок, а не использовать `ValueError`, `RuntimeError` или общий Bare `Exception`.
 - Если одна ошибка может возникать в разных сценариях, не собирать текст ошибки вручную в каждом месте вызова. Вместо этого добавлять на класс ошибки `@classmethod`-фабрики с именем `from_<scenario>`.
@@ -68,36 +68,36 @@ from shared._cli import BaseCliUtility
 Пример:
 
 ```python
-class BroadcastServiceError(Exception):
+class JobServiceError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
 
 
-class BroadcastNotFoundError(BroadcastServiceError):
+class JobNotFoundError(JobServiceError):
     @classmethod
-    def from_start(cls, broadcast_uuid: UUID) -> BroadcastNotFoundError:
-        return cls(f"Telegram broadcast not found for start: broadcast_uuid={broadcast_uuid}")
+    def from_start(cls, job_uuid: UUID) -> JobNotFoundError:
+        return cls(f"Job not found for start: job_uuid={job_uuid}")
 
     @classmethod
-    def from_count(cls, broadcast_uuid: UUID) -> BroadcastNotFoundError:
-        return cls(f"Telegram broadcast not found while counting messages: broadcast_uuid={broadcast_uuid}")
+    def from_count(cls, job_uuid: UUID) -> JobNotFoundError:
+        return cls(f"Job not found while counting related records: job_uuid={job_uuid}")
 ```
 
 Использование:
 
 ```python
-if telegram_broadcast is None:
-    raise BroadcastNotFoundError.from_start(broadcast_uuid)
+if job is None:
+    raise JobNotFoundError.from_start(job_uuid)
 ```
 
 Нежелательно:
 
 ```python
-if telegram_broadcast is None:
-    raise BroadcastNotFoundError("Not found")
+if job is None:
+    raise JobNotFoundError("Not found")
 
-if telegram_broadcast is None:
-    raise BroadcastNotFoundError(f"Error: {broadcast_uuid}")
+if job is None:
+    raise JobNotFoundError(f"Error: {job_uuid}")
 ```
 
 ## Именование функций и docstring

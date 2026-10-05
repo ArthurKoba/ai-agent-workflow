@@ -5,7 +5,7 @@
 
 Standalone table — универсальный table shell без знания бизнес-домена. Он отвечает за механику таблицы, стабильный layout, slots, pagination, column visibility, loading/empty/error states и responsive-поведение.
 
-Entity table — обёртка конкретной сущности. Она знает поля, labels, статусы, базовые колонки, нейтральные filters, форматтеры и mobile card сущности, но не знает сценарий админки, рефералов или конкретной страницы.
+Entity table — обёртка конкретной сущности. Она знает поля, labels, статусы, базовые колонки, нейтральные filters, форматтеры и mobile card сущности, но не знает сценарий админки, аналитики или конкретной страницы.
 
 Context table composition — widget или page-level сборка, которая соединяет entity table, actions, toolbar, сценарные filters, query/page state и route/page context.
 
@@ -58,7 +58,7 @@ Slot props должны давать достаточно контекста д�
 
 Базовые колонки сущности принадлежат `entities`, если они описывают поля сущности и могут повторяться в разных блоках.
 
-Сценарные колонки принадлежат `widgets` или `features`, если они добавляют admin/referral/page-only данные, row actions или поведение конкретного use case.
+Сценарные колонки принадлежат `widgets` или `features`, если они добавляют admin/context/page-only данные, row actions или поведение конкретного use case.
 
 Generic filters layout может жить в `shared`, но filters по полям сущности должны быть в `entities`, а сценарные filters — в `features` или композиции `widgets`.
 
