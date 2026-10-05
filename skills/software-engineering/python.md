@@ -119,11 +119,11 @@ if telegram_broadcast is None:
 Пример правильного многострочного импорта:
 
 ```python
-from integrations.pasarguard import (
-    DataLimitResetStrategy,
-    UserModify,
-    UserNotFoundError,
-    UserStatus
+from integrations.provider import (
+    ExternalUser,
+    ExternalUserNotFoundError,
+    ExternalUserStatus,
+    ProviderSettings,
 )
 ```
 
