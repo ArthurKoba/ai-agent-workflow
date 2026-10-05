@@ -102,6 +102,14 @@ Typical shared material:
 
 Backend/frontend repositories should link to that shared owner and keep only their local implementation map, local constraints and local state.
 
+## Work tracking
+
+Unfinished work, defects, acceptance gaps and follow-up tasks belong in the repository's issue/work-item tracker when one is available.
+
+Do not maintain Markdown roadmaps, backlog files or open-question lists as a parallel planning database. Documentation may define durable acceptance criteria or product semantics; Issues/Work Items own task lifecycle, priority, assignee, discussion and closure evidence.
+
+A documentation page may link to an issue, but it must not copy the mutable task state back into prose. Conditional future options should become issues only when they are actually activated.
+
 ## Minimal bootstrap
 
 Default substantial-task startup should be intentionally small:
@@ -210,7 +218,7 @@ Each slice should receive:
 
 Do not give every specialist the full project corpus by default.
 
-An architecture reviewer does not need every style rule. A style agent does not need the complete product roadmap. A database reviewer does not need the entire frontend architecture unless the contract crosses that boundary.
+An architecture reviewer does not need every style rule. A style agent does not need the complete issue backlog/product-planning context. A database reviewer does not need the entire frontend architecture unless the contract crosses that boundary.
 
 Fan-in must operate on one known integrated revision so findings from separate passes refer to the same implementation.
 

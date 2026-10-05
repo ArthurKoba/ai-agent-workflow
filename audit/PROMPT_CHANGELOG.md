@@ -126,10 +126,10 @@ Dominant failures were state loss, execution-lane confusion, protocol drift, pre
 Changes:
 - expanded the software-engineering skill into conditional DDD/Python/package/PostgreSQL/observability/aiogram modules;
 - added frontend-engineering with Vue/TypeScript, FSD, UI and reusable-table modules;
-- added Git workflow and persistent knowledge-base skills;
+- added Git workflow and reusable documentation/context ownership guidance;
 - added skill-authoring and context-maintenance contracts;
 - expanded the Orchestrator role for multi-slice/multi-repository fan-in without overriding writer/reviewer identity separation;
-- removed project-specific paths, commands, versions, temporary test policies and Obsidian-only routing from the generalized copies.
+- removed project-specific paths, commands, versions and temporary test policies from the generalized copies.
 
 Reason:
-A mature product workspace had accumulated reusable engineering knowledge inside its infrastructure/Obsidian context. Keeping that knowledge there created duplicate global authority and made it unavailable to unrelated projects. The reusable parts now live in the universal workflow library; project-specific facts remain with their project owners.
+A mature product workspace had accumulated reusable engineering knowledge inside a legacy shared-context tree. Keeping that knowledge there created duplicate global authority and made it unavailable to unrelated projects. The reusable parts now live in the universal workflow library; project-specific facts remain with their project owners.

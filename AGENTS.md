@@ -28,7 +28,6 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 - implementation/refactoring/backend/Python/PostgreSQL → `skills/software-engineering/README.md`
 - frontend/Vue/TypeScript/FSD/UI/tables → `skills/frontend-engineering/README.md`
 - Git commit/message work → `skills/git-workflow/README.md`
-- persistent knowledge-base/wiki/Obsidian work → `skills/knowledge-base/README.md`
 - independent review → `skills/code-review/README.md`
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations/README.md`
 - any task that emits human-operated commands → `skills/terminal-operations/README.md` (mandatory)
