@@ -66,3 +66,6 @@ WSL/container/native Linux builds must use the environment contract of that lane
 
 ## B-024 — Observable safety-block incident loop
 During reverse/behavior analysis, every provider/safety/pre-tool block becomes a durable, sanitized incident evidence point. Re-read the active behavior-analysis terminology before the next analysis call, consolidate repeated occurrences into the same infrastructure issue when they share a failure class, and distinguish the block from target evidence.
+
+## B-025 — Persist research exhaustion and stay reverse-first
+For legacy/obscure silicon, once bounded public research has failed to produce authoritative material, record that boundary and make target reverse the default in later sessions. Reopen web/source research only for a new concrete lead or explicit user request; do not restart family-wide searching merely because a new agent/chat began.

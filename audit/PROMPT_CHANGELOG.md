@@ -1,5 +1,16 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Stop repeated public research for exhausted legacy silicon
+
+Changes:
+- hardware-reverse now treats generic web/source/datasheet/SDK research as a bounded evidence path rather than a per-session startup step;
+- once a project records that public research for a legacy/obscure processor or companion chip is exhausted, later agents default to target reverse instead of rerunning family-wide searches;
+- external research reopens only for a new concrete artifact/identifier lead or an explicit user request;
+- added E-024 / B-025 for cross-session public-research loops that displace firmware/Analysis evidence work.
+
+Reason:
+Long-running reverse projects repeatedly lost time because each fresh agent independently retried the same broad searches for old processor documentation, SDK/source code and secondary-controller material. The searches produced no authoritative target corpus, while preserved firmware and Analysis already offered the productive evidence path.
+
 ## 2026-10 — Reverse-analysis safety-block incident loop
 
 Changes:

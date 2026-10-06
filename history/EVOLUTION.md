@@ -104,3 +104,11 @@ Reverse-analysis work now treats provider/policy/safety/pre-tool blocks as first
 Repeated instances of the same failure class are accumulated in one issue rather than scattered across chats. This separates tool/provider failures from target evidence while building enough invocation-level history to diagnose false-positive safety checks and improve the MCP/provider layer.
 
 Automation/quality effect: analysis can continue without blind retries, while safety/provider regressions become measurable and repairable instead of ephemeral.
+
+## 13 — Research-exhaustion persistence for legacy silicon
+
+Legacy-chip reverse work now persists a stop condition for generic public research. Once bounded datasheet/SDK/source/family searches have failed to produce authoritative material, a new chat or agent does not reset that evidence path to unknown. Target firmware, saved Analysis state, runtime traces and board evidence become the default continuation.
+
+External research resumes only when a new concrete identifier/artifact materially changes the search space or the user explicitly requests another research pass.
+
+Automation/quality effect: long-running reverse projects stop paying the same public-research tax on every handoff and spend more cycles on evidence that can actually close target behavior contracts.
