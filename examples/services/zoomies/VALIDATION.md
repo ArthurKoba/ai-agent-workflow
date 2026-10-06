@@ -87,3 +87,24 @@ Still required:
 8. legacy runner retirement decision.
 
 The legacy runner remains rollback until these gates pass.
+
+
+## Stage 5 — multi-owner GitHub connections
+
+Validated:
+
+- personal-account GitHub App created and connected;
+- personal App installation granted **All repositories**;
+- Zoomies repository target connected and API verification succeeded;
+- organisation-owned GitHub App created for a second owner scope;
+- organisation App installation granted **All repositories**;
+- organisation target connected and API verification succeeded;
+- Zoomies reported two healthy GitHub connections simultaneously;
+- both connections had healthy API quota readings.
+
+Observed architecture difference:
+
+- personal-account connection remains repository-scoped for runner registration even when the App installation can access all personal repositories;
+- organisation connection is organisation-scoped and can use organisation self-hosted runner management.
+
+Webhook acceptance remains pending until a post-Finish GitHub event is accepted. Pre-Finish `ping` and `installation.created` rejections are recorded but are not acceptance failures.

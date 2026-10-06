@@ -137,3 +137,55 @@ Observed behavior:
 - GitHub can emit `installation.created` immediately;
 - until Zoomies' local **Finish** step records the installation, that delivery can still be rejected for lack of local installation/webhook-secret context;
 - complete **Finish** before judging webhook health.
+
+
+## Multiple owner scopes
+
+A single Zoomies controller can hold multiple GitHub App connections.
+
+Validated pattern:
+
+- one personal-account-owned App for personal repositories;
+- one organisation-owned App for an organisation;
+- each connection keeps its own App identity, installation ID, private key and webhook secret inside Zoomies;
+- pools can later be attached to the appropriate connection.
+
+For an organisation-wide CI fleet, create the App under the organisation and install it with **All repositories** when the trust model intentionally covers all current and future organisation repositories.
+
+For a personal account, GitHub does not provide account-wide self-hosted runners. A GitHub App may be installed with **All repositories**, but the Zoomies connection target is still repository-scoped for runner registration. Broad App installation access therefore does not turn a personal-account repository connection into an account-wide runner target.
+
+Treat these as separate concepts:
+
+```text
+GitHub App installation scope
+    !=
+Zoomies runner-registration target
+```
+
+## Validated owner examples
+
+The live validation used two independent connections:
+
+```text
+personal account:
+  App owner: personal account
+  App installation: All repositories
+  Zoomies target type: Repository
+
+organisation:
+  App owner: organisation
+  App installation: All repositories
+  Zoomies target type: Organisation
+```
+
+The organisation App requested `organization_self_hosted_runners: write`; the repository-target App used repository `administration: write` instead.
+
+After local Finish, Zoomies should report each connection as `Connected` and healthy and should be able to verify GitHub API access.
+
+## Webhook acceptance
+
+Do not confuse App/API health with webhook acceptance.
+
+During App creation and installation, GitHub can emit `ping` and `installation.created` before Zoomies has completed the local Finish step. Those deliveries may be rejected because the relevant installation/webhook secret is not yet registered.
+
+After all installations are finished, validate webhook behavior again with a post-configuration GitHub event such as `workflow_job`. Until an accepted webhook is observed, Zoomies may fall back to polling GitHub; that is functional but slower and consumes more API quota.
