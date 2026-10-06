@@ -113,3 +113,27 @@ Observed sequence:
 6. only after the installation is recorded should webhook acceptance be used as a connectivity check.
 
 Do not treat a pre-installation rejected `ping` as proof that the public webhook endpoint is broken.
+
+
+## Repository access at installation
+
+GitHub asks whether the App installation should access:
+
+- **All repositories** — all current and future repositories owned by the selected account;
+- **Only select repositories** — an explicit subset.
+
+Choose this independently from the Zoomies connection target.
+
+For a fleet intentionally meant to serve the whole personal account, `All repositories` avoids revisiting the App installation every time a new repository is created. This broadens the App's repository scope, so use it only when the runner trust model is account-wide.
+
+A repository-target Zoomies connection may still be created from a manifest that names one repository even when the underlying GitHub App installation has broader repository access. Validate what Zoomies actually exposes after finishing the installation instead of assuming App installation scope and pool/runner scope are identical.
+
+## Installation callback boundary
+
+After GitHub installs the App, it redirects back with an `installation_id`.
+
+Observed behavior:
+
+- GitHub can emit `installation.created` immediately;
+- until Zoomies' local **Finish** step records the installation, that delivery can still be rejected for lack of local installation/webhook-secret context;
+- complete **Finish** before judging webhook health.

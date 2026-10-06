@@ -65,7 +65,13 @@ Observed after manifest creation:
 
 This is expected pre-installation behavior, not webhook acceptance.
 
-No GitHub installation is marked accepted until the App is installed on the intended target and that installation appears in Zoomies.
+Observed installation stage:
+
+- GitHub installation was granted **All repositories** for the personal account;
+- GitHub redirected back with an installation ID;
+- `installation.created` arrived before the controller's local Finish step and was rejected for the same missing-local-installation context as the earlier ping.
+
+No GitHub installation is marked accepted until the local Finish step records the installation and Zoomies shows it as connected.
 
 ## Pending acceptance
 
