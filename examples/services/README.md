@@ -25,3 +25,4 @@ Each preset should be self-contained and safe to publish. A typical preset conta
 ## Available presets
 
 - `jenkins/` — Jenkins controller with a dedicated inbound builder and an isolated TLS-protected Docker-in-Docker daemon.
+- `zoomies/` — Zoomies controller and staged native GitHub Actions runner-fleet setup; controller/Coolify migration validated, host/pool/DinD acceptance in progress.
