@@ -4,6 +4,7 @@ Use for services, deployment, networking, hosts, runtime maintenance and infrast
 
 ## Sub-map
 - Docker/Compose/container packaging → `docker-compose.md`
+- Git-backed infrastructure / orchestrator-owned deployments → `git-backed-infrastructure.md`
 - terminal/remote execution → `../terminal-operations/README.md`
 - infrastructure/tooling architecture → `../../docs/MCP_STRATEGY.md`
 - source/config changes → `../software-engineering/README.md`
