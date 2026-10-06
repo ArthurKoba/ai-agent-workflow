@@ -1,5 +1,16 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Terminal command grouping by decision boundary
+
+Changes:
+- strengthened `skills/terminal-operations/README.md` so one current decision boundary maps to one copyable command block;
+- commands required for the same evidence-collection/routine stage must stay together instead of being fragmented into multiple blocks;
+- added an explicit rule for shell clearing: clear only when prior output is no longer useful, and keep the clear command in the same copyable block;
+- added E-029 / B-029 for operator-overhead caused by fragmented command blocks and blind terminal clearing.
+
+Reason:
+A firmware-analysis interaction split one read-only collection step into two PowerShell blocks, forcing unnecessary repeated copy/paste even though no decision boundary existed between them. The existing wording prohibited microstep noise but did not make the one-boundary/one-block contract explicit enough.
+
 ## 2026-10 — Coolify Compose parser contract
 
 Changes:

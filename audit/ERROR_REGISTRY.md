@@ -113,3 +113,8 @@ Agent writes syntactically valid Compose but ignores the orchestrator parser con
 Mitigation: load the Coolify Compose contract; classify each value as secret/shared, required external topology, safe default, internal literal or generated parser state; validate the result on a freshly parsed Coolify resource before deployment.
 
 Add a new class only when root cause or mitigation is materially different.
+
+
+## E-029 — One decision boundary is fragmented into multiple copy/paste blocks
+Agent asks the operator to run several command blocks even though all commands belong to the same current evidence-collection or routine stage, creating unnecessary copy/paste overhead and obscuring the real decision boundary. The inverse failure is clearing the terminal blindly and destroying still-useful evidence.
+Mitigation: one current decision boundary per copyable block; group all commands needed for that boundary together, and clear the screen only when the prior output is no longer needed.

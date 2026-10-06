@@ -80,3 +80,7 @@ Once an active workstream is reported with a scoped percentage, preserve that pe
 
 ## B-028 — Parser-aware Coolify Compose
 Treat Coolify's Compose parser as an explicit deployment API. Encode required external topology with empty `:?` expressions in owning service environments, keep secrets behind scoped shared references, keep internal traffic on Docker DNS, use one generated-domain owner per service, use inline `content:` for managed file templates, and validate parser-generated UI state on a fresh resource before runtime acceptance.
+
+
+## B-029 — One copy/paste block per current decision boundary
+Human-operated terminal instructions should minimize operator overhead without crossing decision boundaries: group all commands needed for the current evidence-collection or routine stage into one copyable block. Use the shell-native clear command only when prior output is no longer needed for comparison or evidence, and keep it inside that same block.
