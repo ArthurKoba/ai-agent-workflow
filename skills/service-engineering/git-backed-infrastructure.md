@@ -44,6 +44,10 @@ A useful default for a private infrastructure repository is:
 
 Keep each deployable stack in its own directory so the runtime platform can watch and redeploy only the affected stack.
 
+## Coolify specialization
+
+When the runtime control plane is Coolify and it parses Docker Compose, also load `coolify-compose.md`. Parser-managed environment variables, domains and file mounts are part of the desired-state contract and must be validated on a freshly parsed resource.
+
 ## Git-backed deployment pattern
 
 Prefer a Git-backed application/deployment source when the orchestrator supports it.

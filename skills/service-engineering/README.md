@@ -4,6 +4,7 @@ Use for services, deployment, networking, hosts, runtime maintenance and infrast
 
 ## Sub-map
 - Docker/Compose/container packaging → `docker-compose.md`
+- Coolify-parsed Docker Compose → `coolify-compose.md` (mandatory when Coolify owns parsing/deployment)
 - Git-backed infrastructure / orchestrator-owned deployments → `git-backed-infrastructure.md`
 - reusable service deployment presets/examples → `../../examples/services/README.md`
 - terminal/remote execution → `../terminal-operations/README.md`

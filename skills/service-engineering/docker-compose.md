@@ -8,6 +8,10 @@ Use this module for Dockerfiles, Docker Compose manifests, container runtime con
 - Use Compose when the project already uses it or when one reproducible multi-container definition is the natural local/service contract.
 - Keep environment-specific hosts, registry coordinates, secrets and deployment topology in project/local context.
 
+## Coolify parser gate
+
+If Coolify parses or deploys the Compose resource, also load `coolify-compose.md` before editing the manifest. Generic Compose validity does not prove that Coolify will materialize required variables, generated domains, shared references or managed file mounts correctly.
+
 ## Compose files
 
 - Prefer the repository's established filename and extension. If no convention exists, modern Compose commonly uses `compose.yaml` or `docker-compose.yaml`; do not rename an existing working convention merely for style.
