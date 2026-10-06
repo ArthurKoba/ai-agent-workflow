@@ -33,7 +33,19 @@ Checks: Read and write
 
 Subscribe to the GitHub events exposed for those permissions. Do not grant unrelated repository administration, secrets, workflow-write or deployment permissions just to run CI.
 
-Configure a high-entropy webhook secret. Store the same value in Jenkins Credentials as a **Secret text** credential and configure it under the Jenkins GitHub shared hook secrets with SHA-256 verification.
+Configure a high-entropy webhook secret. Store the same value in Jenkins Credentials as a **Secret text** credential.
+
+The validated Jenkins configuration used:
+
+```text
+Manage Jenkins → System → GitHub → Advanced
+
+Shared secret: GitHub webhook HMAC secret
+Signature algorithm: SHA-256
+GitHub API rate limiting strategy: Throttle at/near rate limit
+```
+
+Do not expose the secret value in documentation.
 
 Generate a GitHub App private key and convert it to unencrypted PKCS#8 PEM before creating the Jenkins **GitHub App** credential. The credential consists of the GitHub App ID plus that private key. Never commit the private key.
 
@@ -42,6 +54,17 @@ Generate a GitHub App private key and convert it to unencrypted PKCS#8 PEM befor
 When the same public GitHub App is installed for multiple owners/organizations, do not rely on automatic installation selection if repository discovery becomes ambiguous.
 
 Create one Jenkins GitHub App credential profile per owner while reusing the same App ID/private key, and restrict each credential to its owner through the credential's repository access strategy.
+
+The validated owner-bound credential settings were:
+
+```text
+Repository access strategy: Specify accessible repositories
+Owner: <one GitHub owner>
+Repositories: empty
+Default permissions strategy: All permissions available to the app installation
+```
+
+With no repositories listed, the credential can access any repository available to that App installation for the specified owner. This avoids installation ambiguity while keeping owner boundaries explicit.
 
 Example:
 
@@ -79,6 +102,25 @@ Discover pull requests from forks:
 Disabling fork PR discovery is deliberate for a persistent trusted self-hosted builder. Add a separate trust/approval or ephemeral isolation boundary before executing untrusted fork code.
 
 The project recognizer should use the repository `Jenkinsfile` when Jenkins owns the pipeline definition.
+
+The validated Organization Folder configuration also used:
+
+```text
+API endpoint: https://api.github.com
+Scan Organization Triggers:
+  Periodically if not otherwise run: enabled
+  Interval: 1 day
+
+Child Scan Triggers:
+  Periodically if not otherwise run: enabled
+  Interval: 1 day
+
+Automatic branch project triggering:
+  Branch names to build automatically: .*
+  Suppression strategy: schedule all builds / nothing suppressed
+```
+
+Webhooks remain the primary near-real-time trigger; the one-day scan is a recovery/reconciliation path.
 
 ## Scope warning
 
