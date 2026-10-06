@@ -112,3 +112,12 @@ Legacy-chip reverse work now persists a stop condition for generic public resear
 External research resumes only when a new concrete identifier/artifact materially changes the search space or the user explicitly requests another research pass.
 
 Automation/quality effect: long-running reverse projects stop paying the same public-research tax on every handoff and spend more cycles on evidence that can actually close target behavior contracts.
+
+
+## 14 — Delta-first report checkpoints
+
+Long-running work now distinguishes ordinary progress reports from full state snapshots. An ordinary report is a delta against the previous user-facing report checkpoint: only changed directions, new findings, scalar progress transitions, goal status and the next decision boundary are shown. A full/detailed report intentionally reconstructs the complete current state.
+
+Report comparison state can be persisted alongside existing Task Context/status authorities so a context change does not force the agent to repeat the entire project or lose the `before -> after` baseline. Progress ranges are replaced by one stable scalar estimate, exact counters or explicit state transitions.
+
+Automation/quality effect: users can see real incremental progress without manually diffing repetitive reports, while comprehensive reports remain available on explicit request.

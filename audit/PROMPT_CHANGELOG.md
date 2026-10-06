@@ -1,5 +1,19 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Delta-based progress reporting contract
+
+Changes:
+- added `docs/REPORTING_PROTOCOL.md` as the single reusable authority for progress-report semantics;
+- plain/compact report requests now mean delta reports against the previous report checkpoint;
+- compact reports show only changed directions, scalar `before -> after` progress, unique new results, goal status and the immediate next path;
+- full/detailed report requests remain comprehensive current-state snapshots and may repeat stable context;
+- percentage ranges are prohibited in reports; use one stable scalar estimate, exact counters, or an evidence/state transition instead;
+- long-running tasks persist enough report-checkpoint state to recover the comparison baseline without relying only on chat memory;
+- added E-025 / B-026 for repetitive non-delta reporting.
+
+Reason:
+Long-running technical sessions accumulated noisy reports that repeated unchanged findings and baselines. The user had to mentally diff reports to discover what actually changed, and progress ranges made successive reports difficult to compare. The new contract makes ordinary reports delta-first while preserving a separate explicit full-report mode.
+
 ## 2026-10 — Stop repeated public research for exhausted legacy silicon
 
 Changes:
