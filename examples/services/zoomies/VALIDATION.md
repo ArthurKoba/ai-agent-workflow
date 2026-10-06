@@ -50,6 +50,12 @@ Validated from the authenticated Zoomies 1.3.4 Installations flow:
 - the UI exposes the exact requested GitHub App permissions before redirecting to GitHub;
 - personal-account use requires repository-target installations because GitHub has no account-wide personal runner registration.
 
+Additional observed details:
+
+- the generated default App name can exceed GitHub's 34-character name limit for a long repository target;
+- the manifest creation page accepted the shortened App name and was ready to create the App under the personal account;
+- GitHub authentication is a user-interactive step; credentials are not handled by the automation.
+
 No GitHub installation is marked accepted until the manifest flow returns successfully and the installation appears in Zoomies.
 
 ## Pending acceptance

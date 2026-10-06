@@ -85,3 +85,15 @@ Therefore:
 - each personal-account repository that should use Zoomies needs its own repository-target installation and pool, while the same Zoomies fleet/hosts can provide the compute.
 
 For first acceptance on a personal account, prefer a private repository so untrusted public pull-request code cannot reach a newly commissioned self-hosted runner before the trust model is proven.
+
+
+## Manifest creation details
+
+Observed on GitHub.com with Zoomies 1.3.4:
+
+- GitHub App names are limited to 34 characters;
+- Zoomies' default name can exceed that limit for a long repository target, so set a shorter explicit name when needed;
+- after GitHub authentication, the manifest creation page may show only the App name and a single confirmation button because the webhook URL, permissions and event subscriptions are carried in the manifest payload;
+- for a personal-account repository target, GitHub creates the App under that personal account.
+
+A short stable name such as `Koba Zoomies CI` is preferable to embedding a long repository slug in the App name.
