@@ -125,3 +125,20 @@ Validated from the Zoomies 1.3.4 host wizard and runtime/security documentation:
 - `host-socket` is not part of the accepted architecture.
 
 A first 15-minute enrollment token was intentionally discarded before use because the rootless runtime had not yet been proven. No host is marked accepted yet.
+
+
+## Stage 7 — reproducible rootless host bootstrap
+
+A reusable one-shot host bootstrap is now part of the preset.
+
+Static validation completed:
+
+- Bash syntax validation passes;
+- the script is idempotent by construction around existing user/socket/service state;
+- cgroup v2 is required;
+- root/sudo/docker-group exposure is treated as a blocker;
+- the accepted runtime must report Docker rootless mode;
+- the accepted runtime socket must be owned by the Zoomies user;
+- optional enrollment verifies the agent systemd unit's service user.
+
+Live host acceptance remains pending until the bootstrap is executed on the target host and the resulting agent/runtime capabilities are observed in Zoomies.

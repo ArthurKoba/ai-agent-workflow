@@ -59,6 +59,50 @@ Before enrollment, validate:
 
 Rootless Docker on cgroup v2 can enforce delegated resource controllers when the host is configured correctly. A successful socket connection alone is not resource-limit acceptance.
 
+## One-shot host bootstrap
+
+Use `bootstrap-host.sh` to prepare a host once instead of repeating manual package/user/runtime commands.
+
+The bootstrap is idempotent and fail-closed. It:
+
+- requires root only for the host bootstrap itself;
+- creates or reuses a dedicated `zoomies` account;
+- locks password login for that account;
+- removes it from `docker`, `sudo` and `wheel` groups if present;
+- refuses to continue if the account still has passwordless sudo;
+- installs the rootless Docker prerequisites when they are missing;
+- requires cgroup v2 for this hardened preset;
+- enables persistent user services with systemd lingering;
+- installs/starts Docker in rootless mode under the `zoomies` uid;
+- requires the Docker socket to be owned by `zoomies`;
+- requires Docker to report the `rootless` security option;
+- refuses the rootful Docker data root;
+- writes the accepted runtime endpoint to `/etc/zoomies/rootless-runtime.env`;
+- can optionally run the official Zoomies agent installer with a one-time join token;
+- if it enrolls the agent, verifies that the system service runs as `zoomies`, not root.
+
+Basic runtime preparation:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ArthurKoba/ai-agent-workflow/main/examples/services/zoomies/bootstrap-host.sh \
+  | bash
+```
+
+For reproducible production use, pin the raw URL to a reviewed commit instead of `main`.
+
+To prepare and enroll in one pass, supply the controller and fresh single-use token:
+
+```bash
+curl -fsSL <pinned-bootstrap-url> | bash -s -- \
+  --controller https://<zoomies-domain> \
+  --join-token '<single-use-token>' \
+  --version v1.3.4
+```
+
+The join token must never be committed. A 15-minute single-use token is appropriate for an interactive enrollment.
+
+After the script succeeds, acceptance still requires the Zoomies Hosts page to show that the agent is using the expected rootless Docker endpoint and capabilities. The bootstrap does not promote daemon connectivity into DinD/resource-limit acceptance.
+
 ## Agent enrollment
 
 Hosts → Add a host generates a single-use, short-lived join token and one-line installer command.
