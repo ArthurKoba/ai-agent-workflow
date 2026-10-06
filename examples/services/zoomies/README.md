@@ -51,7 +51,8 @@ The controller must not receive the host rootful `/var/run/docker.sock`.
 
 - `docker-compose.yaml` — controller-only reusable Compose.
 - `COOLIFY.md` — Git-backed Coolify deployment and in-place migration procedure.
-- `GITHUB.md` — first-admin and GitHub App integration notes.
+- `GITHUB.md` — first-admin, GitHub App and repository migration notes.
+- `HOSTS.md` — host enrollment, rootless runtime and Docker-mode contract.
 - `VALIDATION.md` — observed acceptance state and remaining gates.
 
 ## Controller configuration

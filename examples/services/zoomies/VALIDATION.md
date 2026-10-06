@@ -108,3 +108,20 @@ Observed architecture difference:
 - organisation connection is organisation-scoped and can use organisation self-hosted runner management.
 
 Webhook acceptance remains pending until a post-Finish GitHub event is accepted. Pre-Finish `ping` and `installation.created` rejections are recorded but are not acceptance failures.
+
+
+## Stage 6 — host enrollment contract
+
+Validated from the Zoomies 1.3.4 host wizard and runtime/security documentation:
+
+- standalone agents connect outbound to the controller;
+- a direct HTTPS controller address is sufficient;
+- join tokens are single-use and short-lived;
+- capacity and host labels are bound during enrollment;
+- the agent runtime can be pinned with `ZOOMIES_DOCKER_HOST` / `--docker-host`;
+- runtime autodetection prefers rootless sockets before `/var/run/docker.sock`;
+- rootless Docker is supported;
+- Docker-in-Docker is a pool mode and must be accepted with a real job;
+- `host-socket` is not part of the accepted architecture.
+
+A first 15-minute enrollment token was intentionally discarded before use because the rootless runtime had not yet been proven. No host is marked accepted yet.
