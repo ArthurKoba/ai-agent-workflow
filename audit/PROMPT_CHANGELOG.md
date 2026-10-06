@@ -1,5 +1,21 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Coolify Compose parser contract
+
+Changes:
+- added `skills/service-engineering/coolify-compose.md` as the focused authority for Coolify-parsed Compose;
+- Coolify tasks now distinguish generic Compose validity from parser-generated environment/domain/storage state;
+- required external topology uses empty `${VAR:?}` expressions and must be declared in the owning service environment so the UI materializes an empty Required value;
+- shared team/project/environment/server variables are the default authority for secrets and reusable credentials;
+- internal service traffic stays on Docker DNS/`expose`; host `ports` are reserved for real external consumers;
+- generated domains are modeled per Compose service, with separate lightweight ingress services when independent public routes share one underlying network namespace;
+- editable config files use inline `content:` managed file mounts when appropriate;
+- fresh-resource parser validation is required for generated env/domain/storage behavior;
+- added E-027 / B-028 for treating valid Compose as sufficient evidence of Coolify correctness.
+
+Reason:
+Repeated infrastructure work exposed the same parser-specific failures: descriptive `:?` text became a variable value, variables referenced only from ports/commands did not appear as Required in the UI, multiple generated domains on one service collapsed into one route, and managed file generation depended on Coolify-specific `content:` semantics. These are reusable deployment-contract issues rather than one project's topology.
+
 ## 2026-10 — Sticky percentage progress in reports
 
 Changes:

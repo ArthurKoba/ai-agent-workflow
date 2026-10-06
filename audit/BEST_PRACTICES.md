@@ -76,3 +76,7 @@ Ordinary report requests show only changes since the previous report checkpoint:
 
 ## B-027 — Sticky progress metrics
 Once an active workstream is reported with a scoped percentage, preserve that percentage basis across later reports so progress remains comparable. This includes an established overall-goal percentage. Exact counters and evidence states may supplement the percentage; if the prior numeric value is temporarily unrecoverable, keep the current approximate percentage and mark the old baseline unavailable rather than silently switching metrics.
+
+
+## B-028 — Parser-aware Coolify Compose
+Treat Coolify's Compose parser as an explicit deployment API. Encode required external topology with empty `:?` expressions in owning service environments, keep secrets behind scoped shared references, keep internal traffic on Docker DNS, use one generated-domain owner per service, use inline `content:` for managed file templates, and validate parser-generated UI state on a fresh resource before runtime acceptance.

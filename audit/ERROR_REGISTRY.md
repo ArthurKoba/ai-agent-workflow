@@ -108,4 +108,8 @@ Mitigation: use the reporting protocol. Plain reports are delta reports against 
 A report replaces an established or meaningfully estimable percentage with counters, qualitative states or prose, so the user loses continuity of progress even though the underlying work can still be compared.
 Mitigation: percentage reporting is sticky per active direction/workstream, including an established overall-goal percentage. Preserve the same scoped denominator across reports; if the previous numeric value is temporarily unrecoverable, report the current approximate percentage and mark the prior baseline unavailable rather than downgrading to counters/status.
 
+## E-027 — Generic Compose validity is mistaken for Coolify parser correctness
+Agent writes syntactically valid Compose but ignores the orchestrator parser contract, causing required variables to receive placeholder values, variables used only in ports/commands to disappear from the UI, multiple domains to collapse onto one service, managed files to fail to materialize, internal ports to be published unnecessarily, or secrets to be copied into Git/resource envs.
+Mitigation: load the Coolify Compose contract; classify each value as secret/shared, required external topology, safe default, internal literal or generated parser state; validate the result on a freshly parsed Coolify resource before deployment.
+
 Add a new class only when root cause or mitigation is materially different.
