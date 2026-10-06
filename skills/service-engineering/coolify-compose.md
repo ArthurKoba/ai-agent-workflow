@@ -72,14 +72,18 @@ Do not turn every literal into an environment variable. Parameterization is usef
 
 Prefer the application's canonical environment variable when it already expresses the right meaning. Do not invent a stack-specific alias merely to forward the same value.
 
-For infrastructure-owned variables that have no upstream canonical name, encode purpose in the key:
+For infrastructure-owned variables that have no upstream canonical name, encode the system and semantic role in the key:
 
-- prefer `VPN_PUBLIC_ENDPOINT`, `ADMIN_BIND_IP`, `METRICS_REMOTE_WRITE_URL`;
-- avoid ambiguous names such as `PUBLIC_ENDPOINT`, `HOST`, `PORT` when several endpoints/hosts/ports exist;
+- prefer `VPN_PUBLIC_ENDPOINT`, `ADMIN_BIND_IP`, `VICTORIA_METRICS_ENDPOINT`;
+- prefer `<SYSTEM>_ENDPOINT` for a canonical HTTP(S) destination when the transport role is obvious from the consumer;
+- use a transport-specific suffix such as `_REMOTE_WRITE_URL` only when distinguishing several different endpoints is operationally useful;
+- pair credentials consistently, for example `VICTORIA_METRICS_AUTH_USERNAME` and `VICTORIA_METRICS_AUTH_PASSWORD`;
+- avoid ambiguous names such as `PUBLIC_ENDPOINT`, `HOST`, `PORT`, `URL` when several endpoints/hosts/ports exist;
+- avoid awkward implementation verbs in long-lived variable names when a stable noun communicates the contract better;
 - distinguish container-local ports from externally meaningful listen ports;
 - distinguish public peer endpoints from HTTP/admin domains.
 
-A variable name is part of the operational contract. Renaming a live variable requires the same migration care as changing its value.
+A variable name is part of the operational contract. Renaming a live variable requires the same migration care as changing its value. Prefer names that remain valid if the implementation behind the endpoint changes.
 
 ## Required variables
 
@@ -146,16 +150,22 @@ system. If a project needs to override a team-level default, point that
 deployment at the project-scoped value explicitly rather than assuming
 `{{project.TZ}}` will transparently fall back to `{{team.TZ}}`.
 
-If one canonical value feeds components with different names, map from the same
-shared value directly:
+If one canonical value feeds components with different names, declare one
+resource variable in Compose and map both consumer keys from it:
 
 ```yaml
 environment:
-  TZ: '{{project.TZ}}'
-  tz: '{{project.TZ}}'
+  TZ: ${TZ:?}
+  tz: ${TZ:?}
 ```
 
-Use the actual selected scope for the deployment; the example above shows project scope.
+Then assign the Coolify resource variable to the selected shared scope, for example:
+
+```text
+TZ={{team.TZ}}
+```
+
+Use the actual selected scope for the deployment. Do not assume a reference at one scope falls back to another.
 
 ## Coolify variable flags
 
@@ -182,19 +192,29 @@ Use the narrowest Coolify shared-variable scope that matches ownership:
 - `{{environment.NAME}}`
 - `{{server.NAME}}`
 
-Example:
+For Git-backed Compose on Coolify 4.3.23, use a two-step contract:
 
 ```yaml
 environment:
-  METRICS_URL: '{{project.METRICS_URL}}'
-  METRICS_USERNAME: '{{project.METRICS_USERNAME}}'
-  METRICS_PASSWORD: '{{project.METRICS_PASSWORD}}'
+  METRICS_ENDPOINT: ${METRICS_ENDPOINT:?}
+  METRICS_AUTH_USERNAME: ${METRICS_AUTH_USERNAME:?}
+  METRICS_AUTH_PASSWORD: ${METRICS_AUTH_PASSWORD:?}
+```
+
+Then set the generated resource variables in Coolify to the shared references:
+
+```text
+METRICS_ENDPOINT={{team.METRICS_ENDPOINT}}
+METRICS_AUTH_USERNAME={{team.METRICS_AUTH_USERNAME}}
+METRICS_AUTH_PASSWORD={{team.METRICS_AUTH_PASSWORD}}
 ```
 
 Rules:
 
-- reference the shared value directly from Compose when the deployed Coolify version supports it;
-- do not create redundant resource-level copies merely to relay an existing shared variable;
+- verify that the referenced shared variable exists at the exact scope and exact key before deployment;
+- do not treat `is_shared=true` on a resource variable as proof that resolution succeeded;
+- an unresolved shared reference can remain literal and reach the container, so validate the runtime value indirectly through application behavior/logs without printing secrets;
+- on versions where direct `{{scope.KEY}}` inside Git Compose has not been proven, do not hard-code shared references as service environment values; prefer `${VAR}` in Git and put the shared reference in the Coolify resource variable;
 - choose the narrowest scope covering all consumers;
 - an agent usually needs variable names, scopes and references, not plaintext values;
 - never reveal or log secret values merely to verify that the reference exists;
@@ -283,6 +303,8 @@ This gives three useful properties:
 Rules:
 
 - use `content:` for generated/managed files when a repository-relative source does not already exist as the authoritative file;
+- on Coolify 4.3.23, a repository-relative bind such as `./config.alloy:/etc/alloy/config.alloy:ro` without inline `content:` can be classified as a directory; use an explicit file mount with `content:` when the parser must materialize a file;
+- existing Coolify File Storage content at the same mount path takes precedence over the Git inline bootstrap content on later reparses; treat inline `content:` as bootstrap/recovery, not forced synchronization;
 - do not replace a production config during migration until its current content is captured or the operator explicitly chooses a new template;
 - keep directory/named volumes for durable state and overlay only the specific managed config file when needed;
 - a deleted/changed managed storage entry may require a fresh parse/recreate depending on Coolify version/state; do not assume reload always reconstructs deleted managed state;
@@ -308,14 +330,28 @@ When converting a UI-owned Coolify service into Git-backed Compose:
 2. inventory required/shared/default variables;
 3. capture generated domains and their target ports;
 4. capture managed-file contents;
-5. preserve exact persistent volume names/ownership;
+5. capture old persistent volume names and determine how the deployed Coolify version names replacement volumes;
 6. refactor only after the preservation contract is explicit;
 7. create/recreate the Git-backed resource and inspect parser output before deployment;
-8. stop the old service before attaching the same writable volumes to the replacement;
-9. deploy and validate;
-10. retain the old resource as rollback until acceptance.
+8. when the parser namespaces named volumes to the new resource UUID, do not assume top-level Compose `external:`/`name:` will preserve cross-resource attachment; explicitly copy old volume contents into the new resource volumes after verifying source and destination identities;
+9. stop the old service before copying or attaching writable state;
+10. deploy and validate;
+11. retain the old resource and old volumes as rollback until acceptance.
 
 Do not run two stacks concurrently against the same writable state volume unless the application explicitly supports it.
+
+## Parser state and stale variables
+
+Treat an existing Coolify resource as stateful parser output, not as a pure reflection of the current Git file.
+
+Observed consequences on Coolify 4.3.23:
+
+- variables removed from Compose can remain as stale resource variables until explicitly deleted;
+- generated file/domain/storage records can survive source changes;
+- a successful reparse does not prove stale state was removed;
+- recreating a resource is often the cleanest diagnostic path when parser-managed state has diverged materially.
+
+During migration or refactors, compare current Git requirements with the actual resource variable/storage/domain inventory and remove only entries proven obsolete. Do not delete unknown state merely because it is absent from the latest Compose.
 
 ## Fresh-parse validation
 
@@ -325,14 +361,16 @@ Before declaring the source ready, inspect a fresh Coolify resource and verify:
 
 - every required variable exists, is marked Required and is empty until intentionally set;
 - optional variables contain only approved defaults;
+- each shared-variable reference points to an existing key at the exact intended scope;
 - shared secret references are present without exposing secret values;
+- runtime logs/behavior show that shared references resolved to usable values rather than remaining literal `{{scope.KEY}}` strings;
 - generated domains exist in the expected count, under the expected services, with the expected target ports;
 - managed file mounts appear at the intended paths;
 - internal-only ports are not host-published;
 - persistent volumes refer to the intended existing data;
 - Compose parser output contains no stale placeholders or unintended generated values.
 
-Then perform deployment/runtime/consumer acceptance separately.
+Then perform deployment/runtime/consumer acceptance separately. For telemetry pipelines, query the actual backend (for example through Grafana's configured datasource proxy) after deployment; container health and successful exporter scrape are not enough to prove remote-write delivery.
 
 ## Source references
 
