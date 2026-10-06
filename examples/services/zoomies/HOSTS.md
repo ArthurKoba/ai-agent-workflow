@@ -59,88 +59,73 @@ Before enrollment, validate:
 
 Rootless Docker on cgroup v2 can enforce delegated resource controllers when the host is configured correctly. A successful socket connection alone is not resource-limit acceptance.
 
-## One-shot host bootstrap
+## One-shot rootless runtime bootstrap
 
-Use `bootstrap-host.sh` to prepare a host once instead of repeating manual package/user/runtime commands.
+Use `bootstrap-host.sh` once per runner host. It prepares only the unprivileged runtime; it does **not** install a native Zoomies agent.
 
 The bootstrap is idempotent and fail-closed. It:
 
-- requires root only for the host bootstrap itself;
-- creates or reuses a dedicated `zoomies` account;
-- locks password login for that account;
-- removes it from `docker`, `sudo` and `wheel` groups if present;
-- refuses to continue if the account still has passwordless sudo;
-- installs the rootless Docker prerequisites when they are missing;
-- requires cgroup v2 for this hardened preset;
+- creates/reuses the dedicated `zoomies` account;
+- locks password login;
+- removes `docker`, `sudo` and `wheel` group membership;
+- refuses passwordless sudo;
+- installs rootless Docker prerequisites;
+- requires cgroup v2;
 - enables persistent user services with systemd lingering;
-- installs/starts Docker in rootless mode under the `zoomies` uid;
-- requires the Docker socket to be owned by `zoomies`;
-- requires Docker to report the `rootless` security option;
+- installs/starts rootless Docker under the `zoomies` uid;
+- verifies socket ownership and Docker's reported `rootless` security mode;
 - refuses the rootful Docker data root;
-- writes the accepted runtime endpoint to `/etc/zoomies/rootless-runtime.env`;
-- can optionally run the official Zoomies agent installer with a one-time join token;
-- if it enrolls the agent, verifies that the system service runs as `zoomies`, not root.
+- writes the accepted uid/gid/socket values to `/etc/zoomies/rootless-runtime.env`.
 
-Basic runtime preparation:
+Root is used only for this host bootstrap. No Zoomies agent process is installed as a root-owned native service.
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/ArthurKoba/ai-agent-workflow/main/examples/services/zoomies/bootstrap-host.sh \
-  | bash
-```
+## Preferred standalone agent: container
 
-For reproducible production use, pin the raw URL to a reviewed commit instead of `main`.
+Zoomies officially supports a standalone agent container. This is the preferred pattern for Compose/Coolify-managed hosts.
 
-To prepare and enroll in one pass, supply the controller and fresh single-use token:
+Use `agent-compose.yaml`.
 
-```bash
-curl -fsSL <pinned-bootstrap-url> | bash -s -- \
-  --controller https://<zoomies-domain> \
-  --join-token '<single-use-token>' \
-  --version v1.3.4
-```
+On the first start:
 
-The join token must never be committed. A 15-minute single-use token is appropriate for an interactive enrollment.
+1. `ZOOMIES_JOIN_TOKEN` is redeemed once;
+2. Zoomies receives a lasting host credential;
+3. that credential is stored in `zoomies-agent-data`.
 
-After the script succeeds, acceptance still requires the Zoomies Hosts page to show that the agent is using the expected rootless Docker endpoint and capabilities. The bootstrap does not promote daemon connectivity into DinD/resource-limit acceptance.
+On subsequent starts, the volume credential is reused. The one-time join token is no longer needed and should be removed from the deployment environment after acceptance.
 
-## Agent enrollment
+The image runs as an unprivileged account. It needs access to a container-runtime socket because it creates runner containers as siblings, not nested containers.
 
-Hosts → Add a host generates a single-use, short-lived join token and one-line installer command.
-
-Validated UI choices for a conservative first host:
+The upstream example mounts the host rootful `/var/run/docker.sock`. This hardened preset deliberately does not. Instead it bind-mounts the dedicated rootless socket prepared by `bootstrap-host.sh`:
 
 ```text
-connection: direct outbound HTTPS
-capacity: 1
-host label: node=tambov-ci
-join token TTL: 15 minutes
+host: /run/user/<zoomies-uid>/docker.sock
+container: /run/zoomies/docker.sock
 ```
 
-The installer:
+The numeric group owning that rootless socket is passed through with `group_add`.
 
-- downloads a release-matched Zoomies binary and verifies it;
-- redeems the join token;
-- writes agent credentials;
-- installs a persistent service;
-- uses outbound-only communication to the controller.
-
-Never store the join token in Git or long-lived documentation.
-
-If runtime preparation is not complete, discard the generated token and mint a fresh one later instead of leaving a valid enrollment capability unused.
-
-## Agent ownership
-
-For a native root install, Zoomies creates/runs the agent as a dedicated unprivileged system user and gives it only the container-runtime access it needs. The systemd unit is sandboxed.
-
-The agent owns its state/work directories and the runner containers it creates.
-
-If the Docker daemon is shared or externally managed, set the agent Docker build-cache target to zero so Zoomies does not prune that daemon's builder cache:
+Required deployment variables:
 
 ```text
-ZOOMIES_AGENT_DOCKER_BUILD_CACHE_MB=0
+ZOOMIES_CONTROLLER_URL=https://<zoomies-domain>
+ZOOMIES_JOIN_TOKEN=<fresh single-use token; first start only>
+ZOOMIES_AGENT_NAME=<stable unique host name>
+ZOOMIES_RUNTIME_GID=<from /etc/zoomies/rootless-runtime.env>
+ZOOMIES_RUNTIME_SOCKET=<from /etc/zoomies/rootless-runtime.env>
+ZOOMIES_IMAGE_TAG=v1.3.4
 ```
 
-A dedicated rootless daemon for the Zoomies runner fleet may instead allow Zoomies to manage its own cache according to the chosen fleet policy.
+A container hostname is not a stable fleet identity across multiple hosts, so set `ZOOMIES_AGENT_NAME` explicitly.
+
+For a first host, mint the token in **Hosts → Add a host** with conservative capacity and labels. Those token-bound values win during enrollment.
+
+After the host becomes Online, remove `ZOOMIES_JOIN_TOKEN` and redeploy. Do not delete `zoomies-agent-data`; losing it requires a new join token and a new enrollment.
+
+## Native agent alternative
+
+The one-line native installer is also supported. On systemd hosts, root/sudo is needed only to write/install the system service. The resulting service runs under a dedicated unprivileged account.
+
+For a Compose/Coolify-managed environment, prefer the standalone agent container above because its lifecycle and persistent credential are represented directly in deployment state.
 
 ## Pool Docker modes
 

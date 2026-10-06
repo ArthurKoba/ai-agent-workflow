@@ -53,7 +53,8 @@ The controller must not receive the host rootful `/var/run/docker.sock`.
 - `COOLIFY.md` — Git-backed Coolify deployment and in-place migration procedure.
 - `GITHUB.md` — first-admin, GitHub App and repository migration notes.
 - `HOSTS.md` — host enrollment, rootless runtime and Docker-mode contract.
-- `bootstrap-host.sh` — one-shot fail-closed rootless Docker + optional agent enrollment bootstrap.
+- `bootstrap-host.sh` — one-shot fail-closed rootless Docker runtime bootstrap.
+- `agent-compose.yaml` — preferred standalone agent container using the prepared rootless socket.
 - `VALIDATION.md` — observed acceptance state and remaining gates.
 
 ## Controller configuration
@@ -90,7 +91,7 @@ Keep the encryption key in a Coolify shared variable at the narrowest useful sco
 3. Create the first administrator.
 4. Sign in and verify the Overview reports a live connection.
 5. Connect GitHub using the product's GitHub App flow.
-6. Add a trusted host running the Zoomies agent.
+6. Prepare the trusted host's rootless runtime once, then deploy the standalone Zoomies agent container.
 7. Create a first pool with conservative capacity.
 8. Validate one normal GitHub Actions job against that pool.
 9. Validate Docker-in-Docker for workflows that require Docker.

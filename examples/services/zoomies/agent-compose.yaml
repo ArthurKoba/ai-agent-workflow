@@ -1,0 +1,28 @@
+services:
+  zoomies-agent:
+    image: ghcr.io/eyupio/zoomies-agent:${ZOOMIES_IMAGE_TAG:-v1.3.4}
+    restart: unless-stopped
+
+    environment:
+      ZOOMIES_CONTROLLER_URL: ${ZOOMIES_CONTROLLER_URL:?}
+      ZOOMIES_JOIN_TOKEN: ${ZOOMIES_JOIN_TOKEN:-}
+      ZOOMIES_AGENT_NAME: ${ZOOMIES_AGENT_NAME:?}
+      ZOOMIES_STATE_DIR: /var/lib/zoomies
+      ZOOMIES_WORK_DIR: /var/lib/zoomies/work
+      ZOOMIES_DOCKER_HOST: unix:///run/zoomies/docker.sock
+      ZOOMIES_AGENT_DOCKER_BUILD_CACHE_MB: "0"
+
+    group_add:
+      - "${ZOOMIES_RUNTIME_GID:?}"
+
+    volumes:
+      - zoomies-agent-data:/var/lib/zoomies
+      - type: bind
+        source: ${ZOOMIES_RUNTIME_SOCKET:?}
+        target: /run/zoomies/docker.sock
+
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  zoomies-agent-data:
