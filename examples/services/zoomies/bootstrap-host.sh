@@ -91,7 +91,7 @@ done
 
 if [[ ! -S "$DOCKER_SOCKET" ]]; then
   log "installing rootless Docker as $ZOOMIES_USER"
-  as_zoomies dockerd-rootless-setuptool.sh install
+  as_zoomies dockerd-rootless-setuptool.sh install --force
 fi
 
 as_zoomies systemctl --user enable docker.service >/dev/null 2>&1 || true
@@ -115,7 +115,7 @@ root_dir=$(as_zoomies env DOCKER_HOST="$DOCKER_HOST_URI" docker info --format '{
 install -d -m 0755 /etc/zoomies
 cat > /etc/zoomies/rootless-runtime.env <<EOF_RUNTIME
 ZOOMIES_RUNTIME_UID=$ZOOMIES_UID
-ZOOMIES_RUNTIME_GID=$ZOOMIES_GID
+ZOOMIES_RUNTIME_GID=$(stat -c %g "$DOCKER_SOCKET")
 ZOOMIES_RUNTIME_SOCKET=$DOCKER_SOCKET
 ZOOMIES_DOCKER_HOST=$DOCKER_HOST_URI
 EOF_RUNTIME
