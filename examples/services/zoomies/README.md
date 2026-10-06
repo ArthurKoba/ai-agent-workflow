@@ -53,6 +53,7 @@ The controller must not receive the host rootful `/var/run/docker.sock`.
 - `COOLIFY.md` — Git-backed Coolify deployment and in-place migration procedure.
 - `GITHUB.md` — first-admin, GitHub App and repository migration notes.
 - `HOSTS.md` — host enrollment, rootless runtime and Docker-mode contract.
+- `bootstrap-host.sh` — one-shot fail-closed rootless Docker + optional agent enrollment bootstrap.
 - `VALIDATION.md` — observed acceptance state and remaining gates.
 
 ## Controller configuration
