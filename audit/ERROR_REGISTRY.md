@@ -112,4 +112,8 @@ Mitigation: percentage reporting is sticky per active direction/workstream, incl
 Agent writes syntactically valid Compose but ignores the orchestrator parser contract, causing required variables to receive placeholder values, variables used only in ports/commands to disappear from the UI, multiple domains to collapse onto one service, managed files to fail to materialize, internal ports to be published unnecessarily, or secrets to be copied into Git/resource envs.
 Mitigation: load the Coolify Compose contract; classify each value as secret/shared, required external topology, safe default, internal literal or generated parser state; validate the result on a freshly parsed Coolify resource before deployment.
 
+## E-028 — Semantic metadata claims stronger certainty than the evidence
+A behavior-analysis project leaves generic names after semantics are closed, keeps provisional/candidate names after confirmation, or preserves strong semantic names/types/links after evidence weakens or contradicts them. Future agents then inherit either lost knowledge or false certainty from the persistent analysis surface.
+Mitigation: use the evidence-state semantic lifecycle. Keep names/comments/types/boundaries/links synchronized with `UNKNOWN`/`LIKELY`/`CONFIRMED`/`CONTRADICTION`, retire withdrawn interpretations, reuse canonical semantic objects across references, and save after each coherent materialization pass.
+
 Add a new class only when root cause or mitigation is materially different.

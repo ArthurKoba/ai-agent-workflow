@@ -121,3 +121,11 @@ Long-running work now distinguishes ordinary progress reports from full state sn
 Report comparison state can be persisted alongside existing Task Context/status authorities so a context change does not force the agent to repeat the entire project or lose the `before -> after` baseline. Progress ranges are replaced by one stable scalar estimate, exact counters or explicit state transitions.
 
 Automation/quality effect: users can see real incremental progress without manually diffing repetitive reports, while comprehensive reports remain available on explicit request.
+
+## 15 — Confidence-aware semantic materialization
+
+Behavior-analysis metadata now follows an explicit evidence-state lifecycle instead of treating naming as a one-time cleanup step. Actions, globals/state, MMIO fields, protocol fields, addresses and links begin structural when unknown, may receive conservative provisional semantics when likely, and are promoted to canonical semantic names when target evidence confirms the contract. Contradictions force demotion or neutralization, and withdrawn interpretations are retired rather than left as authoritative-looking aliases.
+
+Materialization now synchronizes the whole semantic object: name, comment, type/prototype, boundary and proven relationships. Repeated references reuse one canonical object, while equal magic values are not conflated without identity proof.
+
+Automation/quality effect: persistent reverse projects become safer handoff surfaces. Future agents inherit both the recovered meaning and its current certainty, reducing duplicated rediscovery, speculative overnaming and stale semantic debt.

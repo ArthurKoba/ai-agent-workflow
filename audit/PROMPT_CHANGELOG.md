@@ -1,5 +1,18 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Evidence-state semantic naming lifecycle
+
+Changes:
+- `skills/hardware-reverse/behavior-analysis.md` now defines an explicit semantic lifecycle for actions, states/globals, MMIO/register fields, constants, structures, protocol fields, addresses and action links;
+- `UNKNOWN` stays structural, `LIKELY` may use conservative provisional naming, and `CONFIRMED` promotes the object to canonical semantic metadata;
+- contradictions now require demotion/neutralization of names/types/links that assert too much, while `WITHDRAWN` is defined as a historical marker for invalidated interpretations rather than a live evidence state;
+- semantic promotion/demotion must synchronize names, comments, types/prototypes, boundaries and proven relationships in one coherent materialization pass;
+- repeated references reuse one canonical semantic object instead of accumulating per-action synonyms, while equal numeric values are not merged without identity proof;
+- added E-028 / B-029 for semantic metadata whose apparent certainty drifts away from the actual evidence.
+
+Reason:
+Long-running firmware behavior recovery can accumulate two opposite defects: confirmed behavior remains hidden behind generic addresses/FUN names, while older speculative names survive after later evidence disproves their owner or hardware interpretation. The persistent Analysis surface is a handoff authority, so its names and relationships must communicate the current evidence strength rather than merely preserve the chronology of guesses.
+
 ## 2026-10 — Coolify Compose parser contract
 
 Changes:
