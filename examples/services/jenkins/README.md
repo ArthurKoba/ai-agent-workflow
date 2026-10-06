@@ -6,6 +6,23 @@ This preset reproduces a Jenkins deployment where the controller manages the que
 
 Use it when Jenkins is intentionally selected as the CI control plane. If the goal is only centralized self-hosted compute while preserving GitHub Actions or GitLab CI syntax, prefer native runner management instead.
 
+## Validated versions
+
+The live deployment audited before retirement used:
+
+```text
+Jenkins: 2.584
+Docker client/server: 29.8.2
+
+Locale plugin: 641.v84f22d75fd8b_
+Dark Theme: 652.vea_da_dfea_e769
+GitHub Branch Source: 1983.vfa_27ed961853
+GitHub Checks: 679.v74133da_b_435a_
+GitLab Branch Source: 744.vb_d0403d08ec7
+```
+
+These are an observed compatibility snapshot, not a requirement to pin forever. Revalidate behavior after meaningful Jenkins/plugin upgrades.
+
 ## Architecture
 
 ```text
@@ -32,6 +49,8 @@ The controller never receives the host `/var/run/docker.sock`.
 - `docker-compose.yaml` — reusable Compose stack.
 - `COOLIFY.md` — deployment through Coolify.
 - `GITHUB.md` — optional GitHub App and Organization Folder integration.
+- `LANGUAGE.md` — validated Locale and theme settings.
+- `VALIDATION.md` — smoke-test, TLS debugging and resource-limit acceptance history.
 
 ## Jenkins first-run setup
 
@@ -160,3 +179,26 @@ pipeline {
 ```
 
 Do not call the deployment accepted until the builder is online, Docker TLS works, a disposable container completes successfully, and the intended resource ceilings are observed.
+
+## Internal Jenkins settings summary
+
+The validated UI configuration used this model:
+
+```text
+Built-In Node:
+  executors = 0
+  usage = use this node as much as possible
+
+Builder node:
+  executors = 1
+  remote root = /home/jenkins/agent
+  labels = ci-builder linux x64 docker
+  usage = only jobs matching label expressions
+  launch = inbound agent connecting to controller
+  availability = keep online as much as possible
+```
+
+The reference names are intentionally generic. Environment-specific deployments may prefix them, but the Compose service name and `JENKINS_AGENT_NAME` must stay aligned with the node created in Jenkins.
+
+For language configuration, see `LANGUAGE.md`.
+For Coolify variable placement, see `COOLIFY.md`.

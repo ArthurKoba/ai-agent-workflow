@@ -8,6 +8,8 @@ Each preset should be self-contained and safe to publish. A typical preset conta
 <service>/
 ├── README.md
 ├── COOLIFY.md
+├── LANGUAGE.md       # when locale/UI setup matters
+├── VALIDATION.md     # runtime acceptance/debug history when useful
 └── docker-compose.yaml
 ```
 

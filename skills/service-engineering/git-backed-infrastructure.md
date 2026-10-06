@@ -35,7 +35,7 @@ A useful default for a private infrastructure repository is:
     README.md
     stacks/
       <service>/
-        compose.yaml
+        docker-compose.yaml
         README.md
     inventory/
     docs/
@@ -85,6 +85,24 @@ Never commit:
 - webhook secrets;
 - runner registration secrets;
 - generated credentials.
+
+## Browser/admin UI secret exposure
+
+Treat an authenticated infrastructure browser session as a privileged secret-capable surface.
+
+Masking in an admin UI is not a security boundary once a value is deliberately revealed. In the validated Coolify browser flow:
+
+- a masked secret field was returned to the automation layer only as a redacted value;
+- after a human manually activated the visibility/reveal control, the plaintext became available in the page DOM and therefore to the browser agent.
+
+Operational rule:
+
+- do not reveal real secrets in a shared browser session while an automation/agent has page access unless that disclosure is intentionally authorized;
+- prefer inspecting secret names, scopes and references rather than values;
+- use non-sensitive canary secrets when testing browser/DOM exposure behavior;
+- navigate away or close the privileged page after the operation.
+
+Assume other browser automation systems may have fewer protective filters than the current toolchain.
 
 ## Migration from UI-owned configuration
 
