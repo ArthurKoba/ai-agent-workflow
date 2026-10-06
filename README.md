@@ -45,6 +45,7 @@ It routes the agent to the relevant role, skill, audit or architecture document.
 - `docs/` — system architecture and MCP strategy.
 - `audit/` — recurring error/best-practice aggregation and context-maintenance protocol.
 - `history/` — evolution of the agent system.
+- `examples/` — reusable public examples and service deployment presets; never live/private infrastructure state.
 
 ## Placement rule
 
