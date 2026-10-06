@@ -2,7 +2,7 @@
 
 Status: **controller/Coolify migration validated; GitHub App, host enrollment, pools and DinD acceptance in progress**.
 
-This preset keeps the Zoomies controller as a public scheduler/UI only. It does not mount the host Docker socket and does not embed a runner agent in the controller container.
+This preset supports a controller-only bootstrap and a hardened single-host mode where the controller embeds the agent but receives only a dedicated rootless CI Docker socket, never the system-wide rootful Docker socket.
 
 ## Validated version
 
@@ -28,22 +28,22 @@ Zoomies controller
   +-- persistent controller state
 ```
 
-Target CI architecture:
+Target CI architecture for one Compose/Coolify host:
 
 ```text
 GitHub Actions
      |
      v
-Zoomies controller
+Zoomies controller + embedded agent
      |
-     | outbound agent enrollment
      v
-trusted host agent
+dedicated rootless Docker daemon
      |
      +-- ephemeral runners
-     |
-     +-- DinD runner mode for jobs that require Docker
+     +-- DinD sidecars only for jobs that require Docker
 ```
+
+Additional runner machines use standalone agent containers.
 
 The controller must not receive the host rootful `/var/run/docker.sock`.
 
@@ -91,7 +91,7 @@ Keep the encryption key in a Coolify shared variable at the narrowest useful sco
 3. Create the first administrator.
 4. Sign in and verify the Overview reports a live connection.
 5. Connect GitHub using the product's GitHub App flow.
-6. Prepare the trusted host's rootless runtime once, then deploy the standalone Zoomies agent container.
+6. Prepare the trusted host's rootless runtime once, then enable the embedded agent against that socket (or use a standalone agent container for additional hosts).
 7. Create a first pool with conservative capacity.
 8. Validate one normal GitHub Actions job against that pool.
 9. Validate Docker-in-Docker for workflows that require Docker.
