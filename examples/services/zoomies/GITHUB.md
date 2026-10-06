@@ -189,3 +189,28 @@ Do not confuse App/API health with webhook acceptance.
 During App creation and installation, GitHub can emit `ping` and `installation.created` before Zoomies has completed the local Finish step. Those deliveries may be rejected because the relevant installation/webhook secret is not yet registered.
 
 After all installations are finished, validate webhook behavior again with a post-configuration GitHub event such as `workflow_job`. Until an accepted webhook is observed, Zoomies may fall back to polling GitHub; that is functional but slower and consumes more API quota.
+
+
+## Repository migration wizard
+
+Zoomies 1.3.4 includes a five-step **Migrate repositories** workflow that can rewrite existing GitHub Actions runner labels and open pull requests.
+
+Observed steps:
+
+1. **Installation** — choose which Zoomies GitHub connection to read through.
+2. **Repositories** — choose repositories and workflow files to migrate.
+3. **Labels** — map existing GitHub `runs-on` labels to Zoomies pool labels.
+4. **Exceptions** — route jobs that need a different pool.
+5. **Review** — inspect the exact diff before any pull request is opened.
+
+The wizard explicitly states that nothing is written before the Review/confirmation step.
+
+Prerequisite: at least one usable Zoomies pool must exist before label mapping can be completed.
+
+### Scope behavior
+
+For an organisation connection, the migration wizard can enumerate repositories covered by the organisation installation and migrate many repositories in one session.
+
+For a personal-account repository connection, the wizard sees the repository target of that Zoomies connection, even if the underlying GitHub App installation itself has broader `All repositories` access. Additional personal repositories therefore need repository-target Zoomies connections before they can participate in migration.
+
+Prefer reusing the existing personal-account GitHub App installation when adding those repository connections instead of creating one new GitHub App per repository, when the Zoomies UI supports importing/reusing that App.
