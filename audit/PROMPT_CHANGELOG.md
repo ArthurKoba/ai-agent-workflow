@@ -11,6 +11,8 @@ Changes:
 - generated domains are modeled per Compose service, with separate lightweight ingress services when independent public routes share one underlying network namespace;
 - editable config files use inline `content:` managed file mounts when appropriate;
 - fresh-resource parser validation is required for generated env/domain/storage behavior;
+- Docker Compose location is explicitly documented as relative to Coolify Base directory, with narrow repository-relative watch paths;
+- provider-specific deployment manifests use `deploy/<orchestrator>/<service>/` by default instead of an ambiguous generic stack directory;
 - added E-027 / B-028 for treating valid Compose as sufficient evidence of Coolify correctness.
 
 Reason:
