@@ -1,5 +1,22 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Sticky percentage progress in reports
+
+Changes:
+- strengthened `docs/REPORTING_PROTOCOL.md` so every changed report direction has an explicit progress indicator;
+- percentage reporting is now sticky once established for an active direction/workstream, including an established overall-goal percentage;
+- exact counters/state transitions may supplement an established percentage but no longer silently replace it;
+- when no prior percentage exists but progress is meaningfully estimable, compact reports provide a scoped scalar percentage;
+- losing the previous numeric checkpoint no longer permits dropping percentages: report the current approximate percentage and mark the prior baseline unavailable;
+- the same sticky percentage rule now applies to both compact and full/detailed reports;
+- percentage omission is allowed only when percentage progress is materially misleading or undefined, with a brief reason;
+- multi-direction reports include a scoped overall-goal percentage when a defensible aggregate exists;
+- report checkpoints now preserve the percentage denominator/estimation basis;
+- added E-026 / B-027 for disappearing progress percentages.
+
+Reason:
+A compact report followed the delta-report rule but omitted progress percentages because exact counters and qualitative transitions were available. The previous wording allowed that interpretation even though the active workstream expected percentage continuity. Counters are evidence; they must not erase an established progress metric.
+
 ## 2026-10 — Delta-based progress reporting contract
 
 Changes:

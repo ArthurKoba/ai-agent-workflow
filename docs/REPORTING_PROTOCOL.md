@@ -22,12 +22,17 @@ If there was no previous report for the active goal, use the task start or last 
 A compact report must contain only the following information that is useful now:
 
 1. **Changed progress**
+   - Start the report with an explicit progress block; do not bury progress inside prose.
    - Show only active directions whose progress changed since the previous report.
-   - Use `before -> after`, for example `50% -> 70%`.
+   - Every changed direction must have a progress indicator.
+   - If that direction was previously reported as a percentage, percentage reporting is **sticky**: continue with the same scoped `before% -> after%` metric unless the denominator/scope genuinely changed. An exact counter or state transition may supplement that percentage, but must not silently replace it.
+   - If percentage reporting is established but the previous numeric percentage cannot be reliably recovered after a context switch, do not downgrade the metric to a counter/status. Report the current scoped `≈N%` and explicitly mark the previous numeric baseline as unavailable; restore `before -> after` once a reliable checkpoint exists again.
+   - If no previous percentage exists but the direction is meaningfully estimable, provide one scoped scalar percentage. Use `before -> after` when the baseline is recoverable; otherwise show the current `≈N%` and state that the prior percentage baseline is unavailable.
    - Do not report percentage ranges such as `50-70%`.
-   - When progress is approximate, use one scalar estimate derived with the same scope/method as the previous report.
-   - If no defensible percentage exists, use an exact count or state transition instead of inventing a number, for example `3/8 -> 5/8` or `LIKELY -> CONFIRMED`.
+   - When progress is approximate, use one scalar estimate derived with a stable scope/method.
+   - Use an exact count or state transition **instead of** a percentage only when percentage progress would be materially misleading or undefined (for example a binary external approval, one unresolved decision, or a single pass/fail gate). In that case say briefly why a percentage is not meaningful.
    - If the denominator/scope changed, say so explicitly; do not compare incompatible percentages as if they were the same metric.
+   - For a multi-direction active goal, include one scoped overall-goal percentage when an overall estimate is defensible. Once an overall-goal percentage has appeared in this workstream, it is sticky under the same rule as direction percentages. If an aggregate is genuinely not defensible, say so instead of inventing precision.
 
 2. **Unique new results**
    - Report only findings, decisions, fixes, artifacts, semantic closures, contradictions or blockers discovered since the previous report.
@@ -67,7 +72,7 @@ A full report should include, as applicable:
 7. what remains before the active goal can be called complete;
 8. next viable paths in priority order.
 
-Use scalar percentages or exact counters, not min/max ranges. Preserve validation-level distinctions; implementation proof, execution proof, board proof and integration proof are not interchangeable.
+The same sticky-progress rules apply to full reports: if percentages are established or meaningfully estimable for an active direction/workstream, include them; exact counters may supplement them but do not silently replace them. Use state/counter-only reporting only when percentage progress is genuinely undefined or misleading, and say why. Never use min/max percentage ranges. Preserve validation-level distinctions; implementation proof, execution proof, board proof and integration proof are not interchangeable.
 
 ## Progress metric discipline
 
@@ -75,9 +80,10 @@ A report percentage is a communication metric, not objective truth by itself.
 
 - Scope the percentage to a named direction or denominator.
 - Reuse the same denominator/estimation basis across successive compact reports so `before -> after` remains meaningful.
-- Prefer exact `closed / total` when a real checklist exists.
-- When no exact denominator exists but a project intentionally tracks approximate progress, use one scalar approximation and keep the estimation method stable.
-- Never show a range merely to avoid choosing a usable scalar. If the estimate cannot be made responsibly, report a state/count transition instead.
+- Exact `closed / total` counters are useful evidence and may accompany a percentage, but they do not automatically replace an established percentage metric.
+- If the user or previous reports established percentage-based progress for the active workstream, preserve that format across subsequent reports unless the user changes it or the denominator becomes invalid.
+- When no exact denominator exists but progress is still meaningfully estimable, use one scalar approximation and keep the estimation method stable.
+- Never show a range merely to avoid choosing a usable scalar. If percentage progress is genuinely undefined or misleading, report a state/count transition and say why no percentage is shown.
 - Do not revive an old percentage after its denominator was retired or redefined.
 
 ## Report checkpoint continuity
@@ -86,7 +92,7 @@ For long-running work, the previous report baseline must not depend only on frag
 
 When the task already maintains durable Task Context, status, handoff or structured state, keep enough report-checkpoint information there to recover:
 - the active goal;
-- the last reported progress values/counters;
+- the last reported progress values/counters, including the active percentage denominator/estimation basis when percentages are in use;
 - the last reported material findings;
 - the next decision boundary at that report.
 
@@ -102,6 +108,8 @@ Do not create a second planning database only for reports. Reuse the project's e
 ## Anti-patterns
 
 Do not:
+- omit percentages merely because an exact counter or state transition is also available when percentage reporting is already established or meaningfully estimable;
+- silently switch a direction from percentage reporting to counters/status without explaining that the old denominator became invalid;
 - repeat the same unchanged findings in every compact report;
 - show every project area when only one or two changed;
 - mix current progress with historical ranges;

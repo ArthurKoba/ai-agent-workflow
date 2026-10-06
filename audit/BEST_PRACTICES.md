@@ -73,3 +73,6 @@ For legacy/obscure silicon, once bounded public research has failed to produce a
 
 ## B-026 — Delta-first progress reporting
 Ordinary report requests show only changes since the previous report checkpoint: changed progress as a scalar `before -> after`, unique new findings, current goal status and the immediate next path. Full/detailed reports intentionally reconstruct the complete current state. Long-running tasks persist enough report-checkpoint state to make the delta recoverable after context changes.
+
+## B-027 — Sticky progress metrics
+Once an active workstream is reported with a scoped percentage, preserve that percentage basis across later reports so progress remains comparable. This includes an established overall-goal percentage. Exact counters and evidence states may supplement the percentage; if the prior numeric value is temporarily unrecoverable, keep the current approximate percentage and mark the old baseline unavailable rather than silently switching metrics.

@@ -104,4 +104,8 @@ Mitigation: persist the research-exhausted boundary. Do not reopen generic exter
 A long-running agent answers every ordinary report request by restating the same baseline, completed areas and old findings instead of reporting the delta since the previous report. This hides real progress, increases noise and makes progress numbers hard to compare.
 Mitigation: use the reporting protocol. Plain reports are delta reports against the previous report checkpoint, changed directions use scalar `before -> after` progress, unchanged material is omitted, and the next decision boundary is always stated. Full/detailed reports remain comprehensive snapshots.
 
+## E-026 — Progress percentage disappears from a report
+A report replaces an established or meaningfully estimable percentage with counters, qualitative states or prose, so the user loses continuity of progress even though the underlying work can still be compared.
+Mitigation: percentage reporting is sticky per active direction/workstream, including an established overall-goal percentage. Preserve the same scoped denominator across reports; if the previous numeric value is temporarily unrecoverable, report the current approximate percentage and mark the prior baseline unavailable rather than downgrading to counters/status.
+
 Add a new class only when root cause or mitigation is materially different.
