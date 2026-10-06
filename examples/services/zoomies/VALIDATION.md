@@ -129,7 +129,7 @@ A first 15-minute enrollment token was intentionally discarded before use becaus
 
 ## Stage 7 — reproducible rootless host bootstrap
 
-A reusable one-shot host bootstrap is now part of the preset.
+A reusable one-shot rootless-runtime bootstrap is now part of the preset.
 
 Static validation completed:
 
@@ -139,6 +139,29 @@ Static validation completed:
 - root/sudo/docker-group exposure is treated as a blocker;
 - the accepted runtime must report Docker rootless mode;
 - the accepted runtime socket must be owned by the Zoomies user;
-- optional enrollment verifies the agent systemd unit's service user.
+- the bootstrap deliberately does not enroll/install the agent.
 
 Live host acceptance remains pending until the bootstrap is executed on the target host and the resulting agent/runtime capabilities are observed in Zoomies.
+
+
+## Stage 8 — standalone agent container contract
+
+Validated from Zoomies 1.3.4 upstream documentation:
+
+- `ghcr.io/eyupio/zoomies-agent` is the supported standalone agent image;
+- the agent container redeems `ZOOMIES_JOIN_TOKEN` on first start;
+- the lasting host credential is persisted in the agent state volume;
+- later starts reuse that credential without another join;
+- `ZOOMIES_AGENT_NAME` should be explicit for stable unique host identity;
+- the agent image runs unprivileged;
+- the agent requires a runtime socket only for its own runner-container management;
+- workflow jobs do not receive that socket unless a pool explicitly selects `host-socket`.
+
+Preset-specific hardening:
+
+- use the dedicated rootless Docker socket rather than `/var/run/docker.sock`;
+- pass only the rootless socket-owning group to the agent container;
+- keep `host-socket` pool mode prohibited;
+- remove the spent join token from deployment environment after first successful enrollment.
+
+Live container-agent acceptance remains pending.
