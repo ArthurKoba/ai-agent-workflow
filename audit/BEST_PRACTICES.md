@@ -63,3 +63,6 @@ Reading a rule is not enough. Before sending output governed by an active skill/
 
 ## B-023 — Isolate build-lane environment
 WSL/container/native Linux builds must use the environment contract of that lane. Do not let host Windows PATH/toolchain state leak into Buildroot or other Linux-native builds. Reuse a known clean environment instead of rediscovering it after failure.
+
+## B-024 — Observable safety-block incident loop
+During reverse/behavior analysis, every provider/safety/pre-tool block becomes a durable, sanitized incident evidence point. Re-read the active behavior-analysis terminology before the next analysis call, consolidate repeated occurrences into the same infrastructure issue when they share a failure class, and distinguish the block from target evidence.

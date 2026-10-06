@@ -91,4 +91,9 @@ Mitigation: explicit pre-send compliance gate. Hard Project/skill constraints ou
 A WSL/container/Linux-native build inherits host environment entries that are invalid or unsafe for the build system. Example: Windows `PATH` entries under `/mnt/c/Program Files/...` reach Buildroot, which rejects PATH values containing spaces.
 Mitigation: explicit build-lane environment isolation; restore the known Linux-only PATH, reset shell command hashing, and keep Linux-native builds on the intended Linux workspace/toolchain surface.
 
+
+## E-023 — Tool safety/provider block disappears from the evidence trail
+A provider, policy, safety or pre-tool block is treated as a transient inconvenience: the agent switches paths, but the exact blocked invocation is never recorded, so repeated false positives cannot be correlated or fixed.
+Mitigation: on every block, re-read the active domain terminology/rules, record a sanitized invocation evidence point, deduplicate against the configured infrastructure incident tracker, append to an existing analogous issue or create one, then continue through a legitimate alternate evidence path.
+
 Add a new class only when root cause or mitigation is materially different.

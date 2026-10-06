@@ -96,3 +96,11 @@ Large project maps and mandatory current-state/rule bundles were identified as a
 The workflow now treats context budget as an explicit engineering constraint. `context-engineering` defines compact repository maps, shared-contract ownership, code-as-implementation-authority, just-in-time rule loading and staged specialist passes for implementation, architecture, package/import boundaries, consistency, API/contracts, persistence/performance and code-quality/style.
 
 Automation/quality effect: agents spend more context on the current decision, backend/frontend can synchronize through one shared contract authority, and later refactoring/review agents can load only the concern-specific rules needed for their pass.
+
+## 12 — Observable provider/safety incident feedback
+
+Reverse-analysis work now treats provider/policy/safety/pre-tool blocks as first-class infrastructure evidence. Each occurrence triggers a narrow reload of the active behavior-analysis terminology, a sanitized capture of the blocked invocation, deduplication into the configured incident tracker, and continuation through a legitimate alternate evidence path when available.
+
+Repeated instances of the same failure class are accumulated in one issue rather than scattered across chats. This separates tool/provider failures from target evidence while building enough invocation-level history to diagnose false-positive safety checks and improve the MCP/provider layer.
+
+Automation/quality effect: analysis can continue without blind retries, while safety/provider regressions become measurable and repairable instead of ephemeral.

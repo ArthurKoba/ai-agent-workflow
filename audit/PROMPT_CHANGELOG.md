@@ -1,5 +1,17 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Reverse-analysis safety-block incident loop
+
+Changes:
+- behavior-analysis now treats provider/policy/safety/pre-tool blocks as infrastructure evidence rather than target evidence;
+- every such block requires a narrow re-read of the current behavior-analysis terminology before the next reverse-analysis invocation;
+- blocked invocations are recorded with sanitized request shape, purpose, block text, backend-reached state and alternate-path result;
+- agents must reuse an analogous infrastructure issue when one exists and append each occurrence, otherwise create a new issue;
+- added E-023 / B-024 so recurring safety false positives build a durable diagnostic corpus instead of disappearing in chat history.
+
+Reason:
+A read-only reverse-analysis batch request was blocked before reaching the Analysis backend while narrower individual requests remained legitimate. The immediate workaround preserved progress, but without a durable incident loop the exact blocked request would be lost and repeated provider/safety false positives would remain hard to diagnose.
+
 ## 2026-09 — Browser-first web routing with cURL fallback
 
 Changes:
