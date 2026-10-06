@@ -128,13 +128,34 @@ Typical candidates:
 
 Prefer canonical variable names already understood by images. Do not invent a stack-specific forwarding alias solely to map an unchanged value into `TZ`, `HTTP_PROXY`, or another standard variable.
 
-If one canonical value feeds components with different names, map from the canonical variable:
+Timezone deserves special treatment because most images already understand the canonical `TZ` key.
+
+Prefer a shared `TZ` variable instead of inventing stack-specific names such as
+`APP_TIMEZONE`, `SERVICE_TIMEZONE`, or `VPN_CORE_TIMEZONE` unless the
+application itself requires such a key.
+
+Choose the shared scope according to ownership:
+
+- team scope for a broad organizational default;
+- project scope when the whole project shares one timezone;
+- environment scope when staging/production or regions differ;
+- resource scope only when one deployment genuinely differs.
+
+Coolify shared references are explicit, not an automatic cascading inheritance
+system. If a project needs to override a team-level default, point that
+deployment at the project-scoped value explicitly rather than assuming
+`{{project.TZ}}` will transparently fall back to `{{team.TZ}}`.
+
+If one canonical value feeds components with different names, map from the same
+shared value directly:
 
 ```yaml
 environment:
-  TZ: ${TZ:-UTC}
-  tz: ${TZ:-UTC}
+  TZ: '{{project.TZ}}'
+  tz: '{{project.TZ}}'
 ```
+
+Use the actual selected scope for the deployment; the example above shows project scope.
 
 ## Coolify variable flags
 
