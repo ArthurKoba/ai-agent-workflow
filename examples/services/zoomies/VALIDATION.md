@@ -56,7 +56,16 @@ Additional observed details:
 - the manifest creation page accepted the shortened App name and was ready to create the App under the personal account;
 - GitHub authentication is a user-interactive step; credentials are not handled by the automation.
 
-No GitHub installation is marked accepted until the manifest flow returns successfully and the installation appears in Zoomies.
+Observed after manifest creation:
+
+- GitHub App object creation completed and Zoomies sealed the generated key;
+- the controller advanced to the explicit installation step;
+- GitHub delivered a `ping` webhook before installation existed;
+- Zoomies rejected that early ping because no installation/webhook-secret context was configured yet.
+
+This is expected pre-installation behavior, not webhook acceptance.
+
+No GitHub installation is marked accepted until the App is installed on the intended target and that installation appears in Zoomies.
 
 ## Pending acceptance
 

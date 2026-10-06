@@ -97,3 +97,19 @@ Observed on GitHub.com with Zoomies 1.3.4:
 - for a personal-account repository target, GitHub creates the App under that personal account.
 
 A short stable name such as `Koba Zoomies CI` is preferable to embedding a long repository slug in the App name.
+
+
+## App creation versus installation
+
+A successful manifest creation returns to Zoomies before installation is complete.
+
+Observed sequence:
+
+1. GitHub creates the App and returns the manifest exchange code;
+2. Zoomies exchanges the code and seals the generated App private key in controller state;
+3. GitHub may send an initial `ping` webhook immediately;
+4. before an installation exists, Zoomies can reject that ping because it does not yet have an installation/webhook-secret context to validate against;
+5. install the App on the intended repository/account target;
+6. only after the installation is recorded should webhook acceptance be used as a connectivity check.
+
+Do not treat a pre-installation rejected `ping` as proof that the public webhook endpoint is broken.
