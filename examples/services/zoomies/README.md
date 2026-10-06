@@ -90,9 +90,9 @@ Keep the encryption key in a Coolify shared variable at the narrowest useful sco
 5. Connect GitHub using the product's GitHub App flow.
 6. Add a trusted host running the Zoomies agent.
 7. Create a first pool with conservative capacity.
-8. Point one GitHub Actions workflow at that pool.
-9. Validate a normal job.
-10. Validate Docker-in-Docker for workflows that require Docker.
-11. Retain the legacy runner until real workload acceptance succeeds.
+8. Validate one normal GitHub Actions job against that pool.
+9. Validate Docker-in-Docker for workflows that require Docker.
+10. Use **Migrate repositories** to rewrite existing `runs-on` labels, review exact diffs and open PRs across the intended repositories.
+11. Retain the legacy runner until real workload acceptance succeeds and migration PRs are accepted.
 
 Do not promote later steps to "validated" until the real job path has succeeded.
