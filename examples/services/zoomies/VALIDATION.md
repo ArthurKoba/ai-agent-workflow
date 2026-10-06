@@ -40,11 +40,44 @@ Validated:
 - authenticated Overview loads;
 - controller reports a live application connection.
 
+## Stage 4 — GitHub App manifest discovery
+
+Validated from the authenticated Zoomies 1.3.4 Installations flow:
+
+- controller offers GitHub App manifest creation;
+- webhook endpoint is derived from the controller external URL at `/webhooks/github`;
+- target scope is explicitly either organisation or single repository;
+- the UI exposes the exact requested GitHub App permissions before redirecting to GitHub;
+- personal-account use requires repository-target installations because GitHub has no account-wide personal runner registration.
+
+Additional observed details:
+
+- the generated default App name can exceed GitHub's 34-character name limit for a long repository target;
+- the manifest creation page accepted the shortened App name and was ready to create the App under the personal account;
+- GitHub authentication is a user-interactive step; credentials are not handled by the automation.
+
+Observed after manifest creation:
+
+- GitHub App object creation completed and Zoomies sealed the generated key;
+- the controller advanced to the explicit installation step;
+- GitHub delivered a `ping` webhook before installation existed;
+- Zoomies rejected that early ping because no installation/webhook-secret context was configured yet.
+
+This is expected pre-installation behavior, not webhook acceptance.
+
+Observed installation stage:
+
+- GitHub installation was granted **All repositories** for the personal account;
+- GitHub redirected back with an installation ID;
+- `installation.created` arrived before the controller's local Finish step and was rejected for the same missing-local-installation context as the earlier ping.
+
+No GitHub installation is marked accepted until the local Finish step records the installation and Zoomies shows it as connected.
+
 ## Pending acceptance
 
 Still required:
 
-1. GitHub App connection and installation;
+1. complete the first repository-target GitHub App installation;
 2. trusted host enrollment;
 3. pool creation;
 4. normal GitHub Actions job success;
@@ -54,3 +87,24 @@ Still required:
 8. legacy runner retirement decision.
 
 The legacy runner remains rollback until these gates pass.
+
+
+## Stage 5 — multi-owner GitHub connections
+
+Validated:
+
+- personal-account GitHub App created and connected;
+- personal App installation granted **All repositories**;
+- Zoomies repository target connected and API verification succeeded;
+- organisation-owned GitHub App created for a second owner scope;
+- organisation App installation granted **All repositories**;
+- organisation target connected and API verification succeeded;
+- Zoomies reported two healthy GitHub connections simultaneously;
+- both connections had healthy API quota readings.
+
+Observed architecture difference:
+
+- personal-account connection remains repository-scoped for runner registration even when the App installation can access all personal repositories;
+- organisation connection is organisation-scoped and can use organisation self-hosted runner management.
+
+Webhook acceptance remains pending until a post-Finish GitHub event is accepted. Pre-Finish `ping` and `installation.created` rejections are recorded but are not acceptance failures.
