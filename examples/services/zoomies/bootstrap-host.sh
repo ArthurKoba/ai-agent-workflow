@@ -215,7 +215,7 @@ enroll_agent_if_requested() {
     local service_user
     service_user=$(systemctl show zoomies-agent.service -p User --value)
     [[ "$service_user" == "$ZOOMIES_USER" ]] || \
-      die "zoomies-agent.service runs as \${service_user:-root}, expected $ZOOMIES_USER"
+      die "zoomies-agent.service runs as ${service_user:-root}, expected $ZOOMIES_USER"
   fi
 }
 
