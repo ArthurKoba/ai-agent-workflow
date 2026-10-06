@@ -160,7 +160,7 @@ setup_rootless_docker() {
     [[ -S "$DOCKER_SOCKET" ]] && break
     sleep 0.5
   done
-  [[ -S "$DOCKER_SOCKET" ]] || die "rootless Docker socket did not appear at $DOCKER_SOCKERT"
+  [[ -S "$DOCKER_SOCKET" ]] || die "rootless Docker socket did not appear at $DOCKER_SOCKET"
 
   local socket_uid security root_dir
   socket_uid=$(stat -c %u "$DOCKER_SOCKET")
@@ -176,7 +176,7 @@ setup_rootless_docker() {
   cat > /etc/zoomies/rootless-runtime.env <<EOF_RUNTIME
 ZOOMIES_DOCKER_HOST=$DOCKER_HOST_URI
 ZOOMIES_AGENT_DOCKER_BUILD_CACHE_MB=$BUILD_CACHE_MB
-EOF_RUNTIMER
+EOF_RUNTIME
   chmod 0644 /etc/zoomies/rootless-runtime.env
 }
 
@@ -184,8 +184,54 @@ assert_privilege_boundary() {
   local groups
   groups=" $(id -nG "$ZOOMIES_USER") "
   [[ "$groups" != *" docker "* ]] || die "$ZOOMIES_USER is in docker group"
-  [[ "$groups" != *" sudo "* ]] || die "$ZOOMIES_USER" is in sudo group"
+  [[ "$groups" != *" sudo "* ]] || die "$ZOOMIES_USER is in sudo group"
   [[ "$groups" != *" wheel "* ]] || die "$ZOOMIES_USER is in wheel group"
 
   if command -v sudo >/dev/null 2>&1 && runuser -u "$ZOOMIES_USER" -- sudo -n true >/dev/null 2>&1; then
-    die "$ZOOMIES_USER …¸ÍÕ‘¼ˆ(€™¤((€ml€ˆ‘=-I}M=-Pˆ€„ô€ˆ½Ù…È½ÉÕ¸½‘½­•È¹Í½¬ˆutñð‘¥”€‰É½½Ñ™Õ°½­•ÈÍ½­•Ð¥Ì™½É‰¥‘‘•¸ˆ)ô()•¹É½±±}…•¹Ñ}¥™}É•ÅÕ•ÍÑ• ¤ì(€ml€µ¸€ˆ‘)=%9}Q=-8ˆutñðÉ•ÑÕÉ¸€À(€½µµ…¹€µØÕÉ°€ø½‘•Ø½¹Õ±°€Èø˜Äñð‘¥”€‰ÕÉ°¥ÌÉ•ÅÕ¥É•™½Èi½½µ¥•Ì•¹É½±±µ•¹Ðˆ((€±½œ€‰•¹É½±±¥¹œi½½µ¥•Ì…•¹ÐÝ¥Ñ Ñ¡”½™™¥¥…°¥¹ÍÑ…±±•Èˆ(€€ŒQ¡”½¹”µÑ¥µ”Ñ½­•¸•á¥ÍÑÌ½¹±ä¥¸Ñ¡¥ÌÁÉ½•ÍÌ•¹Ù¥É½¹µ•¹Ð½…ÉÕµ•¹ÐÍÑÉ•…´¸(€€ŒI½½Ð¥ÌÕÍ•Ñ¼¥¹ÍÑ…±°Ñ¡”Í•ÉÙ¥”°‰ÕÐÑ¡”É•ÍÕ±Ñ¥¹œÍ•ÉÙ¥”µÕÍÐÉÕ¸…Ì(€€ŒÑ¡”‘•‘¥…Ñ•i½½µ¥•Ì…½Õ¹Ð¸Q¡”É½½Ñ±•ÍÌÍ½­•Ð¥ÌÁ¥¹¹••áÁ±¥¥Ñ±ä¸(€•áÁ½ÉÐ=-I}!=MPôˆ‘=-I}!=MQ}UI$ˆ((€•áÁ½ÉÐi==5%M}=-I}!=MPôˆ‘=-I}!=MQ}UI$ˆ(€•áÁ½ÉÐi==5%M}9Q}=-I}	U%1}!}5ôˆ‘	U%1}!}5ˆ(€ÕÉ°€µ™ÍM0¡ÑÑÁÌè¼½é½½µ¥•Ì¹Í ½¥¹ÍÑ…±°¹Í ðÍ €µÌ€´´p(€€€€´µµ½‘”…•¹Ðp(€€€€´µ½¹ÑÉ½±±•È€ˆ‘=9QI=11I}UI0ˆp(€€€€´µ©½¥¸µÑ½­•¸€ˆ‘)=%9}Q=-8ˆp(€€€€´µÙ•ÉÍ¥½¸€ˆ‘i==5%M}YIM%=8ˆ((€¥˜ÍåÍÑ•µÑ°…Ðé½½µ¥•Ìµ…•¹Ð¹Í•ÉÙ¥”€ø½‘•Ø½¹Õ±°€Èø˜ÄìÑ¡•¸(€€€±½…°Í•ÉÙ¥•}ÕÍ•È(€€€Í•ÉÙ¥•}ÕÍ•Èô¡ÍåÍÑ•µÑ°Í¡½Üé½µ¥•Ìµ…•¹Ð¹Í•ÉÙ¥”€µÀUÍ•È€´µÙ…±Õ”¤(€€€ml€ˆ‘Í•ÉÙ¥•}ÕÍ•Èˆ€ôô€ˆ‘i==5%M}UMHˆutñðp(€€€€€‘¥”€‰é½µ¥•Ìµ…•¹Ð¹Í•ÉÙ¥”ÉÕ¹Ì…Ì€‘íÍ•ÉÙ¥•}ÕÍ•ÈèµÉ½½Ñô°•áÁ•Ñ•€‘i==5%M}UMHˆ(€™¤)ô()¥¹ÍÑ…±±}É½½Ñ±•ÍÍ}ÁÉ•É•ÅÌ)•¹ÍÕÉ•}ÕÍ•È)…ÍÍ•ÉÑ}ÁÉ¥Ù¥±••}‰½Õ¹‘…Éä)Í•ÑÕÁ}É½½Ñ±•ÍÍ}‘½­•È)…ÍÍ•ÉÑ}ÁÉ¥Ù¥±••}‰½Õ¹‘…Éä)•¹É½±±}…•¹Ñ}¥™}É•ÅÕ•ÍÑ•()±½œ€‰‰½½ÑÍÑÉ…À…•ÁÑ•ˆ)±½œ€‰ÕÍ•Èè€‘i==5%M}UMH€¡Õ¥ô‘i==5%M}U%¤°¹¼ÍÕ‘¼½‘½­•ÈµÉ½ÕÀ…•ÍÌˆ)±½œ€‰½­•ÈèÉ½½Ñ±•ÍÌ…Ð€‘=-I}!=MQ}UI$ˆ)±½œ€‰ÉÕ¹Ñ¥µ”•¹Øè€½•ÑŒ½é½½µ¥•Ì½É½½Ñ±•ÍÌµÉÕ¹Ñ¥µ”¹•¹Øˆ)¥˜ml€µè€ˆ‘)=%9}Q=-8ˆutìÑ¡•¸(€±½œ€‰ÉÕ¹Ñ¥µ”¥ÌÉ•…‘äìÉ•ÉÕ¸Ý¥Ñ €´µ½¹ÑÉ½±±•È…¹€´µ©½¥¸µÑ½­•¸Ñ¼•¹É½±°Ñ¡”…•¹Ðˆ)•±Í”(€±½œ€‰…•¹Ð•¹É½±±µ•¹ÐÉ•ÅÕ•ÍÑ•ìÙ•É¥™äÑ¡”¡½ÍÐ¥Ì=¹±¥¹”¥¸i½½µ¥•Ì‰•™½É”É•…Ñ¥¹œÁ½½±Ìˆ)™¤(
+    die "$ZOOMIES_USER can sudo"
+  fi
+
+  [[ "$DOCKER_SOCKET" != "/var/run/docker.sock" ]] || die "rootful Docker socket is forbidden"
+}
+
+enroll_agent_if_requested() {
+  [[ -n "$JOIN_TOKEN" ]] || return 0
+  command -v curl >/dev/null 2>&1 || die "curl is required for Zoomies enrollment"
+
+  log "enrolling Zoomies agent with the official installer"
+  # The one-time token exists only in this process environment/argument stream.
+  # Root is used to install the service, but the resulting service must run as
+  # the dedicated Zoomies account. The rootless socket is pinned explicitly.
+  export DOCKER_HOST="$DOCKER_HOST_URI"
+  export ZOOMIES_DOCKER_HOST="$DOCKER_HOST_URI"
+  export ZOOMIES_AGENT_DOCKER_BUILD_CACHE_MB="$BUILD_CACHE_MB"
+  curl -fsSL https://zoomies.sh/install.sh | sh -s -- \
+    --mode agent \
+    --controller "$CONTROLLER_URL" \
+    --join-token "$JOIN_TOKEN" \
+    --version "$ZOOMIES_VERSION"
+
+  if systemctl cat zoomies-agent.service >/dev/null 2>&1; then
+    local service_user
+    service_user=$(systemctl show zoomies-agent.service -p User --value)
+    [[ "$service_user" == "$ZOOMIES_USER" ]] || \
+      die "zoomies-agent.service runs as \${service_user:-root}, expected $ZOOMIES_USER"
+  fi
+}
+
+install_rootless_prereqs
+ensure_user
+assert_privilege_boundary
+setup_rootless_docker
+assert_privilege_boundary
+enroll_agent_if_requested
+
+log "bootstrap accepted"
+log "user: $ZOOMIES_USER (uid=$ZOOMIES_UID), no sudo/docker-group access"
+log "Docker: rootless at $DOCKER_HOST_URI"
+log "runtime env: /etc/zoomies/rootless-runtime.env"
+if [[ -z "$JOIN_TOKEN" ]]; then
+  log "runtime is ready; rerun with --controller and --join-token to enroll the agent"
+else
+  log "agent enrollment requested; verify the host is Online in Zoomies before creating pools"
+fi
