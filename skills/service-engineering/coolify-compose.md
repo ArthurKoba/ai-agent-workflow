@@ -15,6 +15,43 @@ Keep these layers distinct:
 
 When parser behavior matters, inspect the deployed Coolify version's parser/source instead of assuming generic Compose behavior.
 
+## Repository and build-path contract
+
+When a Compose manifest contains orchestrator-specific semantics, prefer a layout that names the orchestrator explicitly:
+
+```text
+deploy/<orchestrator>/<service>/
+```
+
+For Coolify:
+
+```text
+deploy/coolify/<service>/
+```
+
+This distinguishes a Coolify parser contract from a generic Compose file that might be usable by other runtimes.
+
+Coolify's **Docker compose location is relative to Base directory**. Do not repeat the base path in both fields.
+
+Example:
+
+```text
+Base directory: /deploy/coolify/example
+Docker compose location: /docker-compose.yaml
+Watch paths: deploy/coolify/example/**
+```
+
+Do not configure:
+
+```text
+Base directory: /deploy/coolify/example
+Docker compose location: /deploy/coolify/example/docker-compose.yaml
+```
+
+unless the deployed Coolify version explicitly documents a different path contract.
+
+Keep watch paths repository-relative and narrow to the service's deployment directory so unrelated infrastructure changes do not trigger redeployments.
+
 ## Configuration classification
 
 Classify every configurable value before writing the manifest.

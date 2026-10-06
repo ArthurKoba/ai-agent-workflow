@@ -33,16 +33,19 @@ A useful default for a private infrastructure repository is:
 
     AGENTS.md
     README.md
-    stacks/
-      <service>/
-        docker-compose.yaml
-        README.md
+    deploy/
+      <orchestrator>/
+        <service>/
+          docker-compose.yaml
+          README.md
     inventory/
     docs/
       architecture.md
       migrations/
 
-Keep each deployable stack in its own directory so the runtime platform can watch and redeploy only the affected stack.
+Use `deploy/<orchestrator>/<service>/` when manifests contain provider/parser-specific semantics. A generic `stacks/<service>/` layout remains reasonable only when the deployment definition is intentionally orchestrator-neutral.
+
+Keep each deployable service in its own directory so the runtime platform can watch and redeploy only the affected deployment.
 
 ## Coolify specialization
 
