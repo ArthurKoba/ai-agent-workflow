@@ -69,3 +69,7 @@ During reverse/behavior analysis, every provider/safety/pre-tool block becomes a
 
 ## B-025 — Persist research exhaustion and stay reverse-first
 For legacy/obscure silicon, once bounded public research has failed to produce authoritative material, record that boundary and make target reverse the default in later sessions. Reopen web/source research only for a new concrete lead or explicit user request; do not restart family-wide searching merely because a new agent/chat began.
+
+
+## B-026 — Delta-first progress reporting
+Ordinary report requests show only changes since the previous report checkpoint: changed progress as a scalar `before -> after`, unique new findings, current goal status and the immediate next path. Full/detailed reports intentionally reconstruct the complete current state. Long-running tasks persist enough report-checkpoint state to make the delta recoverable after context changes.

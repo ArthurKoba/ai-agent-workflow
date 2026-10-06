@@ -22,6 +22,7 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 4. If changing the agent system itself, also read `audit/README.md`, `audit/CONTEXT_MAINTENANCE.md` and `docs/SYSTEM_ARCHITECTURE.md`.
 5. If creating/restructuring skills, also read `docs/SKILL_AUTHORING.md`.
 6. If touching tooling/MCP/infrastructure strategy, read `docs/MCP_STRATEGY.md`.
+7. For long-running work or any user-facing progress/report request, read `docs/REPORTING_PROTOCOL.md`.
 
 ## Routing
 

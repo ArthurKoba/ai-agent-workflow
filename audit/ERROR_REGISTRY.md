@@ -100,4 +100,8 @@ Mitigation: on every block, re-read the active domain terminology/rules, record 
 A reverse-analysis agent repeats generic web/source/datasheet/SDK searches for the same legacy or obscure processor/controller even though prior project evidence already established that the public path is exhausted. This consumes time, duplicates weak family-level material and displaces target reverse.
 Mitigation: persist the research-exhausted boundary. Do not reopen generic external research without a new concrete artifact/identifier lead or an explicit user request; continue from target firmware, Analysis and runtime/board evidence instead.
 
+## E-025 — Compact progress reports repeat unchanged state
+A long-running agent answers every ordinary report request by restating the same baseline, completed areas and old findings instead of reporting the delta since the previous report. This hides real progress, increases noise and makes progress numbers hard to compare.
+Mitigation: use the reporting protocol. Plain reports are delta reports against the previous report checkpoint, changed directions use scalar `before -> after` progress, unchanged material is omitted, and the next decision boundary is always stated. Full/detailed reports remain comprehensive snapshots.
+
 Add a new class only when root cause or mitigation is materially different.
