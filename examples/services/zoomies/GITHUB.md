@@ -20,14 +20,46 @@ Acceptance:
 
 From the authenticated Overview, use **Connect GitHub** / **Installations**.
 
-Do not pre-document exact permissions from memory. Record the actual App permissions, callback/webhook behavior and installation scope observed during the product flow.
+Zoomies 1.3.4 uses GitHub's App manifest flow and shows the exact contract before leaving the controller.
+
+Observed webhook endpoint shape:
+
+```text
+https://<zoomies-domain>/webhooks/github
+```
+
+Observed permissions for an organisation target:
+
+```text
+organization_self_hosted_runners: write
+actions: write
+metadata: read
+contents: write
+pull_requests: write
+workflows: write
+event: workflow_job
+```
+
+For a repository target, GitHub uses repository administration permission instead of the organisation runner-management permission:
+
+```text
+administration: write
+```
+
+Purpose observed in the Zoomies flow:
+
+- runner-management write permission — register/remove ephemeral runners;
+- `actions: write` — read workflow jobs and allow workflow cancellation from Zoomies;
+- `metadata: read` — mandatory GitHub App metadata access;
+- `contents: write`, `pull_requests: write`, `workflows: write` — migration wizard support;
+- `workflow_job` — low-latency queue/scaling webhook.
+
+If the migration wizard will never be used, review whether its repository-write permissions can be removed after setup. Revalidate actual product behavior after changing App permissions.
 
 Principles:
 
-- use a dedicated GitHub App rather than a personal access token;
-- grant only the permissions required by Zoomies;
-- install it only for the repositories/owner scope intended for this runner fleet;
-- do not grant workflow-write or repository-administration permissions unless the product demonstrably requires them;
+- use the manifest-created dedicated GitHub App rather than a personal access token;
+- install it only for the intended owner/repository scope;
 - never commit App private keys, client secrets, webhook secrets or installation secrets.
 
 ## Acceptance before host enrollment
@@ -40,3 +72,16 @@ GitHub integration is accepted only when:
 4. no unrelated repository scope is granted.
 
 After that, continue with host enrollment and pool creation.
+
+
+## Organisation versus personal account
+
+GitHub has organisation-level self-hosted runners, but no personal-account-wide runner registration.
+
+Therefore:
+
+- an organisation target can serve multiple repositories through one installation/pool scope;
+- a personal account uses a repository target written as `owner/repository`;
+- each personal-account repository that should use Zoomies needs its own repository-target installation and pool, while the same Zoomies fleet/hosts can provide the compute.
+
+For first acceptance on a personal account, prefer a private repository so untrusted public pull-request code cannot reach a newly commissioned self-hosted runner before the trust model is proven.

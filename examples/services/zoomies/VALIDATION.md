@@ -40,11 +40,23 @@ Validated:
 - authenticated Overview loads;
 - controller reports a live application connection.
 
+## Stage 4 — GitHub App manifest discovery
+
+Validated from the authenticated Zoomies 1.3.4 Installations flow:
+
+- controller offers GitHub App manifest creation;
+- webhook endpoint is derived from the controller external URL at `/webhooks/github`;
+- target scope is explicitly either organisation or single repository;
+- the UI exposes the exact requested GitHub App permissions before redirecting to GitHub;
+- personal-account use requires repository-target installations because GitHub has no account-wide personal runner registration.
+
+No GitHub installation is marked accepted until the manifest flow returns successfully and the installation appears in Zoomies.
+
 ## Pending acceptance
 
 Still required:
 
-1. GitHub App connection and installation;
+1. complete the first repository-target GitHub App installation;
 2. trusted host enrollment;
 3. pool creation;
 4. normal GitHub Actions job success;
