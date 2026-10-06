@@ -32,6 +32,41 @@ Use explicit evidence states when a conclusion is not self-evident:
 
 Capability evidence is not topology proof. A datasheet feature, SDK option or firmware code path does not prove that a product PCB routes or uses that capability.
 
+`WITHDRAWN` is a historical-status marker, not a live evidence state. Use it when a previous semantic interpretation has been invalidated and must remain visible only to prevent later reuse. The current claim itself must still be classified as `UNKNOWN`, `LIKELY`, `CONFIRMED` or `CONTRADICTION` as appropriate.
+
+## Semantic naming lifecycle
+
+Every recovered semantic object must track evidence strength and keep its persisted metadata at the same strength. This applies to action nodes and boundaries, states/globals, MMIO registers and fields, constants/enums, structures, protocol fields, addresses/labels, transitions and action links.
+
+Use this lifecycle:
+
+1. **UNKNOWN** — preserve exact raw identity and structure, but do not invent a semantic owner or product meaning. Keep a generic/structural name when that is all the evidence supports.
+2. **LIKELY** — a conservative provisional semantic name is allowed when it improves navigation, but the name must assert no more than the evidence proves. Prefer observed behavior over vendor/component identity. When ambiguity would otherwise be hidden, use the project's provisional/candidate naming convention and record `LIKELY` plus the supporting evidence and unresolved condition in the comment.
+3. **CONFIRMED** — when reproducible target evidence closes the behavior contract, promote the object to its precise semantic name. In the same coherent materialization pass, remove obsolete provisional markers and update the comment, type/prototype, enum/field names, boundary and proven links/relationships that depend on the stronger conclusion.
+4. **CONTRADICTION** — stop relying on the affected semantic edge immediately. Demote or neutralize any name/type/comment that now asserts too much, record the conflicting evidence, and do not restore a strong name until the contradiction is resolved.
+5. **WITHDRAWN interpretation** — retire or rename stale aliases and misleading semantic names. Keep a historical note only when it prevents a known-bad interpretation from being reintroduced.
+
+Confidence is not monotonic. A semantic object may be promoted, demoted or withdrawn as new evidence appears. Persisted names must change with the evidence state; a stale strong name is itself a documentation defect.
+
+### Materialization checklist
+
+For each recovered object, materialize as much of the following as the evidence supports:
+
+- exact object identity: address, storage, action boundary or protocol location;
+- current evidence state and the primary evidence point(s) that justify it;
+- one canonical semantic name at the correct confidence level;
+- a comment that states the recovered behavior/control contract and the remaining unknowns;
+- type, prototype, enum, structure/field or register-bit semantics only when width/layout/ABI evidence supports them;
+- proven transitions, inbound/outbound action links and data relationships, repairing stale boundaries/links before naming through them;
+- retirement of stale aliases, contradictory comments and superseded provisional names;
+- a stable save/checkpoint after the coherent semantic mutation batch.
+
+When the same register, state, constant or protocol field appears in multiple actions, reuse one canonical semantic object/name after identity is established. Do not create per-action synonyms for the same recovered contract, and do not merge equal numeric values into one semantic object until references and lifecycle behavior prove that identity.
+
+Raw addresses and numeric values remain exact evidence, but they are not semantic names by themselves. A precise-looking name must never encode a stronger owner, protocol, physical pin role, hardware block identity or product meaning than the current evidence state supports.
+
+If a required rename/type/boundary/link mutation is temporarily blocked by tooling, annotate the nearest stable object with the proven semantics, current evidence state and stale-metadata warning so the handoff surface does not silently preserve the wrong interpretation.
+
 ## Validation levels
 
 Keep these levels separate:
