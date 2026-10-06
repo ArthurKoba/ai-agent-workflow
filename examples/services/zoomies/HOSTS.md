@@ -79,6 +79,14 @@ The bootstrap is idempotent and fail-closed. It:
 
 Root is used only for this host bootstrap. No Zoomies agent process is installed as a root-owned native service.
 
+Run the reviewed bootstrap once:
+
+```bash
+curl -fsSL <pinned-bootstrap-url> | bash
+```
+
+For production, pin the URL to a reviewed commit rather than a moving branch. The script prints the accepted uid/gid/socket values and writes them to `/etc/zoomies/rootless-runtime.env`.
+
 ## Preferred standalone agent: container
 
 Zoomies officially supports a standalone agent container. This is the preferred pattern for Compose/Coolify-managed hosts.
