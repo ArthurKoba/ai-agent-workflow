@@ -96,4 +96,8 @@ Mitigation: explicit build-lane environment isolation; restore the known Linux-o
 A provider, policy, safety or pre-tool block is treated as a transient inconvenience: the agent switches paths, but the exact blocked invocation is never recorded, so repeated false positives cannot be correlated or fixed.
 Mitigation: on every block, re-read the active domain terminology/rules, record a sanitized invocation evidence point, deduplicate against the configured infrastructure incident tracker, append to an existing analogous issue or create one, then continue through a legitimate alternate evidence path.
 
+## E-024 — Exhausted public research is restarted every session
+A reverse-analysis agent repeats generic web/source/datasheet/SDK searches for the same legacy or obscure processor/controller even though prior project evidence already established that the public path is exhausted. This consumes time, duplicates weak family-level material and displaces target reverse.
+Mitigation: persist the research-exhausted boundary. Do not reopen generic external research without a new concrete artifact/identifier lead or an explicit user request; continue from target firmware, Analysis and runtime/board evidence instead.
+
 Add a new class only when root cause or mitigation is materially different.
