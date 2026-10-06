@@ -165,3 +165,17 @@ Preset-specific hardening:
 - remove the spent join token from deployment environment after first successful enrollment.
 
 Live container-agent acceptance remains pending.
+
+
+## Stage 9 — embedded rootless single-host contract
+
+Validated from Zoomies 1.3.4 deployment/configuration documentation:
+
+- Docker Compose deployments support an embedded agent in the controller;
+- the agent backend is selected independently through `ZOOMIES_DOCKER_HOST`;
+- rootless Docker is supported as an agent backend;
+- the runtime socket is Zoomies' control plane for creating runner containers and is not given to workflow jobs unless a pool explicitly selects host-socket mode.
+
+For a single Coolify host, the preset therefore permits an embedded agent when the controller receives only the dedicated rootless CI daemon socket. This removes standalone-agent join-token/state lifecycle while preserving separation from the system-wide rootful Docker daemon.
+
+Live embedded-agent acceptance remains pending.

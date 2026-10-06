@@ -87,6 +87,35 @@ curl -fsSL <pinned-bootstrap-url> | bash
 
 For production, pin the URL to a reviewed commit rather than a moving branch. The script prints the accepted uid/gid/socket values and writes them to `/etc/zoomies/rootless-runtime.env`.
 
+## Single-host Compose: embedded agent on rootless Docker
+
+For a single machine that already runs the controller under Docker Compose/Coolify, the lowest-complexity deployment is the controller's built-in embedded agent pointed at the dedicated rootless daemon.
+
+This avoids:
+
+- a second Zoomies container;
+- a join token;
+- a second persistent agent credential volume;
+- native systemd agent installation.
+
+Set the controller container to:
+
+```text
+ZOOMIES_AGENT_EMBEDDED=true
+ZOOMIES_AGENT_NAME=<stable host name>
+ZOOMIES_AGENT_CAPACITY=<slot count>
+ZOOMIES_AGENT_LABELS=<host labels>
+ZOOMIES_AGENT_BACKEND=docker
+ZOOMIES_DOCKER_HOST=unix:///run/zoomies/docker.sock
+ZOOMIES_AGENT_DOCKER_BUILD_CACHE_MB=0
+```
+
+Bind only the dedicated rootless Docker socket into the controller container and add the numeric group that owns that socket.
+
+The controller is public-facing, so this pattern is acceptable only when that socket belongs to a dedicated rootless daemon whose blast radius is the unprivileged CI account. Do not use the system-wide rootful `/var/run/docker.sock`.
+
+For additional machines, use the standalone agent container below.
+
 ## Preferred standalone agent: container
 
 Zoomies officially supports a standalone agent container. This is the preferred pattern for Compose/Coolify-managed hosts.
