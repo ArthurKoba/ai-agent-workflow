@@ -50,15 +50,21 @@ Docker compose location: /deploy/coolify/example/docker-compose.yaml
 
 unless the deployed Coolify version explicitly documents a different path contract.
 
-For Git-backed Coolify resources, **Watch paths are mandatory** unless the repository explicitly documents why the resource must react to repository-wide changes. Set them repository-relative and as narrowly as possible to the service's deployment inputs, normally the service directory itself.
+For Git-backed Coolify resources, **Watch paths are mandatory** unless the repository explicitly documents why the resource must react to repository-wide changes. Set them repository-relative and as narrowly as possible to the actual deployment inputs.
 
-A missing or overly broad Watch paths contract is an acceptance blocker for Git-backed deployments: it can cause unrelated commits to rebuild/redeploy the service, while an incomplete path set can prevent required changes from triggering deployment. Treat the persisted Coolify Watch paths value as runtime state and verify it after resource creation/recreation.
+Do not automatically watch the whole service directory when it also contains README/runbook/audit files. A docs-only commit must not restart a production service unless documentation is itself a deployment input.
 
-Typical service-local value:
+Prefer explicit inputs such as:
 
 ```text
-deploy/coolify/example/**
+deploy/coolify/example/docker-compose.yaml
+deploy/coolify/example/bootstrap/**
+deploy/coolify/example/config/**
 ```
+
+Use `deploy/coolify/example/**` only when the directory is intentionally deployment-only or every file in it should trigger a redeploy.
+
+A missing or overly broad Watch paths contract is an acceptance blocker for Git-backed deployments: it can cause unrelated documentation/metadata commits to rebuild/redeploy the service, while an incomplete path set can prevent required changes from triggering deployment. Treat the persisted Coolify Watch paths value as runtime state and verify it after resource creation/recreation.
 
 If the service consumes shared repository files outside its own directory, list those paths explicitly rather than falling back to an unrestricted repository-wide trigger.
 

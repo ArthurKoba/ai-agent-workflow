@@ -121,11 +121,20 @@ Avoid UI-only Compose definitions when the same configuration can live in Git an
 ## Watch-path isolation
 
 When several stacks live in one repository:
-- give each runtime resource a narrow watch path such as `stacks/<service>/**`;
+- watch the actual deployment inputs, not automatically the whole service directory;
+- include the manifest plus bootstrap/config/source paths that materially change runtime;
+- exclude README/runbook/audit-only files when they are not deployment inputs;
 - avoid repository-wide redeploy triggers unless cross-stack coupling actually requires them;
 - document any shared file that intentionally triggers multiple stacks.
 
-This prevents unrelated documentation or another service change from causing unnecessary redeployments.
+Example:
+
+```text
+deploy/coolify/example/docker-compose.yaml
+deploy/coolify/example/bootstrap/**
+```
+
+A broad `deploy/coolify/example/**` pattern is appropriate only when that directory is deployment-only. This prevents docs-only or unrelated service changes from causing unnecessary production redeployments.
 
 ## Secrets
 
