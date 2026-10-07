@@ -83,3 +83,25 @@ Treat Coolify's Compose parser as an explicit deployment API. Encode required ex
 
 ## B-029 — Evidence-state semantic lifecycle
 Persistent behavior-analysis metadata is confidence-aware. Unknown objects stay structural; likely conclusions may use conservative provisional names; confirmed behavior is promoted to canonical semantic names and synchronized comments/types/boundaries/links; contradictions demote misleading metadata; withdrawn interpretations are retired. One semantic object keeps one canonical name across references, and stale strong names are treated as defects rather than harmless history.
+
+
+## B-030 — Freeze acceptance invariants before implementation
+Write the small set of non-negotiable outcome/architecture invariants before substantial implementation. Local failures may change implementation details but do not silently change entrypoint, user flow, trust model, persistence or validation requirements.
+
+## B-031 — Correction-triggered narrow re-bootstrap
+Repeated explicit user correction or strong dissatisfaction after a technical mismatch triggers a bounded recovery of requirements, durable state and the owning rule/source. Diagnose the drift before more mutation; do not dismiss the signal as tone and do not reload unrelated documentation.
+
+## B-032 — Lifecycle-first deployment design
+Before rollout, model clean install, repeat deploy, partial/stale state, restart/reboot, upgrade, migration and rollback where they are materially distinct. Convert the important transitions into regression or live acceptance gates.
+
+## B-033 — Prefer behavioral invariants
+Define acceptance in terms of the operation the real consumer must perform. Treat ownership IDs, parser records, generated paths and similar metadata as supporting evidence unless the platform contract makes them authoritative.
+
+## B-034 — Security boundaries follow authority
+Separate services/templates/resources are not separate trust domains unless permissions, identities, credentials, approval or deployment authority actually differ. Protect untrusted runtime workloads from the trusted infrastructure control plane instead of counting resources as isolation.
+
+## B-035 — Validate the exact execution mode
+Static/syntax checks are necessary but insufficient when production uses wrappers, stdin, sourcing, namespace entry, orchestrator interpolation or generated helper commands. Test the real invocation shape before claiming runtime readiness.
+
+## B-036 — Upstream ownership first
+Before replacing or wrapping a third-party service lifecycle, inspect its supported deployment modes, installer/source and ownership of enrollment, runtime probing, persistence, upgrades and recovery. Custom provisioning should fill a proven integration gap, not duplicate upstream policy.

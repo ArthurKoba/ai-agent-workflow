@@ -77,7 +77,18 @@ Repeat only the relevant bootstrap subset when:
 - a new task domain is entered;
 - context/handoff/agent changes;
 - a long task resumes after state uncertainty;
-- the user reports that command/routing rules were violated.
+- the user reports that command/routing rules were violated;
+- the user explicitly rejects the current technical direction, repeats the same correction, or expresses escalating frustration after a technical mismatch.
+
+For a correction-triggered re-bootstrap, do not reread the whole library. Stop speculative mutation at the next safe boundary and recover only the context needed to explain the mismatch:
+
+1. reread the latest explicit user requirements/corrections and the current durable Task Context;
+2. compare the current implementation/architecture against the original acceptance contract;
+3. identify the assumption, contradiction or ownership decision that drifted;
+4. reload only the map/skill/source authority that owns that decision;
+5. persist the corrected contract before continuing substantial implementation.
+
+Strong negative feedback is not itself technical proof, but it is operational evidence that the current task model may be wrong. Do not dismiss repeated direct correction as tone or continue the same strategy without a bounded self-audit.
 
 Do not reread everything mechanically after every tool call.
 

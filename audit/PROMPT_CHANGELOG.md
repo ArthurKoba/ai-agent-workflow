@@ -1,5 +1,31 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Contract recovery after repeated correction
+
+Changes:
+- bootstrap now treats repeated explicit technical correction or escalating dissatisfaction after a mismatch as a narrow re-bootstrap trigger;
+- context-engineering defines a correction-triggered recovery flow: stop patch stacking, recover the latest acceptance contract and durable state, identify the drifted assumption/owner, reload only the relevant authority, then persist the corrected contract;
+- audit now distinguishes acceptance-contract drift from ordinary local defects and treats repeated user correction as workflow evidence rather than conversational noise;
+- added E-029/E-030 and B-030/B-031.
+
+Reason:
+A long infrastructure integration repeatedly optimized for the latest failure and, after user corrections, sometimes continued from the same incorrect task model. The productive turning point was to stop implementation, reconstruct the non-negotiable contract and resolve contradictions before coding again. The reusable lesson is not to preload more context; it is to reload the right context when feedback proves the current model is wrong.
+
+## 2026-10 — Lifecycle-first infrastructure and parser acceptance
+
+Changes:
+- service engineering now freezes deployment-entrypoint, steady-state, privilege, persistence, manual-step and validation invariants before substantial redesign;
+- Git-backed infrastructure now requires lifecycle coverage for clean install, repeat deploy, stale/partial state, restart/reboot, upgrade/migration and rollback;
+- resource/service separation is no longer treated as a security boundary unless permissions, identities, credentials or deployment authority actually differ;
+- Docker/Compose guidance distinguishes one deployment entrypoint from one service/container and allows narrowly scoped one-shot privileged bootstrap only when the accepted trust model requires it;
+- terminal operations now require validation of the exact production invocation mode, not only shell syntax;
+- Coolify guidance now covers generated-route vs application-visible URL separation, nested generated-URL fallback, fresh-resource parser-state diagnosis, narrow legacy storage migration and user-namespace ownership semantics;
+- added E-031 through E-035 and B-032 through B-036.
+
+Reason:
+The same integration exposed several independent failure classes: happy-path-only bootstrap design, invented metadata invariants, syntax tests that did not match stdin/wrapper execution, a nominal resource split that added complexity without a new authority boundary, and duplicated lifecycle/security behavior implemented before upstream ownership was understood. Clean recreation plus behavioral acceptance closed the ambiguity.
+
+
 ## 2026-10 — Evidence-state semantic naming lifecycle
 
 Changes:
