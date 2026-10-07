@@ -129,3 +129,22 @@ Behavior-analysis metadata now follows an explicit evidence-state lifecycle inst
 Materialization now synchronizes the whole semantic object: name, comment, type/prototype, boundary and proven relationships. Repeated references reuse one canonical object, while equal magic values are not conflated without identity proof.
 
 Automation/quality effect: persistent reverse projects become safer handoff surfaces. Future agents inherit both the recovered meaning and its current certainty, reducing duplicated rediscovery, speculative overnaming and stale semantic debt.
+
+
+## 16 — Correction-triggered contract recovery
+
+Long technical sessions can fail even with good tools and documentation when the agent starts optimizing for the most recent failure instead of the accepted outcome. Repeated direct user correction is now treated as evidence that the task model itself may have drifted.
+
+The recovery pattern is deliberately narrow: stop speculative patch stacking, recover the latest explicit requirements plus durable branch/state evidence, compare the current design to the original acceptance invariants, reload only the owner of the mismatched decision, and persist the corrected contract before resuming implementation.
+
+Automation/quality effect: user feedback becomes a fast control signal for model drift without turning every negative interaction into a full-context reload. The workflow spends context on the wrong assumption, not on rereading the entire library.
+
+## 17 — Lifecycle-first deployment and authority-backed security
+
+Infrastructure integration now distinguishes deployment entrypoint, service count, steady-state container count and host runtime instead of treating them as interchangeable. Security boundaries are defined by actual identities/credentials/approval/deployment authority, not by the number of Compose files or orchestrator resources.
+
+Before rollout, substantial deployment work models clean install, repeat deploy, partial/stale state, restart/reboot, upgrade/migration and rollback. Third-party installer/runtime source is read before duplicating lifecycle/security policy. Validation follows the actual production invocation path and prefers real consumer behavior over incidental metadata such as namespace-mapped ownership IDs.
+
+Coolify-specific work also separates parser-generated routing state from application-visible canonical URLs and treats a fresh resource as a diagnostic tool when parser-managed state may be stale.
+
+Automation/quality effect: live failures are less likely to trigger architecture drift, repeat deployments become first-class acceptance cases, and orchestrator/parser behavior is validated as part of the deployment API rather than discovered one production patch at a time.
