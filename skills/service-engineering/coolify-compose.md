@@ -50,7 +50,17 @@ Docker compose location: /deploy/coolify/example/docker-compose.yaml
 
 unless the deployed Coolify version explicitly documents a different path contract.
 
-Keep watch paths repository-relative and narrow to the service's deployment directory so unrelated infrastructure changes do not trigger redeployments.
+For Git-backed Coolify resources, **Watch paths are mandatory** unless the repository explicitly documents why the resource must react to repository-wide changes. Set them repository-relative and as narrowly as possible to the service's deployment inputs, normally the service directory itself.
+
+A missing or overly broad Watch paths contract is an acceptance blocker for Git-backed deployments: it can cause unrelated commits to rebuild/redeploy the service, while an incomplete path set can prevent required changes from triggering deployment. Treat the persisted Coolify Watch paths value as runtime state and verify it after resource creation/recreation.
+
+Typical service-local value:
+
+```text
+deploy/coolify/example/**
+```
+
+If the service consumes shared repository files outside its own directory, list those paths explicitly rather than falling back to an unrestricted repository-wide trigger.
 
 ## Configuration classification
 
