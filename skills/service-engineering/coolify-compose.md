@@ -291,6 +291,39 @@ The adapters should expose only the intended HTTP port and should not acquire un
 
 After parser changes, validate the number of generated domains, owning services and internal ports on a **freshly parsed resource**. Existing resources can retain stale managed state.
 
+### Consuming generated URLs inside the application
+
+Keep routing declaration and application-visible canonical URL conceptually separate.
+
+A port-qualified magic variable such as:
+
+```yaml
+SERVICE_URL_APP_8080: /
+```
+
+primarily declares a Coolify-managed public route to internal port 8080. If the application also needs to know its own public URL for webhooks, secure-cookie derivation, OAuth redirects or generated links, prefer an ordinary overridable application variable with a generated default, for example:
+
+```yaml
+environment:
+  SERVICE_URL_APP_8080: /
+  APP_EXTERNAL_URL: ${APP_EXTERNAL_URL:-${SERVICE_URL_APP}}
+```
+
+This preserves three properties:
+
+- Coolify owns route generation/target-port state;
+- the application gets a canonical URL by default;
+- operators can override the application-level URL without changing Git.
+
+Observed on a Git-backed Coolify 4.4.1 path: directly assigning an application variable from a port-qualified magic variable in the same Compose environment could reach the final Docker Compose interpolation before that generated value was present, producing an unset-variable warning and an empty application value even though the public proxy route later existed. Treat this as parser/runtime ordering, not generic Compose behavior.
+
+Therefore validate both surfaces separately:
+
+1. the public route answers on the generated domain;
+2. application startup/runtime evidence shows its own external/canonical URL is non-empty and correct.
+
+An HTTP 200 through the proxy does not prove the application received its external URL.
+
 ## Managed file mounts
 
 When a service needs an editable configuration file, prefer Coolify's inline-content bind mount rather than an unmanaged host file:
@@ -363,6 +396,22 @@ Observed consequences on Coolify 4.3.23:
 
 During migration or refactors, compare current Git requirements with the actual resource variable/storage/domain inventory and remove only entries proven obsolete. Do not delete unknown state merely because it is absent from the latest Compose.
 
+When a parser-managed feature is introduced after a resource already exists, a reparse can materialize the variable/storage record without reproducing the same initialization path as a brand-new resource. If generated state looks impossible or internally inconsistent, recreate a disposable resource from the same Git revision before changing the manifest again. Fresh-resource reproduction distinguishes parser-state drift from source defects.
+
+### Persistent-state migration discipline
+
+Do not repair a named volume by recursively changing ownership or deleting unknown contents merely because a new container UID/GID differs.
+
+For a layout migration:
+
+1. identify which subpaths are durable authority and which are documented recreatable cache/runtime data;
+2. whitelist only proven disposable legacy paths for automatic cleanup/migration;
+3. validate their expected structure before deleting them;
+4. fail closed on unknown siblings/content;
+5. re-run the same migration on a regression fixture so repeat deploy remains idempotent.
+
+In user-namespace/rootless scenarios, files created by runner/container identities may appear on the host with subordinate mapped IDs. That alone is not corruption.
+
 ## Fresh-parse validation
 
 Parser-driven features require parser validation, not only YAML validation.
@@ -375,6 +424,7 @@ Before declaring the source ready, inspect a fresh Coolify resource and verify:
 - shared secret references are present without exposing secret values;
 - runtime logs/behavior show that shared references resolved to usable values rather than remaining literal `{{scope.KEY}}` strings;
 - generated domains exist in the expected count, under the expected services, with the expected target ports;
+- if the application consumes its own public URL, startup/runtime evidence shows the resolved canonical URL rather than only proving proxy reachability;
 - managed file mounts appear at the intended paths;
 - internal-only ports are not host-published;
 - persistent volumes refer to the intended existing data;

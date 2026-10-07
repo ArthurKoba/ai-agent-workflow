@@ -12,6 +12,34 @@ Keep three authorities distinct:
 
 Do not treat any one of these as a substitute for the others.
 
+## Trust boundaries follow authority
+
+A second Compose file, orchestrator resource or repository directory is not automatically a security boundary.
+
+Before splitting privileged provisioning from an application, draw the authority graph:
+
+- who can modify the Git definition;
+- who can merge/approve it;
+- which orchestrator identity deploys it;
+- which credentials/permissions each resource receives;
+- whether untrusted jobs/workloads can invoke or mutate the privileged path.
+
+If the same repository/reviewer/orchestrator authority can deploy both resources with the same host privileges, separating them may improve lifecycle clarity but does not materially reduce that authority. Do not trade away a required one-entrypoint/zero-touch contract and call the extra resource isolation unless permissions or deployment authority actually differ.
+
+The useful boundary is often:
+
+```text
+trusted infrastructure deployment authority
+              |
+              +-- temporary host provisioning authority
+              |
+              `-- persistent unprivileged service
+                         |
+                         `-- untrusted workload/job
+```
+
+Protect the lower-trust workload from the infrastructure control plane. Do not pretend the control plane is untrusted while still granting it the power to deploy arbitrary privileged definitions.
+
 ## Public methodology vs private state
 
 Reusable instructions belong in a public/general workflow repository when they do not expose environment-specific state.
@@ -50,6 +78,31 @@ Keep each deployable service in its own directory so the runtime platform can wa
 ## Coolify specialization
 
 When the runtime control plane is Coolify and it parses Docker Compose, also load `coolify-compose.md`. Parser-managed environment variables, domains and file mounts are part of the desired-state contract and must be validated on a freshly parsed resource.
+
+## Acceptance contract and lifecycle matrix
+
+Before implementation, record the small set of deployment invariants that must survive every fix, for example:
+
+- one vs multiple deployment entrypoints;
+- allowed persistent services;
+- which component may ever hold host/root privileges;
+- state/backup ownership;
+- zero-touch vs allowed post-install/manual steps;
+- clean-host assumptions;
+- rollback dependency that must stay alive until replacement acceptance.
+
+Then model materially different lifecycle rows:
+
+| State | Expected behavior |
+| --- | --- |
+| clean install | all required prerequisites are created or a precise unsupported-state error is raised |
+| repeat deploy | healthy state is checked/idempotently preserved; no destructive reinstall |
+| partial/stale prior state | known legacy state has an explicit migration; unknown state fails closed |
+| restart/reboot | persistent runtime reconnects without re-enrollment/manual repair where required |
+| version upgrade | pinned/versioned components converge according to an explicit upgrade contract |
+| rollback | known-good dependency remains usable until replacement acceptance |
+
+Do not let the most recent failed deploy rewrite this table implicitly.
 
 ## Git-backed deployment pattern
 

@@ -76,6 +76,21 @@ Hard skill/project constraints outrank response-completeness, convenience, compa
 If the draft violates a hard constraint, rewrite the draft before sending it.
 
 
+## Exact execution-mode validation
+
+Shell syntax validation does not prove the production invocation.
+
+When a script is actually executed through a wrapper, stdin, `bash -s`, `sh -c`, sourcing, `set -e/-u`, `nsenter`, generated helper command or orchestrator entrypoint, include a test that reproduces that invocation shape before rollout.
+
+Examples of failures syntax-only checks miss:
+
+- variables such as `BASH_SOURCE[0]` are unavailable or differ under stdin execution;
+- `set -u` turns an otherwise harmless absent variable into a fatal error;
+- an orchestrator wrapper changes arguments/environment/cwd;
+- namespace entry changes which filesystem/process/systemd state the script observes.
+
+Keep `bash -n`/`sh -n` as fast checks, but bind runtime readiness to the path production really uses.
+
 ## WSL environment isolation
 
 WSL is a separate execution lane even when it inherits environment from Windows.
