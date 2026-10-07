@@ -147,6 +147,21 @@ Load a rule when at least one is true:
 
 Do not load a rule merely because it is generally 'good practice'.
 
+## Correction-triggered context recovery
+
+Repeated explicit correction is a context signal.
+
+When a user rejects the same technical direction more than once, says the implementation violates an earlier requirement, or becomes strongly dissatisfied immediately after a technical mismatch:
+
+1. stop stacking local fixes;
+2. recover the latest explicit acceptance requirements and the durable task/branch state;
+3. compare the current design against those requirements rather than against the most recent failure alone;
+4. identify whether the drift is in terminology, trust model, lifecycle assumptions, ownership, validation level or tool/routing rules;
+5. load only the authority that owns that mismatch;
+6. restate/persist the corrected contract before substantial implementation resumes.
+
+Do not treat frustration as permission to guess what the user wants, and do not bulk-reload every document as a ritual. The purpose of the reset is to recover the decision model that produced the wrong work.
+
 ## Implementation and refactoring are different passes
 
 Do not force one agent/pass to optimize every quality dimension at once.

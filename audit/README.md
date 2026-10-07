@@ -22,6 +22,8 @@ For changes to the workflow library itself, also follow `CONTEXT_MAINTENANCE.md`
 ## Cadence
 Run after major phases, repeated corrections, serious incidents, before major prompt rewrites, or when enough new evidence accumulates.
 
+If the user repeatedly rejects the same technical direction or strongly signals that the agent is working from the wrong model, do not wait for the phase boundary. Run a bounded audit before more mutation: identify the violated contract/root cause, reload only its owner, and decide whether the correction belongs to project state, a reusable skill, universal workflow or tooling.
+
 Detailed project chronology is optional and belongs to the source project when useful.
 
 ## Promotion rule
