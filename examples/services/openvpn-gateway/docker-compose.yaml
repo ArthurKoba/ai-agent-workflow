@@ -1,0 +1,32 @@
+services:
+  openvpn-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      TZ: ${TZ:-UTC}
+      OPENVPN_GATEWAY_LAN_CIDR: ${OPENVPN_GATEWAY_LAN_CIDR:-}
+      OPENVPN_TUN_DEVICE: ${OPENVPN_TUN_DEVICE:-openvpn0}
+      OPENVPN_USERNAME: ${OPENVPN_USERNAME:-}
+      OPENVPN_PASSWORD: ${OPENVPN_PASSWORD:-}
+    volumes:
+      - type: bind
+        source: ./managed/openvpn/client.ovpn
+        target: /etc/openvpn/client.ovpn
+        content: |
+          # Replace this placeholder in the orchestrator-managed file storage
+          # with the private OpenVPN client profile. Never commit the real profile.
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "printf 'state\nquit\n' | socat - UNIX-CONNECT:/run/openvpn/management.sock | grep -q ',CONNECTED,SUCCESS,'"
+      interval: 10s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
