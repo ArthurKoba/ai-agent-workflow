@@ -1,5 +1,15 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Coolify watch-path input isolation
+
+Changes:
+- Coolify/Git-backed infrastructure now scopes Watch paths to actual deployment inputs instead of assuming the entire service directory should trigger redeploy;
+- README/runbook/audit-only files are explicitly excluded from deployment triggers unless they are real runtime inputs;
+- E-027/B-028 now include docs-only redeploy as parser/orchestrator-contract failure.
+
+Reason:
+A documentation-only update inside a watched deployment directory triggered a live service redeploy even though no runtime input changed. Directory ownership is not the same thing as deployment-input ownership.
+
 ## 2026-10 — Contract recovery after repeated correction
 
 Changes:

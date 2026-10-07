@@ -79,7 +79,7 @@ Once an active workstream is reported with a scoped percentage, preserve that pe
 
 
 ## B-028 — Parser-aware Coolify Compose
-Treat Coolify's Compose parser as an explicit deployment API. Encode required external topology with empty `:?` expressions in owning service environments, keep secrets behind scoped shared references, keep internal traffic on Docker DNS, use one generated-domain owner per service, use inline `content:` for managed file templates, and validate parser-generated UI state on a fresh resource before runtime acceptance.
+Treat Coolify's Compose parser as an explicit deployment API. Encode required external topology with empty `:?` expressions in owning service environments, keep secrets behind scoped shared references, keep internal traffic on Docker DNS, use one generated-domain owner per service, use inline `content:` for managed file templates, scope Watch paths to actual runtime inputs (not incidental docs in the same directory), and validate parser-generated UI state on a fresh resource before runtime acceptance.
 
 ## B-029 — Evidence-state semantic lifecycle
 Persistent behavior-analysis metadata is confidence-aware. Unknown objects stay structural; likely conclusions may use conservative provisional names; confirmed behavior is promoted to canonical semantic names and synchronized comments/types/boundaries/links; contradictions demote misleading metadata; withdrawn interpretations are retired. One semantic object keeps one canonical name across references, and stale strong names are treated as defects rather than harmless history.
