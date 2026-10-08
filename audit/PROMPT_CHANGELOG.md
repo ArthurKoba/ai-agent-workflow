@@ -1,5 +1,15 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Standalone program-analysis skill
+
+Changes:
+- renamed the former hardware-reverse skill to `skills/program-analysis/README.md`, maintaining a single file and no nested analysis subskills;
+- broadened analyzer tracing, semantic naming, evidence states and Java/GhidraScript lifecycle to executables, BIOS/UEFI, libraries, drivers, services and firmware;
+- updated active workflow routing; historical references to the old directory remain only in chronological audit records.
+
+Reason:
+The analysis skill is about investigating program behavior, not inherently hardware reverse. A standalone cohesive skill avoids unnecessary navigation and applies to high- and low-level code equally.
+
 ## 2026-10 — Coolify watch-path input isolation
 
 Changes:

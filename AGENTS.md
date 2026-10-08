@@ -34,7 +34,7 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 - any task that emits human-operated commands → `skills/terminal-operations/README.md` (mandatory)
 - service/deployment/infrastructure operations → `skills/service-engineering/README.md`
 - reusable service deployment examples/presets → `examples/services/README.md` after loading the relevant service-engineering skill
-- embedded reverse/bring-up → `skills/hardware-reverse/README.md`
+- program analysis (EXE, BIOS/UEFI, firmware, libraries, drivers), behavior tracing and Ghidra/Analysis → `skills/program-analysis/README.md`
 - OpenIPC migration/porting/contribution → `skills/openipc-porting/README.md`
 - context-efficient documentation/bootstrap/multi-agent workflow design → `skills/context-engineering/README.md`
 - chat/workflow/prompt audit → `skills/workflow-audit/README.md`

@@ -1,93 +1,130 @@
-# Hardware Reverse / Embedded Bring-up
+# Program Analysis & Behavior Reconstruction
 
-Single authoritative skill for hardware/firmware behavior recovery:
-terminology, evidence levels, semantic naming, project lifecycle, programmable
-Ghidra analysis and monitored script jobs. Read this one file; do not require
-additional hardware-reverse skill documents. Keep future terminology,
-tracing, scripting, job orchestration and project lifecycle rules **in this
-same README**; do not split them into sibling Markdown skill modules.
+Self-contained skill for analyzer-driven examination of program behavior:
+EXE/PE/ELF files, BIOS/UEFI, applications, libraries, drivers, firmware,
+embedded binaries, and other programs supported by the selected analyzer.
+
+Use this one README for terminology, trace methodology, semantic recovery,
+confidence and proofs, Ghidra/Analysis project lifecycle, Java/GhidraScript,
+persistent scripts and monitored jobs. Its rules do not require hardware,
+a board, or a low-level target. Keep related analysis rules in this same
+file, not in further nested skill modules. Project-owned target scope,
+tool access, and validation criteria take precedence.
 
 ## Evidence-first
-- Do not restart reverse if an existing corpus/contract answers the question.
-- Prefer one authoritative searchable corpus over repeated target extraction.
-- Capture once; analyze offline.
 
-## Public-research stopping rule
+- Check existing analysis, names and proof before re-tracing a closed behavior.
+- Prefer one canonical indexed project and preserved target bytes/source over
+  extracting or importing duplicate mutable copies.
+- Record the target's identity where relevant: version, binary hash, PE/ELF
+  section layout, firmware/BIOS region, platform, CPU/language, image base,
+  address mapping, relocations, loader/compiler and ABI assumptions.
+- Define the observable question and the next evidence boundary before
+  starting a broad scan.
 
-For legacy, obscure or poorly documented silicon, generic public research is a bounded evidence path, not a mandatory startup ritual.
+## External reference stopping rule
 
-- If the current project already records that broad searches for datasheets, SDKs, vendor source trees, mirrors, chip-family examples or secondary-controller documentation were exhausted without producing an authoritative artifact, do **not** restart the same generic search in a new chat/session.
-- After that boundary is recorded, the default path is target evidence: preserved firmware, canonical Analysis state, instruction-level behavior, runtime traces, board observations and other project-owned artifacts.
-- Reopen external research only when there is a **new concrete lead**: a newly identified part number/revision, document title, archive filename/hash, vendor SDK/version, leaked/source repository reference, package marking that changes the search space, newly available dump, or another specific artifact locator. A direct user request to research externally is also sufficient.
-- A vague hope that another search engine/query/session might find something is not a new lead. Do not spend another analysis cycle enumerating the same chip family, decoding the same top mark, or looking for generic source code after the project has already classified that route as exhausted.
-- When a bounded external search is attempted, record the useful artifact or record that the path remained exhausted so later agents inherit the stop condition. Do not report generic family material as target proof.
+External SDKs, symbols, PDB/DWARF data, libraries, protocol documents,
+vendor information and related builds are possible clues, **not proof of
+the target's behavior**. Use them when they materially reduce uncertainty.
 
-This rule applies equally to the primary processor, audio DSP, secondary controller and other legacy companion silicon. Target reverse remains the authority when public material is absent.
+For a poorly documented program, chipset or proprietary application,
+once broad searches for sources and documentation have been exhausted,
+do not repeat them as a ritual on each session. Reopen research only with
+a new concrete lead (exact version, hash, symbol server, vendor SDK,
+artifact locator, document or direct user request). Preserve useful and
+negative search results. Target code and observed behavior take precedence
+over analogies to another version or platform.
 
-## Semantic reverse
-Use decompiler, CFG, callers/callees, XREF, globals/strings, types/structures and unresolved indirect flow.
+## Trace and recovery process
 
-Pseudocode is for understanding. Instruction/ASM evidence is required for critical proof.
+Trace program behavior through actual control and data dependencies,
+not by naming isolated functions or repeatedly proving known facts.
 
-## Canonical project
-Before mutating reverse state, identify the canonical project/program. Do not create competing mutable projects for the same binary.
+1. **Locate anchors:** program entry, exports/imports, callbacks, event or
+   command handlers, API calls, literals, strings, objects/vtables, types,
+   exception handlers, device registers (when present), or external inputs.
+2. **Trace control:** callers/callees, CFG, XREF, dispatch tables, indirect
+   branches/calls, state-machine transitions and error/cleanup/retry paths.
+   Distinguish *code present* from *reachable or observed executing*.
+3. **Trace data:** inputs, return values, calling convention/ABI, object
+   fields, globals, buffers, producers/consumers, transforms and
+   externally visible effects (files, network, UI, services, peripherals).
+4. **Reconstruct behavior:** identify the algorithm/contract, parameters,
+   preconditions, outputs, modes, limits, errors, resource ownership and
+   interaction with other modules. Decompiler output is a guide; verify
+   critical claims against instructions/IR, references or runtime evidence.
+5. **Materialize:** apply defensible semantic names, types, structures,
+   transitions, references, evidence comments and uncertainty to the
+   canonical Analysis project. Save, then read back the changed objects.
+6. **Move to a new gap:** avoid repeated proof of closed branches; track
+   uncertain edges and meaningful work needed to close the feature.
 
-## Cross-platform references
-A related SoC/platform may be a semantic oracle, but never assume identical ioctl numbers, structures, callbacks, MMIO or lifecycle. Target evidence wins.
+A PE/EXE application, BIOS/UEFI boot path, library function, driver,
+DSP algorithm or firmware service can all follow this workflow. Hardware
+registers, pin routing and board acceptance are optional target-specific
+concerns, **not requirements for ordinary program analysis**.
 
-## Runtime evidence
-When static evidence is exhausted, define the exact runtime observation needed instead of broad further reverse.
+## Program identity and environment
 
-## Hardware experiments
-`baseline → action → observation → rollback → postcondition`
+Before mutation identify the canonical project, selected program and
+actual mapped code/data. Related program versions can suggest semantics,
+but do not assume identical API/ABI, offsets, structures, callbacks,
+device registers or lifecycle. The examined target wins.
 
-Physical/visual evidence outranks software success flags when they conflict.
+When static evidence cannot settle behavior, define a bounded authorized
+debugger/emulation/trace experiment and the required observation. Preserve
+the known-good baseline. For hardware or other stateful targets use:
+`baseline → action → observation → rollback → postcondition`.
 
-## Stateful stacks
-Stateful media/hardware pipelines need an explicit owner. Avoid competing processes/opens unless proven safe.
-
-## Feature parity
-A feature is complete only if a target contract is implemented, a compatible retained provider is proven, or the feature is explicitly unsupported. Silent no-op is not implementation.
+Stateful software processes, drivers, media pipelines or hardware interfaces
+need clear ownership. Do not launch competing sessions or change target
+state speculatively. A static behavior contract is sufficient for an
+analysis-only task; implementing a replacement or achieving system
+integration is a separate acceptance level.
 
 ## Terminology, semantic contracts and evidence
 
-Use this section when reverse/embedded work is expressed as recovered behavior rather than ordinary source-level implementation.
+Use this terminology for both high-level program behavior and native code.
 
 ### Vocabulary
 
-Use these terms consistently in progress updates, handoffs and explanatory documentation:
+Use stable names for concepts: **program**, **module**, **function/method**,
+**callback**, **handler**, **state**, **input**, **output**, **side effect**,
+**dispatcher**, **branch/transition**, **producer/consumer**, **behavior
+contract**, **evidence point** and **semantic coverage**.
 
-- **behavior analysis** / **behavior recovery** — the overall activity;
-- **action node**, **action boundary**, **action map**, **action route** — analyzed code/control structures;
-- **transition**, **action link**, **inbound action**, **outbound action** — control-flow relationships;
-- **high-level behavior view** / **low-level action view** — semantic/pseudocode vs instruction-level inspection;
-- **behavior contract** / **control contract** — recovered semantics required for implementation or integration;
-- **semantic coverage** / **behavior coverage** — progress over a named analysis denominator;
-- **state**, **handler**, **dispatcher**, **chain**, **route**, **evidence point** — preferred neutral structural nouns;
-- **implementation proof**, **execution proof**, **board proof**, **integration proof** — distinct validation levels.
+When using an analyzer that calls functions **action nodes**, the terms
+`action node`, `action boundary`, `action map`, `action route`,
+`action link` and `low/high-level action view` refer specifically to its
+code/control representation. Do not label a device, data structure, external
+process or protocol as an action node. Prefer the actual program's names when
+they are known.
 
-Exact architecture names, instruction mnemonics, registers, addresses, protocol fields, control IDs and API identifiers remain exact evidence and should not be renamed merely to fit the vocabulary.
-
-#### Scope boundary
-
-`action node` and related action terminology apply to analyzed code/control structure. Do not use them as generic replacements for hardware parts, PCB routes, pins, buses, protocols, connectors or physical functions. A component identification is not an action node; a UART pin mux is not an action node; a protocol boundary is not an action node unless the statement is specifically about the code structure implementing it.
+Raw instruction/register names, ABI/API signatures, imported symbols,
+addresses and protocol IDs remain exact evidence even after semantic renaming.
 
 ### Evidence states
 
-Use explicit evidence states when a conclusion is not self-evident:
+- **CONFIRMED**: primary target evidence directly supports the claim:
+  instructions, control/data flow, source, runtime observations, or verified
+  hardware evidence if applicable.
+- **LIKELY**: multiple independent clues support a bounded hypothesis but
+  the precise behavior is not fully proved.
+- **UNKNOWN**: available information cannot establish the claim.
+- **CONTRADICTION**: authoritative findings disagree; affected semantics
+  must not be treated as settled.
+- **WITHDRAWN**: a historical interpretation was invalidated; this is not
+  a live confidence state.
 
-- **CONFIRMED** — reproducible target evidence directly supports the claim: bytes/instructions, low-level behavior, runtime output, package marking, continuity/scope measurement, hardware observation or equivalent primary evidence;
-- **LIKELY** — multiple independent clues support the claim but direct target proof is incomplete;
-- **UNKNOWN** — available evidence is insufficient;
-- **CONTRADICTION** — authoritative observations disagree and the affected conclusion cannot be treated as settled.
-
-Capability evidence is not topology proof. A datasheet feature, SDK option or firmware code path does not prove that a product PCB routes or uses that capability.
-
-`WITHDRAWN` is a historical-status marker, not a live evidence state. Use it when a previous semantic interpretation has been invalidated and must remain visible only to prevent later reuse. The current claim itself must still be classified as `UNKNOWN`, `LIKELY`, `CONFIRMED` or `CONTRADICTION` as appropriate.
+An imported API, SDK feature or code path does not automatically prove that
+it runs or is exposed. A firmware capability additionally does not prove
+physical wiring. Keep capability, reachability, execution and topology
+claims separate.
 
 ### Semantic naming lifecycle
 
-Every recovered semantic object must track evidence strength and keep its persisted metadata at the same strength. This applies to action nodes and boundaries, states/globals, MMIO registers and fields, constants/enums, structures, protocol fields, addresses/labels, transitions and action links.
+Every recovered semantic object must track confidence: functions, methods, callbacks, imports, globals, structures, class/object fields, constants/enums, state machines, call links, addresses and (when present) device registers.
 
 Use this lifecycle:
 
@@ -107,36 +144,44 @@ For each recovered object, materialize as much of the following as the evidence 
 - current evidence state and the primary evidence point(s) that justify it;
 - one canonical semantic name at the correct confidence level;
 - a comment that states the recovered behavior/control contract and the remaining unknowns;
-- type, prototype, enum, structure/field or register-bit semantics only when width/layout/ABI evidence supports them;
+- types, prototypes, enum, class/structure fields or register bits only when size/layout/ABI evidence supports them;
 - proven transitions, inbound/outbound action links and data relationships, repairing stale boundaries/links before naming through them;
 - retirement of stale aliases, contradictory comments and superseded provisional names;
 - a stable save/checkpoint after the coherent semantic mutation batch.
 
-When the same register, state, constant or protocol field appears in multiple actions, reuse one canonical semantic object/name after identity is established. Do not create per-action synonyms for the same recovered contract, and do not merge equal numeric values into one semantic object until references and lifecycle behavior prove that identity.
+Reuse a single canonical semantic name for the same global, field, constant, state or register after proving its identity. Do not create per-function synonyms or merge unrelated objects just because they have the same numeric value.
 
-Raw addresses and numeric values remain exact evidence, but they are not semantic names by themselves. A precise-looking name must never encode a stronger owner, protocol, physical pin role, hardware block identity or product meaning than the current evidence state supports.
+Raw addresses and numbers are proof points, not semantic names. Do not encode an owner, algorithm, protocol or physical role in a name unless actual target evidence supports it.
 
 If a required rename/type/boundary/link mutation is temporarily blocked by tooling, annotate the nearest stable object with the proven semantics, current evidence state and stale-metadata warning so the handoff surface does not silently preserve the wrong interpretation.
 
 ### Validation levels
 
-Keep these levels separate:
+- **Static/implementation proof** — source, instructions, references and
+  analyzed data/control flow establish a behavior contract.
+- **Execution proof** — the relevant target path and side effects were
+  actually observed under identified conditions.
+- **Integration proof** — behavior meets the actual surrounding system
+  acceptance contract, when integration is part of the task.
+- **Board proof** — physical device ownership/routing was observed, only
+  when physical hardware is in scope.
 
-- **implementation proof** — the target behavior/contract is recovered or implemented at source/static/native-analysis level;
-- **execution proof** — the relevant path has been observed executing;
-- **board proof** — target-board ownership, routing or physical behavior is established;
-- **integration proof** — the modified/rebuilt implementation has been accepted on the target system with the required surrounding contracts and recovery path.
-
-Never promote one level into another. A decoded path is not execution proof; a successful command is not board routing proof; a build is not integration proof.
+Do not promote static results to execution proof, a build to integration
+proof, or a documented capability to physical-wiring proof.
 
 ### Coverage and progress
 
-- Any percentage must name its denominator.
-- Action-node naming coverage is not equivalent to feature, behavior or product completion.
-- A control-path estimate must say which paths/contracts it includes and excludes.
-- Prefer semantic route/contract closure over exhaustive naming of unrelated library code.
-- When reporting progress, distinguish recovered behavior, unresolved routes, runtime evidence, board evidence and integration evidence.
-- In ordinary user-facing progress, prefer semantic action names over raw addresses; exact addresses remain valid evidence in repository documentation and tool arguments.
+- Every percent must state its scope and denominator; functions named,
+  semantics recovered and feature coverage are separate quantities.
+- Prefer completed control/data contracts to renaming unrelated functions.
+- Report deltas: inspected/understood/renamed functions, traced control/data
+  paths, new scripts executed, behavior contracts confirmed, objects saved
+  and unresolved contradictions. Show `before → after` when measurable.
+- If no useful fact was established, report zero confirmed results and the
+  actual blocker. Do not invent percentages or count exploratory calls as
+  proven recovered behavior.
+- Keep addresses and numeric proof in annotations; prefer meaningful
+  semantic names in user-facing reports.
 
 ### Evidence workflow
 
@@ -150,21 +195,21 @@ Never promote one level into another. A decoded path is not execution proof; a s
 
 ### Provider / safety tool blocks
 
-A provider, policy, safety or pre-tool block is infrastructure evidence, not target evidence. Do not interpret a blocked invocation as a firmware/hardware failure or as proof about the analyzed target.
+A provider, policy, safety or pre-tool block is infrastructure evidence, not evidence that the analyzed program failed. Preserve that distinction.
 
 On every such block during behavior analysis:
 
-1. Re-read this unified hardware-reverse skill from the current authority before the next reverse-analysis invocation. This is a narrow re-bootstrap step intended to restore the active terminology, evidence model and routing constraints; it does not require rereading the whole workflow library.
+1. Re-read the terminology/evidence section of this program-analysis skill from the current authority before the next analysis invocation. This is a narrow re-bootstrap step intended to restore the active terminology, evidence model and routing constraints; it does not require rereading the whole workflow library.
 2. Record the incident while the exact invocation is still available. Preserve the tool/provider surface, operation or method name, sanitized arguments sufficient to identify the request shape, intended evidence goal, exact block/error text, whether the backend was reached, and the result of any legitimate alternate evidence path. Never copy credentials, secrets or unnecessary sensitive payloads into an issue.
 3. Check the configured infrastructure/provider incident tracker for an existing issue with the same failure class. If one exists, append the current invocation and result as a new evidence point. Otherwise open a new issue. Repeated occurrences belong in the same issue when they share the same root symptom so the evidence base grows instead of fragmenting.
 4. Continue through a narrower or otherwise legitimate evidence path when one exists. Do not blindly repeat the same blocked call and do not use another tool merely to evade the safety/policy decision.
 5. If the same class blocks again later, repeat the terminology re-read and append the new occurrence. Treat recurrence count and invocation diversity as useful diagnostic evidence.
 
-The project/infrastructure layer owns the concrete incident repository or provider tracker. The reverse skill owns the requirement to make these blocks observable and deduplicated.
+The project/infrastructure layer owns the incident tracker. This skill requires blocked analysis invocations to be observable and deduplicated.
 
 ### Completion
 
-Behavior analysis is not complete merely because every discovered action node has a name. Completion is defined by the project's actual acceptance surface: the required behavior/control contracts, implementation path, execution evidence, board ownership and integration/recovery gates.
+Program analysis is not complete because all functions have names. Completion follows the user's actual scoped acceptance criteria: recovered contracts and meaningful paths, plus execution, hardware, implementation or integration only when requested or necessary.
 
 ## Persistent Analysis project and worker lifecycle
 
@@ -218,12 +263,11 @@ Before semantic mutation or repair:
 
 ### Backend defects
 
-Keep session/transport/index defects separate from target-behavior findings. A project-open failure, dropped handle or stale index is tooling evidence, not firmware behavior. Record and fix the owning infrastructure layer when possible without rewriting target conclusions around a transient backend defect.
+Keep session/transport/index defects separate from target behavior. A project-open failure, dropped handle or stale index is tooling evidence, not target-code proof. Record and fix the owning infrastructure layer when possible without rewriting target conclusions around a transient backend defect.
 
 ## Java/GhidraScript analysis and monitored jobs
 
-Use this section before using programmable Analysis/Ghidra evidence tools or
-designing a repeatable firmware-wide trace. It is the owner of the script
+Use this section when a repeatable analysis script or broad control/data-flow audit improves target evidence. It is the owner of the script
 execution, promotion, persistence and monitored-job workflow.
 
 ### When to script
@@ -232,16 +276,14 @@ Use a bounded, read-only Ghidra Java/GhidraScript, P-code/SLEIGH pass or
 controlled emulation when it is more reliable than repeated manual lookups,
 especially for:
 
-- cross-module MMIO/constant inventories and register owner searches;
+- cross-module call/import maps, constants, global owners, and MMIO/register maps where applicable;
 - calculated/indirect addresses, data flow and control-flow traces;
 - repeated checks of call/return edges, instruction/data classification and
   saved action boundaries;
-- exhaustive writer/reader audits of a hardware field or protocol state;
+- exhaustive writer/reader audits of a program field, global, protocol state or hardware register when present;
 - reproducible verification after a targeted metadata correction.
 
-Do **not** write a new script for a straightforward question already answered
-by instructions, XREF, CFG or a saved contract. Never redo confirmed reverse
-work merely to increase script counts.
+Do **not** script questions already answered by XREF/CFG/instructions or a saved contract. Rewriting confirmed behavior to increase script counts is not progress.
 
 ### Required two-stage script lifecycle
 
@@ -262,7 +304,7 @@ execute the registered script → retain findings in the canonical project.**
 3. **Promote after useful proof.** Once the script produces a reproducible
    finding or is useful for follow-up/regression, store its **Java source in
    the Analysis/Ghidra server's configured persistent script root**, not as
-   a permanent local file or a Git-tracked firmware artifact. Do not
+   a permanent local file or a Git-tracked target artifact. Do not
    promote disposable failed experiments merely to keep everything.
 4. **Prove registration.** Read back and compare the complete source bytes
    or digest; reject an existing same-name file with different contents
@@ -297,7 +339,7 @@ the reviewed source from inside the running Ghidra process:
   UTF-8/Base64 payload), decode it **inside Ghidra**, and create the file
   with no-clobber semantics. If it exists, compare exact bytes and fail on
   a mismatch. Read back the resulting file; emit installed/identical counts.
-- Do not patch firmware bytes, import the `.java` as a Ghidra `Program`,
+- Do not patch target bytes, import the `.java` as a Ghidra `Program`,
   alter unrelated scripts or claim durable registration from a successful
   inline execution alone.
 
@@ -368,8 +410,7 @@ user to operate a terminal when an authorized job tool can do so.
   owners, new traced edges, confirmed vs likely claims, changes actually
   saved, script count, and remaining contradictions*. Report deltas rather
   than repeated worker/queue bookkeeping.
-- Static script output is implementation/behavior evidence, not runtime
-  execution proof, board proof, or completion of a whole hardware block.
+- Static script output is behavior evidence, not proof of runtime execution or completion of an entire subsystem.
 - Respect script-execution permissions and provider security decisions.
   If installation/execution is unavailable, report the exact missing
   capability; do not silently replace the analyzer's script library with

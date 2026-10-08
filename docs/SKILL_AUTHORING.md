@@ -28,9 +28,9 @@ skills/<skill-name>/
   <optional-subskill>/README.md
 ```
 
-`README.md` is a router: purpose, triggers, boundaries, required reading and completion contract. Large rules/examples belong in conditional modules so agents do not load unrelated context.
+`README.md` defines purpose, triggers, boundaries, operating method and completion. A cohesive, self-contained skill **may consist of just this one file**; do not split terminology, tracing, scripting and lifecycle into nested modules solely because the file grows.
 
-Use subskills only when a topic has its own trigger and workflow. Prefer a small internal map over another hierarchy of global prompts.
+Add optional modules/subskills only when independently triggered workflows clearly benefit from selective loading. Group topics when the work actually demands it, not by default. Avoid mandatory multi-file reading chains.
 
 ## Rule ownership
 
