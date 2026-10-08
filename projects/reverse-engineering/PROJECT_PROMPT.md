@@ -204,7 +204,7 @@ Load from https://github.com/ArthurKoba/ai-agent-workflow :
 - shell/PowerShell/WSL/SSH/UART/bootloader:
   `skills/terminal-operations/README.md`
 - embedded reverse:
-  `skills/hardware-reverse/README.md`
+  `skills/reverse-analysis.md`
 - OpenIPC migration/porting/upstream contribution:
   `skills/openipc-porting/README.md`
 - workflow/chat/prompt audit:
