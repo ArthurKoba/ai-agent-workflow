@@ -1,6 +1,6 @@
 # GitHub integration for Zoomies
 
-Status: **first administrator validated; GitHub App connection not yet fully accepted**.
+Status: **first administrator, existing-App reconnect, organisation target and personal repository target accepted**.
 
 Zoomies uses a GitHub App flow to observe queued GitHub Actions jobs and register ephemeral runners.
 
@@ -62,16 +62,44 @@ Principles:
 - install it only for the intended owner/repository scope;
 - never commit App private keys, client secrets, webhook secrets or installation secrets.
 
-## Acceptance before host enrollment
+## Existing App reconnect and credential rotation
 
-GitHub integration is accepted only when:
+A clean controller does not need a new GitHub App when the intended App already exists.
 
-1. the App is created/connected;
-2. the intended owner/repository installation appears in Zoomies;
-3. the controller can observe GitHub-side queue state;
-4. no unrelated repository scope is granted.
+Use **Connect GitHub → Use an App you already have** and provide:
 
-After that, continue with host enrollment and pool creation.
+```text
+App ID
+Installation ID
+target type: organisation or repository
+target login / owner/repository
+PEM private key
+webhook secret
+```
+
+The Client ID/client secret are not needed for this Zoomies import path.
+
+Safe key rotation:
+
+1. generate a fresh GitHub App private key;
+2. set/rotate the App webhook secret;
+3. connect the existing installation to the clean Zoomies controller with the new PEM and the same webhook secret configured in GitHub;
+4. verify the installation is healthy in Zoomies;
+5. only then remove obsolete private keys.
+
+Do not commit or paste private keys/webhook secrets into project documentation.
+
+## Acceptance before pool creation
+
+GitHub integration is accepted when:
+
+1. the intended App/installation is connected;
+2. Zoomies verifies the GitHub API connection;
+3. the target scope is correct;
+4. a post-configuration workflow job is observed by the controller (webhook or fallback poller);
+5. no unrelated repository scope is granted unintentionally.
+
+After that, create the pools.
 
 
 ## Organisation versus personal account
@@ -96,7 +124,7 @@ Observed on GitHub.com with Zoomies 1.3.4:
 - after GitHub authentication, the manifest creation page may show only the App name and a single confirmation button because the webhook URL, permissions and event subscriptions are carried in the manifest payload;
 - for a personal-account repository target, GitHub creates the App under that personal account.
 
-A short stable name such as `Koba Zoomies CI` is preferable to embedding a long repository slug in the App name.
+A short stable name such as `Zoomies CI` is preferable to embedding a long repository slug in the App name.
 
 
 ## App creation versus installation

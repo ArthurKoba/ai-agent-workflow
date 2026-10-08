@@ -1,6 +1,6 @@
-# Deploy and migrate Zoomies through Coolify
+# Deploy Zoomies through Coolify
 
-This guide covers the validated controller-only deployment model and the in-place Git-path migration used for Zoomies.
+This guide describes the accepted single-host pattern: one Git-backed Compose resource performs a one-shot trusted host bootstrap and then runs one persistent unprivileged Zoomies controller with its embedded agent.
 
 ## Git-backed resource
 
@@ -8,109 +8,129 @@ Recommended repository layout:
 
 ```text
 deploy/coolify/zoomies/
-├── README.md
+├── bootstrap/
+│   ├── Dockerfile
+│   └── entrypoint.sh
+├── bootstrap-host.sh
 └── docker-compose.yaml
 ```
 
-Configure the Coolify application with:
+Configure:
 
 ```text
 Base directory: /deploy/coolify/zoomies
 Docker Compose location: /docker-compose.yaml
-Watch paths: deploy/coolify/zoomies/**
 ```
 
-The Compose location is relative to Base directory.
-
-## Public endpoint
-
-Expose the controller's internal HTTP port `8080` through Coolify/Traefik and terminate TLS at Coolify.
-
-Set:
+Watch the actual runtime inputs, not README/runbook files. Typical Watch paths:
 
 ```text
-ZOOMIES_EXTERNAL_URL=https://<zoomies-domain>
+deploy/coolify/zoomies/docker-compose.yaml
+deploy/coolify/zoomies/bootstrap/**
+deploy/coolify/zoomies/bootstrap-host.sh
 ```
 
-Keep `ZOOMIES_TLS_MODE=off` in the container when Coolify owns TLS.
+A broad directory Watch path can make documentation-only commits redeploy the service.
+
+## Clean-host contract
+
+Qualified clean host:
+
+- Ubuntu 24.04;
+- systemd + logind;
+- normal Coolify/rootful Docker already present;
+- no Zoomies-native agent service;
+- no existing conflicting dedicated runtime identity/state.
+
+The one-shot bootstrap:
+
+1. validates the host contract;
+2. creates/reuses the dedicated unprivileged runtime identity;
+3. allocates subordinate UID/GID ranges;
+4. enables user namespaces and required AppArmor/rootless compatibility;
+5. configures cgroup-v2 delegation;
+6. enables the user's persistent systemd manager/linger;
+7. installs rootless extras matching the already-installed `docker-ce` version;
+8. installs/starts the user's rootless `docker.service`;
+9. proves the real rootless Docker API and cgroup behavior;
+10. prepares `/var/lib/zoomies/shared`;
+11. exits.
+
+The persistent Zoomies service starts only after bootstrap exits successfully.
+
+## Generated public URL
+
+The Compose declares:
+
+```yaml
+SERVICE_URL_ZOOMIES_8080: /
+ZOOMIES_EXTERNAL_URL: ${ZOOMIES_EXTERNAL_URL:-${SERVICE_URL_ZOOMIES}}
+```
+
+The port-qualified magic variable owns Coolify routing to internal port 8080. The application-level URL is a normal overridable variable that defaults to Coolify's canonical generated service URL.
+
+Validate both surfaces:
+
+- the public HTTPS route answers;
+- Zoomies startup/runtime reports a non-empty correct external URL.
+
+A working proxy route alone does not prove the application received its own public URL.
 
 ## Shared encryption key
 
-Declare the Compose variable:
+The Compose requires:
 
 ```yaml
 ZOOMIES_ENCRYPTION_KEY: ${ZOOMIES_ENCRYPTION_KEY:?}
 ```
 
-Store the real secret at the chosen Coolify shared scope and point the resource variable at that reference, for example:
+Store the value in the narrowest appropriate Coolify Shared Variable scope and point the generated resource variable at it, for example:
 
 ```text
 ZOOMIES_ENCRYPTION_KEY={{project.ZOOMIES_ENCRYPTION_KEY}}
 ```
 
-Do not commit the secret value.
+Do not commit the key and do not make `/etc/zoomies` writable as a fallback. Backups of controller state require the same encryption key.
 
-## Persistent state
+## Persistence
 
-The critical volume is:
+Durable:
 
 ```text
 zoomies-controller-data -> /var/lib/zoomies
+zoomies-agent-state     -> /var/lib/zoomies-agent
 ```
 
-The prebuilt image expects this state path and runs non-root. Preserve the native path instead of remapping controller state to an arbitrary directory.
-
-## In-place repository-path migration
-
-When the same Coolify resource already runs Zoomies from an older repository path, prefer an in-place source-path migration so the resource UUID and its UUID-prefixed controller volume remain stable.
-
-Before the change:
-
-1. confirm the resource is healthy;
-2. record the current resource UUID and controller-state volume;
-3. confirm the current `ZOOMIES_ENCRYPTION_KEY` reference;
-4. confirm the public domain;
-5. keep the old Git source available until acceptance.
-
-Then update only the Git source contract:
+Recreatable:
 
 ```text
-Base directory -> /deploy/coolify/zoomies
-Docker Compose location -> /docker-compose.yaml
-Watch paths -> deploy/coolify/zoomies/**
+rootless Docker image/container store
+/var/lib/zoomies/shared
+/run/user/<uid>/docker.sock
 ```
 
-Reload/reparse the Compose source, inspect the parsed variables/storage, then deploy.
+Named volumes use `nocopy`; bootstrap establishes the intended ownership before the persistent service starts.
 
-Acceptance:
+## Lifecycle acceptance
 
-- deployment finishes;
-- resource returns `running:healthy`;
-- controller login still works;
-- controller state is preserved;
-- `ZOOMIES_ENCRYPTION_KEY` remains resolved;
-- webhook/watch-path redeploys are scoped to the Zoomies directory.
+Validate at least:
 
-## Stale parser storage
+- clean creation from Git;
+- repeat deployment;
+- known legacy cache migration only when its structure is recognized;
+- unknown/foreign persisted state fails closed;
+- controller health;
+- embedded-agent backend health;
+- ordinary ephemeral job + teardown;
+- DinD build/run + multi-container networking + teardown.
 
-An existing resource can retain storage records created by older Compose experiments.
+Treat reboot/recovery as a separate host lifecycle gate.
 
-Do not delete a stale storage record merely because the current Compose no longer references it. First prove:
+## Security
 
-1. the current running container does not mount it;
-2. the desired Git Compose does not reference it;
-3. its data is not needed for rollback.
-
-Only the controller-state volume is part of the validated controller-only contract.
-
-## Security boundary
-
-The controller must not mount:
-
-```text
-/var/run/docker.sock
-```
-
-and should not run an embedded agent when the design calls for a separately enrolled trusted host.
-
-Host-agent and DinD details are documented only after runtime acceptance.
+- one-shot bootstrap is the only privileged Compose service;
+- persistent Zoomies is unprivileged;
+- rootful `/var/run/docker.sock` is never mounted;
+- jobs never receive the rootless host socket;
+- `host-socket` pools are prohibited;
+- DinD privilege remains inside the dedicated rootless Docker user namespace.

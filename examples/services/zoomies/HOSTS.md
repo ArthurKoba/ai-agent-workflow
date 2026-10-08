@@ -1,195 +1,119 @@
 # Zoomies hosts and runner runtime
 
-Status: **host enrollment design validated from Zoomies 1.3.4 UI/docs; live rootless host acceptance pending**.
+Status: **single-host embedded agent on dedicated rootless Docker accepted; ordinary and DinD runner paths accepted**.
 
-## Security boundary
+## Default single-host model
 
-The controller and runner runtime are separate concerns.
-
-The controller must not receive the host Docker socket.
-
-A standalone agent may use a container-runtime socket to create and remove runner containers, but workflow jobs do not receive that socket unless a pool is explicitly configured with the dangerous `host-socket` Docker mode.
-
-For this preset:
-
-- use a dedicated rootless Docker daemon for the trusted runner host;
-- pin the agent to that daemon's Unix socket;
-- do not use the host rootful `/var/run/docker.sock`;
-- use pool `docker_mode: none` for ordinary jobs;
-- use pool `docker_mode: dind` for jobs that need Docker;
-- do not use `docker_mode: host-socket`.
-
-## Runtime selection
-
-Zoomies supports rootful/rootless Docker and rootful/rootless Podman.
-
-The agent runtime socket is controlled by:
+For a host that already runs the controller through Coolify/Compose, use the controller's embedded agent against a dedicated host rootless Docker daemon.
 
 ```text
-ZOOMIES_DOCKER_HOST
+controller + embedded agent
+        |
+        v
+/run/user/<uid>/docker.sock
+        |
+        v
+rootless Docker (dedicated unprivileged user)
+        |
+        +-- ordinary ephemeral runner
+        `-- runner + DinD sidecar
 ```
 
-or the equivalent agent flag:
+This avoids a second persistent agent container, a join token and a separate host credential lifecycle for the first machine.
 
-```text
---docker-host
-```
+## Why rootless Docker lives on the host
 
-When left empty, Zoomies autodetects in this order:
+Running rootless Docker nested inside the normal host Docker would require a permanently privileged outer container. The accepted pattern therefore uses a privileged one-shot deployment bootstrap to create the dedicated host user service, then leaves only the unprivileged persistent Zoomies service.
 
-1. `$DOCKER_HOST`;
-2. `$XDG_RUNTIME_DIR/docker.sock`;
-3. `/run/user/<uid>/docker.sock`;
-4. Docker Desktop user socket;
-5. `/var/run/docker.sock`.
-
-For a hardened shared host, do not rely on the final rootful fallback. Pin the intended rootless socket explicitly after proving it exists and is reachable by the agent service account.
+Rootless is a blast-radius boundary, not a VM boundary. Containers still share the host kernel.
 
 ## Rootless acceptance
 
-Prefer cgroup v2.
+Do not accept the backend from socket existence alone. Prove:
 
-Before enrollment, validate:
+- user `docker.service` is active;
+- socket owner is the configured runtime UID and owner has read/write;
+- `docker info` succeeds as that user;
+- Docker reports `rootless`;
+- cgroup v2 is active;
+- cgroup driver is `systemd`;
+- cpu/cpuset/io/memory/pids are delegated to the user's systemd service;
+- Docker data root is not `/var/lib/docker`.
 
-- the rootless Docker daemon exists and stays up under systemd/user lingering or another persistent service model;
-- its socket is reachable by the account Zoomies will run as;
-- `docker info` through that socket succeeds;
-- CPU, memory and PID-limit capabilities reported by Zoomies are usable;
-- Docker-in-Docker is validated with a real job rather than assumed from daemon connectivity.
+The bootstrap in this preset qualifies Ubuntu 24.04 only.
 
-Rootless Docker on cgroup v2 can enforce delegated resource controllers when the host is configured correctly. A successful socket connection alone is not resource-limit acceptance.
+## Embedded-agent configuration
 
-## One-shot rootless runtime bootstrap
-
-Use `bootstrap-host.sh` once per runner host. It prepares only the unprivileged runtime; it does **not** install a native Zoomies agent.
-
-The bootstrap is idempotent and fail-closed. It:
-
-- creates/reuses the dedicated `zoomies` account;
-- locks password login;
-- removes `docker`, `sudo` and `wheel` group membership;
-- refuses passwordless sudo;
-- installs rootless Docker prerequisites;
-- requires cgroup v2;
-- enables persistent user services with systemd lingering;
-- installs/starts rootless Docker under the `zoomies` uid;
-- verifies socket ownership and Docker's reported `rootless` security mode;
-- refuses the rootful Docker data root;
-- writes the accepted uid/gid/socket values to `/etc/zoomies/rootless-runtime.env`.
-
-Root is used only for this host bootstrap. No Zoomies agent process is installed as a root-owned native service.
-
-Run the reviewed bootstrap once:
-
-```bash
-curl -fsSL <pinned-bootstrap-url> | bash
-```
-
-For production, pin the URL to a reviewed commit rather than a moving branch. The script prints the accepted uid/gid/socket values and writes them to `/etc/zoomies/rootless-runtime.env`.
-
-## Single-host Compose: embedded agent on rootless Docker
-
-For a single machine that already runs the controller under Docker Compose/Coolify, the lowest-complexity deployment is the controller's built-in embedded agent pointed at the dedicated rootless daemon.
-
-This avoids:
-
-- a second Zoomies container;
-- a join token;
-- a second persistent agent credential volume;
-- native systemd agent installation.
-
-Set the controller container to:
+The Compose sets:
 
 ```text
 ZOOMIES_AGENT_EMBEDDED=true
-ZOOMIES_AGENT_NAME=<stable host name>
+ZOOMIES_AGENT_NAME=<stable name>
 ZOOMIES_AGENT_CAPACITY=<slot count>
-ZOOMIES_AGENT_LABELS=<host labels>
+ZOOMIES_AGENT_LABELS=<optional labels>
 ZOOMIES_AGENT_BACKEND=docker
-ZOOMIES_DOCKER_HOST=unix:///run/zoomies/docker.sock
+ZOOMIES_DOCKER_HOST=unix:///run/user/<uid>/docker.sock
 ZOOMIES_AGENT_DOCKER_BUILD_CACHE_MB=0
 ```
 
-Bind only the dedicated rootless Docker socket into the controller container and add the numeric group that owns that socket.
-
-The controller is public-facing, so this pattern is acceptable only when that socket belongs to a dedicated rootless daemon whose blast radius is the unprivileged CI account. Do not use the system-wide rootful `/var/run/docker.sock`.
-
-For additional machines, use the standalone agent container below.
-
-## Preferred standalone agent: container
-
-Zoomies officially supports a standalone agent container. This is the preferred pattern for Compose/Coolify-managed hosts.
-
-Use `agent-compose.yaml`.
-
-On the first start:
-
-1. `ZOOMIES_JOIN_TOKEN` is redeemed once;
-2. Zoomies receives a lasting host credential;
-3. that credential is stored in `zoomies-agent-data`.
-
-On subsequent starts, the volume credential is reused. The one-time join token is no longer needed and should be removed from the deployment environment after acceptance.
-
-The image runs as an unprivileged account. It needs access to a container-runtime socket because it creates runner containers as siblings, not nested containers.
-
-The upstream example mounts the host rootful `/var/run/docker.sock`. This hardened preset deliberately does not. Instead it bind-mounts the dedicated rootless socket prepared by `bootstrap-host.sh`:
-
-```text
-host: /run/user/<zoomies-uid>/docker.sock
-container: /run/zoomies/docker.sock
-```
-
-The numeric group owning that rootless socket is passed through with `group_add`.
-
-Required deployment variables:
-
-```text
-ZOOMIES_CONTROLLER_URL=https://<zoomies-domain>
-ZOOMIES_JOIN_TOKEN=<fresh single-use token; first start only>
-ZOOMIES_AGENT_NAME=<stable unique host name>
-ZOOMIES_RUNTIME_GID=<from /etc/zoomies/rootless-runtime.env>
-ZOOMIES_RUNTIME_SOCKET=<from /etc/zoomies/rootless-runtime.env>
-ZOOMIES_IMAGE_TAG=v1.3.4
-```
-
-A container hostname is not a stable fleet identity across multiple hosts, so set `ZOOMIES_AGENT_NAME` explicitly.
-
-For a first host, mint the token in **Hosts → Add a host** with conservative capacity and labels. Those token-bound values win during enrollment.
-
-After the host becomes Online, remove `ZOOMIES_JOIN_TOKEN` and redeploy. Do not delete `zoomies-agent-data`; losing it requires a new join token and a new enrollment.
-
-## Native agent alternative
-
-The one-line native installer is also supported. On systemd hosts, root/sudo is needed only to write/install the system service. The resulting service runs under a dedicated unprivileged account.
-
-For a Compose/Coolify-managed environment, prefer the standalone agent container above because its lifecycle and persistent credential are represented directly in deployment state.
+Embedded enrollment is internal to Zoomies; no operator-managed join token is required for the local host.
 
 ## Pool Docker modes
 
-`none`:
-- default;
-- no Docker daemon is exposed inside the job;
-- preferred for ordinary build/test workflows.
+### none
 
-`dind`:
-- gives each runner its own private Docker daemon sidecar;
-- preferred when a workflow builds/runs containers;
-- must be runtime-validated on the selected rootless daemon.
+Use for ordinary CI:
 
-`host-socket`:
-- mounts the host runtime socket into the job;
-- gives the job host-daemon authority;
-- prohibited by this preset.
+- checkout;
+- dependency install;
+- lint/typecheck;
+- compile/link;
+- unit tests;
+- application builds that do not require a Docker daemon.
 
-## Enrollment acceptance
+No Docker daemon is exposed inside the job.
 
-A host is accepted only when:
+### dind
 
-1. it appears online in Zoomies;
-2. the expected label is present;
-3. capacity is the intended value;
-4. backend reports the intended rootless Docker socket;
-5. resource-limit capabilities are visible;
-6. a normal runner can be created and destroyed;
-7. a `dind` runner can complete a Docker smoke test;
-8. no job receives the host runtime socket.
+Use when the workflow itself needs Docker operations:
+
+- `docker build` / `docker run`;
+- service containers;
+- multi-container integration tests;
+- Compose-like container topologies.
+
+Zoomies creates a private Docker-in-Docker daemon sidecar for the runner. The sidecar is privileged, but under this preset it is created by the dedicated rootless host daemon rather than host rootful Docker.
+
+Runtime acceptance must include a real image build/run and a multi-container networking test.
+
+### host-socket
+
+Prohibited.
+
+It would mount the host runtime socket into the job and give the workflow authority over that daemon.
+
+## Ephemeral acceptance
+
+For each pool:
+
+1. queue a job with the pool's explicit label;
+2. observe a new runner identity;
+3. complete the job;
+4. verify the runner is removed;
+5. verify pool live/busy/idle/queued counters return to zero.
+
+Run ordinary and DinD pools separately so Docker capability is opt-in rather than universal.
+
+## Additional hosts
+
+For extra machines, Zoomies also supports standalone agents. `agent-compose.yaml` remains an optional reference for that topology.
+
+That path has a different lifecycle:
+
+- run the reviewed `bootstrap-host.sh` on the additional host;
+- set the standalone deployment's runtime UID/GID/socket variables from the accepted rootless runtime;
+- mint a one-time join token;
+- persist the standalone agent credential;
+- remove the spent join token after enrollment.
+
+Do not confuse this optional multi-host path with the accepted single-host embedded-agent default.
