@@ -3,6 +3,7 @@
 ## Sub-map
 - behavior-analysis vocabulary, evidence states and proof levels → `behavior-analysis.md`
 - persistent analysis project/session/program lifecycle → `analysis-project-lifecycle.md`
+- Java/GhidraScript traces, inline proof, persistent Analysis script library and monitored jobs → `analysis-scripting.md`
 
 ## Evidence-first
 - Do not restart reverse if an existing corpus/contract answers the question.
@@ -20,6 +21,15 @@ For legacy, obscure or poorly documented silicon, generic public research is a b
 - When a bounded external search is attempted, record the useful artifact or record that the path remained exhausted so later agents inherit the stop condition. Do not report generic family material as target proof.
 
 This rule applies equally to the primary processor, audio DSP, secondary controller and other legacy companion silicon. Target reverse remains the authority when public material is absent.
+
+## Programmable evidence trigger
+
+When scripting is requested or a repeatable instruction/trace audit becomes
+the best evidence path, **load `analysis-scripting.md` before running any
+script**. Probe inline, register useful reviewed Java source in the configured
+Analysis/Ghidra script root, and use tracked jobs for lengthy runs. The
+analysis program remains the authority for recovered hardware semantics;
+the script library stores reusable tools, not firmware findings.
 
 ## Semantic reverse
 Use decompiler, CFG, callers/callees, XREF, globals/strings, types/structures and unresolved indirect flow.
