@@ -80,6 +80,8 @@ The DinD daemon uses a privileged sidecar created by the dedicated rootless host
 
 Runner implementation is accepted when both ordinary and DinD jobs pass and their ephemeral runners are torn down.
 
+For reproducible source-level regression checks on the public preset, run `bash test-contract.sh` from this directory. This does **not** test an actual rootless daemon, Coolify runtime or host reboot.
+
 The following are operational/environment hardening rather than runner-implementation proof:
 
 - host reboot/recovery;
@@ -88,4 +90,4 @@ The following are operational/environment hardening rather than runner-implement
 - narrowing orchestrator Watch paths;
 - retirement of any pre-existing legacy runner after cutover.
 
-Do not promote these untested concerns into a false claim that the runner path itself is still unproven, and do not claim full host/product readiness until the environment-specific gates that matter to that deployment are actually tested.
+Do not promote these untested concerns into a false claim that the runner path itself is still unproven, and do not claim full host/product readiness until the environment-specific gates that matter to that deployment are actually tested. The host-level recovery and cutover matrix is in `RECOVERY.md`; no reusable test script or historical Actions run can replace the required full-host reboot evidence.

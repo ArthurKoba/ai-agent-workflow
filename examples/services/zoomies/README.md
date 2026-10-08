@@ -41,6 +41,8 @@ The rootful host Docker socket is never mounted into Zoomies or jobs. A DinD sid
 - `GITHUB.md` — GitHub App connection and credential-rotation notes.
 - `HOSTS.md` — rootless host, embedded-agent and pool-mode contract.
 - `VALIDATION.md` — demonstrated acceptance and remaining non-runner gates.
+- `RECOVERY.md` — host reboot, zero-touch recovery, proxy, backup, Watch paths and legacy-runner cutover acceptance.
+- `test-contract.sh` — runnable non-privileged regression checks of the reusable Compose/bootstrap contract.
 - `agent-compose.yaml` — optional additional-host standalone-agent example; not the default single-host path.
 
 ## Security boundary
@@ -140,4 +142,6 @@ Runner implementation is accepted when:
 6. both pools return to zero live/busy/idle/queued runners;
 7. no pool uses `host-socket`.
 
-Reboot recovery, reverse-proxy client-IP attribution, off-host backups and retirement of a legacy runner are operational hardening/cutover concerns, not reasons to pretend the runner path itself is still unproven.
+Reboot recovery, reverse-proxy client-IP attribution, off-host backups and retirement of a legacy runner are operational hardening/cutover concerns, not reasons to pretend the runner path itself is still unproven. Follow `RECOVERY.md` before any full-host acceptance or retirement claim.
+
+The reusable source contract can be checked with Bash, Python 3 and standard Unix utilities, without a Docker daemon, using `bash test-contract.sh`. The result is a **static/regression** gate only, not proof of Coolify deployment, real rootless Docker, or host reboot.
