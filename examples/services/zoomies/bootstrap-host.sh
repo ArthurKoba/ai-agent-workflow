@@ -501,7 +501,7 @@ main() {
   assert_no_native_agent
 
   CURRENT_STAGE="accepted"
-  log "bootstrap accepted: rootless Docker is ready for the embedded Zoomies agent"
+  log "bootstrap accepted: rootless Docker is ready for Zoomies runner management"
 }
 
 if [[ "${ZOOMIES_BOOTSTRAP_LIBRARY_ONLY:-0}" != "1" ]]; then
