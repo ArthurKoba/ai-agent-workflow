@@ -8,7 +8,7 @@ Load only the module matching the current task.
 - independent review → `code-review/README.md`
 - shell/PowerShell/WSL/SSH/UART/bootloader → `terminal-operations/README.md`
 - deployment/services/infrastructure operations → `service-engineering/README.md`
-- embedded firmware/hardware reverse → `hardware-reverse/README.md`
+- program behavior analysis, reconstruction and Ghidra/Analysis scripting (EXE, BIOS/UEFI, firmware, drivers, libraries) → `program-analysis/README.md`
 - OpenIPC migration/porting/contribution → `openipc-porting/README.md`
 - context-efficient documentation/bootstrap/multi-agent workflow design → `context-engineering/README.md`
 - workflow/chat/prompt audit → `workflow-audit/README.md`
