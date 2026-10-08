@@ -124,7 +124,7 @@ Validate at least:
 - ordinary ephemeral job + teardown;
 - DinD build/run + multi-container networking + teardown.
 
-Treat reboot/recovery as a separate host lifecycle gate.
+Treat reboot/recovery as a separate host lifecycle gate. Follow `RECOVERY.md` to record pre-reboot safeguards, host recovery and fresh post-reboot ordinary/DinD jobs. Do not use a container restart as proof of host recovery. Run `bash test-contract.sh` for non-privileged source regressions; it does not replace runtime acceptance.
 
 ## Security
 
