@@ -99,7 +99,7 @@ GitHub integration is accepted when:
 4. a post-configuration workflow job is observed by the controller (webhook or fallback poller);
 5. no unrelated repository scope is granted unintentionally.
 
-After that, create the pools.
+After that, create the pools as described in `POOLS.md`; do not select `host-socket` mode or assume that an organisation-target pool serves personal-account repositories.
 
 
 ## Organisation versus personal account

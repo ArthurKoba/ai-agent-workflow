@@ -102,7 +102,7 @@ For each pool:
 4. verify the runner is removed;
 5. verify pool live/busy/idle/queued counters return to zero.
 
-Run ordinary and DinD pools separately so Docker capability is opt-in rather than universal.
+Run ordinary and DinD pools separately so Docker capability is opt-in rather than universal. See `POOLS.md` for the configuration and acceptance sequence in the Zoomies pool editor.
 
 ## Additional hosts
 
