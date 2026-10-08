@@ -19,18 +19,29 @@ A skill must not duplicate account-level behavior, Project authority, repository
 
 ## Structure
 
-Every top-level skill has a directory with `README.md` as its entry point:
+A **standalone skill is a single named Markdown file**:
+
+```text
+skills/<skill-name>.md
+```
+
+Do not require a directory or `README.md` for a self-contained skill.
+The file itself describes triggers, terminology, process, tool workflows,
+validation and completion.
+
+Only group a genuinely multi-file skill when it contains distinct,
+independently useful documents or assets. In that case use:
 
 ```text
 skills/<skill-name>/
   README.md
   <optional-module>.md
-  <optional-subskill>/README.md
 ```
 
-`README.md` defines purpose, triggers, boundaries, operating method and completion. A cohesive, self-contained skill **may consist of just this one file**; do not split terminology, tracing, scripting and lifecycle into nested modules solely because the file grows.
-
-Add optional modules/subskills only when independently triggered workflows clearly benefit from selective loading. Group topics when the work actually demands it, not by default. Avoid mandatory multi-file reading chains.
+The folder's `README.md` then routes to its independent modules. Do not
+split one coherent analysis/recovery process into subordinate documents,
+and do not create a folder merely to hold a single README. The central
+`skills/README.md` map must link directly to whichever entrypoint exists.
 
 ## Rule ownership
 

@@ -1,14 +1,14 @@
-# Program Analysis & Behavior Reconstruction
+# Reverse Analysis
 
 Self-contained skill for analyzer-driven examination of program behavior:
 EXE/PE/ELF files, BIOS/UEFI, applications, libraries, drivers, firmware,
 embedded binaries, and other programs supported by the selected analyzer.
 
-Use this one README for terminology, trace methodology, semantic recovery,
+Use this standalone skill file for terminology, trace methodology, semantic recovery,
 confidence and proofs, Ghidra/Analysis project lifecycle, Java/GhidraScript,
 persistent scripts and monitored jobs. Its rules do not require hardware,
 a board, or a low-level target. Keep related analysis rules in this same
-file, not in further nested skill modules. Project-owned target scope,
+file, not in subdirectories or further skill modules. Project-owned target scope,
 tool access, and validation criteria take precedence.
 
 ## Evidence-first
@@ -199,7 +199,7 @@ A provider, policy, safety or pre-tool block is infrastructure evidence, not evi
 
 On every such block during behavior analysis:
 
-1. Re-read the terminology/evidence section of this program-analysis skill from the current authority before the next analysis invocation. This is a narrow re-bootstrap step intended to restore the active terminology, evidence model and routing constraints; it does not require rereading the whole workflow library.
+1. Re-read the terminology/evidence section of this reverse-analysis skill from the current authority before the next analysis invocation. This is a narrow re-bootstrap step intended to restore the active terminology, evidence model and routing constraints; it does not require rereading the whole workflow library.
 2. Record the incident while the exact invocation is still available. Preserve the tool/provider surface, operation or method name, sanitized arguments sufficient to identify the request shape, intended evidence goal, exact block/error text, whether the backend was reached, and the result of any legitimate alternate evidence path. Never copy credentials, secrets or unnecessary sensitive payloads into an issue.
 3. Check the configured infrastructure/provider incident tracker for an existing issue with the same failure class. If one exists, append the current invocation and result as a new evidence point. Otherwise open a new issue. Repeated occurrences belong in the same issue when they share the same root symptom so the evidence base grows instead of fragmenting.
 4. Continue through a narrower or otherwise legitimate evidence path when one exists. Do not blindly repeat the same blocked call and do not use another tool merely to evade the safety/policy decision.
