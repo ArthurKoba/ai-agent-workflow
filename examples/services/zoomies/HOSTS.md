@@ -111,6 +111,7 @@ For extra machines, Zoomies also supports standalone agents. `agent-compose.yaml
 That path has a different lifecycle:
 
 - run the reviewed `bootstrap-host.sh` on the additional host;
+- set the standalone deployment's runtime UID/GID/socket variables from the accepted rootless runtime;
 - mint a one-time join token;
 - persist the standalone agent credential;
 - remove the spent join token after enrollment.

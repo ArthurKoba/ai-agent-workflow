@@ -124,7 +124,7 @@ Observed on GitHub.com with Zoomies 1.3.4:
 - after GitHub authentication, the manifest creation page may show only the App name and a single confirmation button because the webhook URL, permissions and event subscriptions are carried in the manifest payload;
 - for a personal-account repository target, GitHub creates the App under that personal account.
 
-A short stable name such as `Koba Zoomies CI` is preferable to embedding a long repository slug in the App name.
+A short stable name such as `Zoomies CI` is preferable to embedding a long repository slug in the App name.
 
 
 ## App creation versus installation
