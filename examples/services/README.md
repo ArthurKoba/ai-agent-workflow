@@ -26,4 +26,4 @@ Each preset should be self-contained and safe to publish. A typical preset conta
 
 - `jenkins/` — Jenkins controller with a dedicated inbound builder and an isolated TLS-protected Docker-in-Docker daemon.
 - `openvpn-gateway/` — host-network OpenVPN client gateway with orchestrator-managed profile storage, connection-state health and optional LAN forwarding/NAT.
-- `zoomies/` — Zoomies controller and staged native GitHub Actions runner-fleet setup; controller/Coolify migration validated, host/pool/DinD acceptance in progress.
+- `zoomies/` — Zoomies 1.3.4 single-host rootless controller + embedded-agent preset; clean deployment, ordinary ephemeral runners and DinD build/network acceptance validated.

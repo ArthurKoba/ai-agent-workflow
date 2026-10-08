@@ -1,7 +1,37 @@
 services:
+  zoomies-bootstrap:
+    build:
+      context: .
+      dockerfile: bootstrap/Dockerfile
+    restart: "no"
+    privileged: true
+    pid: host
+    exclude_from_hc: true
+
+    environment:
+      ZOOMIES_RUNTIME_USER: ${ZOOMIES_RUNTIME_USER:-zoomies}
+      ZOOMIES_RUNTIME_UID: ${ZOOMIES_RUNTIME_UID:-1001}
+      ZOOMIES_RUNTIME_GID: ${ZOOMIES_RUNTIME_GID:-1001}
+      ZOOMIES_RUNTIME_SOCKET: ${ZOOMIES_RUNTIME_SOCKET:-/run/user/1001/docker.sock}
+      ZOOMIES_SHARED_DIR: /var/lib/zoomies/shared
+
+    volumes:
+      - type: volume
+        source: zoomies-controller-data
+        target: /bootstrap/controller-state
+        volume:
+          nocopy: true
+      - type: volume
+        source: zoomies-agent-state
+        target: /bootstrap/agent-state
+        volume:
+          nocopy: true
+
   zoomies:
     image: ghcr.io/eyupio/zoomies:v1.3.4
     restart: unless-stopped
+    hostname: ${ZOOMIES_AGENT_NAME:-zoomies-ci}
+    user: "${ZOOMIES_RUNTIME_UID:-1001}:${ZOOMIES_RUNTIME_GID:-1001}"
     command:
       - controller
     stop_grace_period: 20m
@@ -9,19 +39,55 @@ services:
     mem_limit: 1g
     pids_limit: 512
 
+    depends_on:
+      zoomies-bootstrap:
+        condition: service_completed_successfully
+
     environment:
-      ZOOMIES_EXTERNAL_URL: ${ZOOMIES_EXTERNAL_URL:?}
+      HOME: /var/lib/zoomies
+      ZOOMIES_STATE_DIR: /var/lib/zoomies
+      SERVICE_URL_ZOOMIES_8080: /
+      ZOOMIES_EXTERNAL_URL: ${ZOOMIES_EXTERNAL_URL:-${SERVICE_URL_ZOOMIES}}
       ZOOMIES_ENCRYPTION_KEY: ${ZOOMIES_ENCRYPTION_KEY:?}
       ZOOMIES_BIND: 0.0.0.0:8080
       ZOOMIES_TLS_MODE: "off"
-      ZOOMIES_AGENT_EMBEDDED: "false"
+      ZOOMIES_DB_PATH: /var/lib/zoomies/zoomies.db
+      ZOOMIES_AGENT_EMBEDDED: "true"
+      ZOOMIES_AGENT_NAME: ${ZOOMIES_AGENT_NAME:-zoomies-ci}
+      ZOOMIES_AGENT_CAPACITY: "${ZOOMIES_AGENT_CAPACITY:-1}"
+      ZOOMIES_AGENT_LABELS: ${ZOOMIES_AGENT_LABELS:-}
+      ZOOMIES_AGENT_BACKEND: docker
+      ZOOMIES_DOCKER_HOST: unix://${ZOOMIES_RUNTIME_SOCKET:-/run/user/1001/docker.sock}
+      ZOOMIES_AGENT_NETWORK: zoomies-runners
+      ZOOMIES_WORK_DIR: /var/lib/zoomies-agent/work
+      ZOOMIES_AGENT_DOCKER_BUILD_CACHE_MB: "0"
       ZOOMIES_LOG_FORMAT: json
 
     expose:
       - "8080"
 
     volumes:
-      - zoomies-controller-data:/var/lib/zoomies
+      - type: volume
+        source: zoomies-controller-data
+        target: /var/lib/zoomies
+        volume:
+          nocopy: true
+      - type: volume
+        source: zoomies-agent-state
+        target: /var/lib/zoomies-agent
+        volume:
+          nocopy: true
+      - type: bind
+        source: /var/lib/zoomies/shared
+        target: /var/lib/zoomies/shared
+        bind:
+          create_host_path: false
+      - type: bind
+        source: /run/user
+        target: /run/user
+        read_only: true
+        bind:
+          create_host_path: false
 
     healthcheck:
       test:
@@ -35,8 +101,11 @@ services:
       retries: 3
       start_period: 20s
 
+    cap_drop:
+      - ALL
     security_opt:
       - no-new-privileges:true
 
 volumes:
   zoomies-controller-data:
+  zoomies-agent-state:

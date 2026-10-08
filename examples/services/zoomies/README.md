@@ -1,8 +1,8 @@
 # Zoomies CI Reference Preset
 
-Status: **controller/Coolify migration validated; GitHub App, host enrollment, pools and DinD acceptance in progress**.
+Status: **single-host rootless controller + embedded-agent path accepted, including ordinary ephemeral runners and Docker-in-Docker jobs**.
 
-This preset supports a controller-only bootstrap and a hardened single-host mode where the controller embeds the agent but receives only a dedicated rootless CI Docker socket, never the system-wide rootful Docker socket.
+This preset captures the accepted one-host architecture for Zoomies 1.3.4 behind Coolify. It keeps the deployment entrypoint in one Compose file, uses a privileged one-shot bootstrap only to prepare the host rootless Docker runtime, and leaves the persistent Zoomies service unprivileged.
 
 ## Validated version
 
@@ -10,92 +10,134 @@ This preset supports a controller-only bootstrap and a hardened single-host mode
 Zoomies: 1.3.4
 ```
 
-Revalidate the setup after meaningful Zoomies upgrades.
+Revalidate the preset after meaningful Zoomies or host-runtime upgrades.
 
-## Architecture
-
-Current validated bootstrap:
+## Accepted architecture
 
 ```text
-GitHub
+Coolify / rootful Docker
+  +-- zoomies-bootstrap        trusted, privileged, one-shot
+  |     `-- prepares/validates dedicated host rootless Docker
   |
-  v
-Zoomies controller
-  public HTTPS through Coolify
-  no host Docker socket
-  embedded agent disabled
-  |
-  +-- persistent controller state
+  `-- zoomies                  persistent, unprivileged
+        +-- controller
+        +-- embedded agent
+        `-- /run/user/<uid>/docker.sock
+                |
+                `-- dedicated rootless Docker daemon
+                      +-- ephemeral ordinary runner
+                      `-- ephemeral runner + privileged DinD sidecar
 ```
 
-Target CI architecture for one Compose/Coolify host:
-
-```text
-GitHub Actions
-     |
-     v
-Zoomies controller + embedded agent
-     |
-     v
-dedicated rootless Docker daemon
-     |
-     +-- ephemeral runners
-     +-- DinD sidecars only for jobs that require Docker
-```
-
-Additional runner machines use standalone agent containers.
-
-The controller must not receive the host rootful `/var/run/docker.sock`.
+The rootful host Docker socket is never mounted into Zoomies or jobs. A DinD sidecar is privileged inside the dedicated rootless Docker user namespace; it is not the host rootful daemon.
 
 ## Files
 
-- `docker-compose.yaml` — controller-only reusable Compose.
-- `COOLIFY.md` — Git-backed Coolify deployment and in-place migration procedure.
-- `GITHUB.md` — first-admin, GitHub App and repository migration notes.
-- `HOSTS.md` — host enrollment, rootless runtime and Docker-mode contract.
-- `bootstrap-host.sh` — one-shot fail-closed rootless Docker runtime bootstrap.
-- `agent-compose.yaml` — preferred standalone agent container using the prepared rootless socket.
-- `VALIDATION.md` — observed acceptance state and remaining gates.
+- `docker-compose.yaml` — accepted single-host Compose entrypoint.
+- `bootstrap/Dockerfile` — one-shot bootstrap image.
+- `bootstrap/entrypoint.sh` — volume preparation + host namespace handoff.
+- `bootstrap-host.sh` — idempotent Ubuntu 24.04 rootless-Docker host bootstrap used by the one-shot container.
+- `COOLIFY.md` — Coolify parser/deployment contract.
+- `GITHUB.md` — GitHub App connection and credential-rotation notes.
+- `HOSTS.md` — rootless host, embedded-agent and pool-mode contract.
+- `VALIDATION.md` — demonstrated acceptance and remaining non-runner gates.
+- `agent-compose.yaml` — optional additional-host standalone-agent example; not the default single-host path.
 
-## Controller configuration
+## Security boundary
 
-The published image uses `/var/lib/zoomies` for controller state. Preserve the named volume on that native path:
+The deployment control plane is trusted infrastructure authority. The one-shot bootstrap may enter host namespaces because rootless Docker must live on the host; it exits after convergence.
+
+The persistent Zoomies container:
+
+- runs as the dedicated unprivileged runtime UID/GID;
+- drops all Linux capabilities and uses `no-new-privileges`;
+- sees `/run/user` read-only;
+- explicitly talks only to its rootless Docker socket;
+- never receives `/var/run/docker.sock`.
+
+Jobs:
+
+- ordinary pools use `docker_mode: none`;
+- Docker-building/integration pools use `docker_mode: dind`;
+- `host-socket` is prohibited.
+
+## State
+
+Durable controller state:
 
 ```text
 zoomies-controller-data -> /var/lib/zoomies
 ```
 
-The Compose preset deliberately keeps:
+Embedded-agent state:
 
 ```text
-ZOOMIES_AGENT_EMBEDDED=false
-ZOOMIES_TLS_MODE=off
-ZOOMIES_BIND=0.0.0.0:8080
+zoomies-agent-state -> /var/lib/zoomies-agent
 ```
 
-Coolify owns the public TLS boundary.
-
-## Required runtime variables
+Recreatable runtime/cache state:
 
 ```text
-ZOOMIES_EXTERNAL_URL
-ZOOMIES_ENCRYPTION_KEY
+/home/zoomies/.local/share/docker
+/var/lib/zoomies/shared
+/run/user/<uid>/docker.sock
 ```
 
-Keep the encryption key in a Coolify shared variable at the narrowest useful scope. Do not commit it.
+Preserve the controller database together with the same external `ZOOMIES_ENCRYPTION_KEY`.
 
-## Bootstrap sequence
+## Required configuration
 
-1. Deploy the controller.
-2. Confirm the health check passes.
-3. Create the first administrator.
-4. Sign in and verify the Overview reports a live connection.
-5. Connect GitHub using the product's GitHub App flow.
-6. Prepare the trusted host's rootless runtime once, then enable the embedded agent against that socket (or use a standalone agent container for additional hosts).
-7. Create a first pool with conservative capacity.
-8. Validate one normal GitHub Actions job against that pool.
-9. Validate Docker-in-Docker for workflows that require Docker.
-10. Use **Migrate repositories** to rewrite existing `runs-on` labels, review exact diffs and open PRs across the intended repositories.
-11. Retain the legacy runner until real workload acceptance succeeds and migration PRs are accepted.
+The preset defaults the dedicated runtime to UID/GID 1001. If you override the UID/GID, also override the socket path consistently.
 
-Do not promote later steps to "validated" until the real job path has succeeded.
+```text
+ZOOMIES_ENCRYPTION_KEY     required external secret
+ZOOMIES_EXTERNAL_URL      optional explicit override under Coolify
+ZOOMIES_RUNTIME_USER      default zoomies
+ZOOMIES_RUNTIME_UID       default 1001
+ZOOMIES_RUNTIME_GID       default 1001
+ZOOMIES_RUNTIME_SOCKET    default /run/user/1001/docker.sock
+ZOOMIES_AGENT_NAME        default zoomies-ci
+ZOOMIES_AGENT_CAPACITY    default 1
+ZOOMIES_AGENT_LABELS      optional
+```
+
+## Accepted pool pattern
+
+Use separate labels/pools for different trust/capability needs.
+
+Ordinary pool:
+
+```yaml
+runs-on: zoomies-linux-x64
+```
+
+- ephemeral;
+- Docker backend;
+- Docker in jobs: none.
+
+DinD pool:
+
+```yaml
+runs-on: zoomies-linux-x64-dind
+```
+
+- ephemeral;
+- Docker backend;
+- Docker in jobs: DinD;
+- separate privileged sidecar per job inside the rootless daemon.
+
+The accepted DinD smoke covered daemon access, image build/run and communication between multiple containers.
+
+## Completion boundary
+
+Runner implementation is accepted when:
+
+1. the rootless backend is healthy;
+2. the embedded host is Online;
+3. an ordinary ephemeral job succeeds and the runner disappears;
+4. a DinD job builds/runs an image;
+5. a DinD job can run multiple communicating containers;
+6. both pools return to zero live/busy/idle/queued runners;
+7. no pool uses `host-socket`.
+
+Reboot recovery, reverse-proxy client-IP attribution, off-host backups and retirement of a legacy runner are operational hardening/cutover concerns, not reasons to pretend the runner path itself is still unproven.
