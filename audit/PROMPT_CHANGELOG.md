@@ -1,5 +1,16 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Flat Reverse Analysis skill
+
+Changes:
+- renamed the general program-behavior skill to `skills/reverse-analysis.md` at the root of `skills/`;
+- removed the one-file `program-analysis/README.md` folder and redirected active maps;
+- set flat `skills/<skill-name>.md` as the normal standalone skill format, retaining folder/README only for genuinely multi-file skills;
+- preserved the reverse-analysis method for executables, BIOS/UEFI, libraries, drivers and firmware, including semantics, tracing, script persistence and monitored jobs.
+
+Reason:
+The previous correction consolidated content but still created an unnecessary folder/README indirection. A single cohesive skill should be a single named file. Historical references below are provenance, not active router paths.
+
 ## 2026-10 — Standalone program-analysis skill
 
 Changes:

@@ -55,7 +55,7 @@ Examples:
 - do not guess current state → account;
 - use a specific MCP in one project → project;
 - shell/UART formatting → terminal skill;
-- Ghidra/Analysis investigation, tracing and GhidraScript lifecycle → program-analysis skill;
+- Ghidra/Analysis investigation, tracing and GhidraScript lifecycle → reverse-analysis skill;
 - independent review behavior → role model.
 
 ## Infrastructure
