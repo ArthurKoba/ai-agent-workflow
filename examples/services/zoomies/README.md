@@ -40,6 +40,7 @@ The rootful host Docker socket is never mounted into Zoomies or jobs. A DinD sid
 - `COOLIFY.md` — Coolify parser/deployment contract.
 - `GITHUB.md` — GitHub App connection and credential-rotation notes.
 - `HOSTS.md` — rootless host, embedded-agent and pool-mode contract.
+- `POOLS.md` — configure separate ordinary and DinD GitHub runner pools and qualify each job lifecycle.
 - `VALIDATION.md` — demonstrated acceptance and remaining non-runner gates.
 - `RECOVERY.md` — host reboot, zero-touch recovery, proxy, backup, Watch paths and legacy-runner cutover acceptance.
 - `test-contract.sh` — runnable non-privileged regression checks of the reusable Compose/bootstrap contract.
