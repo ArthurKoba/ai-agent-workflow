@@ -1,5 +1,16 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Canonical reverse-analysis method
+
+Changes:
+- clarified full first-pass auto-analysis and bulk decompilation for tractable firmware as a coverage step, not persistent C caching;
+- made Ghidra's saved annotations authoritative and decompilation on-demand after restart or semantic edits;
+- specified known-code reuse, interprocedural type recovery, targeted P-code/SLEIGH investigation, batch semantic writes and optional clean replacement implementation;
+- condensed project/session recovery, reusable GhidraScript registration and long-task execution while keeping agent-review responsibilities out of this skill.
+
+Reason:
+Repeated low-level, hex-first exploration and confusion between saved analysis, generated pseudocode and temporary scripts caused wasted work. The revised skill gives one technical process without growing into an implementation manual.
+
 ## 2026-10 — Flat Reverse Analysis skill
 
 Changes:
