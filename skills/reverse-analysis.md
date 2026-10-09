@@ -36,6 +36,34 @@ artifact locator, document or direct user request). Preserve useful and
 negative search results. Target code and observed behavior take precedence
 over analogies to another version or platform.
 
+## Mandatory high-level-first analysis after import
+
+1. **Identify and enable the architecture.** Inspect the imported program's
+   format, processor/bytecode ISA, ABI, loader and address mapping. Attach the
+   correct analyzer language/processor/loader. If support is absent, implement
+   or integrate the needed decoder/language/loader and decompiler support;
+   record any remaining unsupported scope explicitly, never guess an ISA.
+2. **Analyze before tracing.** Run the analyzer's applicable automatic analysis
+   for executable code and confirm it completed: function boundaries, CFG,
+   references and data flow. Reuse valid saved analysis rather than rerunning
+   it each session; do not treat data-only regions as machine code.
+3. **Decompile and work at a high level.** Generate and read C-like pseudocode
+   for the relevant native functions and their callers/callees. This is the
+   mandatory **primary** representation wherever supported. Recover semantic
+   names, prototypes, structures, field types and constants in the canonical
+   analyzer; regenerate pseudocode after corrections, then save and read back.
+   Do not maintain a hand-written C mirror as a second source of truth.
+4. **Use low-level evidence only when necessary.** Decompilers may misread an
+   ABI, argument width, indirect call, branch, register or side effect. For a
+   *specific, bounded* ambiguity, inspect instructions/registers/IR/raw bytes,
+   correct supported metadata and return to pseudocode. Such inspection is
+   permitted and authoritative, but continuous assembly/register/hex-first
+   analysis is **not** the default while a usable high-level view exists.
+5. **Use the right representation.** For ACPI AML inspect decompiled ASL;
+   for VM/bytecode or unusual packet formats attach/implement the appropriate
+   decoder and high-level model. Do not force data tables into a native C
+   decompiler or substitute raw hexadecimal reading for available structure.
+
 ## Trace and recovery process
 
 Trace program behavior through actual control and data dependencies,
@@ -52,8 +80,8 @@ not by naming isolated functions or repeatedly proving known facts.
    externally visible effects (files, network, UI, services, peripherals).
 4. **Reconstruct behavior:** identify the algorithm/contract, parameters,
    preconditions, outputs, modes, limits, errors, resource ownership and
-   interaction with other modules. Decompiler output is a guide; verify
-   critical claims against instructions/IR, references or runtime evidence.
+   interaction with other modules. Work from the high-level representation
+   above; verify disputed claims with targeted instructions/IR or observations.
 5. **Materialize:** apply defensible semantic names, types, structures,
    transitions, references, evidence comments and uncertainty to the
    canonical Analysis project. Save, then read back the changed objects.
