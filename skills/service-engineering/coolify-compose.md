@@ -15,6 +15,122 @@ Keep these layers distinct:
 
 When parser behavior matters, inspect the deployed Coolify version's parser/source instead of assuming generic Compose behavior.
 
+## ENV design gate — expose only genuine operator configuration
+
+Apply this gate **before** inventing a variable, adding it to `.env.example`,
+creating a Coolify Shared Variable, or adding an `environment:` entry.
+**An ENV key is an external contract, not a place to move application constants.**
+
+For every proposed key, answer all of these:
+
+1. **Who operates it?** Name the human/operator or external system that must
+   supply or legitimately change the value between deployments. If nobody does,
+   keep it in code or a versioned deployment definition, not ENV.
+2. **Who owns it?** Name the exact application subsystem or deployment resource
+   consuming it. Do not group unrelated database, authentication, invitation,
+   idempotency and storage concerns into one generic settings object/prefix.
+3. **Is it independent?** If the application can derive it unambiguously from
+   existing inputs or its known topology, compute it once. Do not demand both
+   database components and an independently supplied connection URL, or expose
+   duplicated public/internal addresses without a distinct consumer contract.
+4. **Where does it belong?** Choose application code for invariant behavior;
+   Git Compose for stable service DNS, internal ports and topology; Coolify
+   operator settings for actual external inputs; and a protected secret provider
+   for credentials. A runtime's ENV is a *delivery mechanism*, not necessarily
+   the owner of the value.
+5. **Is there a safe default?** Mark genuinely unpredictable required values
+   empty/required and fail fast. Keep safe, canonical defaults in the owning
+   code/Compose. Do not advertise internal tuning knobs just because a settings
+   framework supports an override.
+
+### Naming is relative to the service boundary
+
+- Prefer short, recognizable **purpose nouns**: `POSTGRES_PASSWORD`,
+  `ADMIN_UI_PUBLIC_URL`, `CREDENTIAL_ENCRYPTION_KEY`, `SIGNING_PRIVATE_KEY`.
+  Use upstream image/application variable names where those are authoritative.
+- Inside a single service, its own product/service name is already implied.
+  Avoid redundant `MY_SERVICE_`, `PLATFORM_` or application-brand prefixes.
+  Add a domain prefix only when it genuinely distinguishes two concepts in
+  the **same consumer** (`ADMIN_JWT_SIGNING_KEY` vs an unrelated signing key).
+- Deployment identity is already represented by the chosen environment,
+  project and service. Do not bake `DEV_`, `STAGING_`, `PROD_`, environment
+  names or deployment IDs into keys unless the **same process** really consumes
+  independent values for multiple environments.
+- Name the **meaning**, not internal encoding or incidental implementation:
+  avoid `_B64`, generic `_TOKEN`, `_CONFIG` and vague `URL` when a clearer
+  purpose name exists. Specify PEM/base64/format separately in the consuming
+  contract when needed. Do not shorten so far that ownership becomes unclear.
+- One concept gets one canonical key. Do not add an alias/wrapper only to
+  translate a value that the image or application already consumes directly.
+
+### Required, default, internal: three different outcomes
+
+| Decision | Placement | Example |
+| --- | --- | --- |
+| Operator must supply a secret or external origin | protected secret store / required Coolify variable; empty until supplied | `POSTGRES_PASSWORD=` or `ADMIN_UI_PUBLIC_URL=` |
+| Operator may override a genuinely portable value | owning service's documented default, optionally exposed | `POSTGRES_PORT=5432`, `TZ=UTC` |
+| Value follows from architecture, selected deployment or product state | code, service topology or state machine; **not** an operator ENV | internal service DNS, normal timeout, first-user onboarding state |
+
+An `.env.example` is a **minimal contract for its own deployment**, not a
+full list of every settings-model field. Separate historical/legacy and new
+service examples; do not mix incompatible default databases, URLs or secrets.
+Keep tuning overrides undocumented/unexposed until there is a real operator
+use case. An optional key with a safe preset does not become a required blank.
+
+### Feature and security switches are not substitutes for correct design
+
+Do not expose environment toggles that answer whether a deployed service
+really runs its own core function, whether mandatory authentication/service
+identity is enforced, or whether an unfinished preview is enabled. Deploy a
+correctly secured runtime, or **do not deploy that runtime**. Required trust
+material must fail startup closed when absent; never let a boolean silently
+turn off a required security boundary.
+
+When behavior is determined by durable product state (for example, whether
+initial administrator setup remains necessary), derive it from authoritative
+state, not `ENABLE_PREVIEW`, `PRINT_BOOTSTRAP_SECRET` or similar operator flags.
+If an initial code must be shown until setup is completed, use the approved
+restricted operator channel and stop when the state changes; do not expose
+recoverable secrets through general application logs as a configuration choice.
+A real independently supported product feature may have an operator setting,
+but its owner, purpose and supported lifecycle must be explicit.
+
+### Secret ownership and agent access are distinct from ENV transport
+
+- Keep real secret **values** in the designated protected Coolify Shared
+  Variables/secret-provider scope, never in Git, images, sample files or
+  pasted application-variable values. If a project deliberately protects
+  project-scoped Shared Variables from agents while allowing them to manage
+  Application ENV, **preserve that security boundary**, even for a secret
+  consumed by one service; don't relocate it to Application scope for neatness.
+- Application ENV may contain **references**, nonsecret topology and
+  nonsecret operator options. The resolved runtime environment may nonetheless
+  contain plaintext secrets. Do not grant agents shell/process-env access,
+  reveal-secret controls, unredacted logs, or variable-value APIs merely
+  because Application ENV configuration is editable. Verify actual tool/RBAC
+  permissions; UI masking alone is not an access boundary.
+- Share a value only where consumers and **visibility policy** require it.
+  Project/Team/Environment scopes are security/ownership decisions, not
+  synonyms for convenience. Resolve references explicitly; no implicit
+  inheritance, invented default credentials or extra copies of secret values.
+- Secret introduction, renaming, rotation or removal is a migration: preserve
+  durable encrypted data, token verification and replay guarantees. Remove
+  cryptographic ENV inputs only after the replacement design proves those
+  guarantees; never replace encryption with plaintext persistence.
+
+### Acceptance before a Coolify deployment
+
+Independently review the full proposed variable inventory, not just spelling:
+for each key record its real operator use case, consuming owner, scope,
+required/default rule, origin (operator / derived / secret reference) and
+removal/migration path if legacy. Reject unused keys, duplicate sources of
+truth, imaginary configurability, redundant service/environment prefixes,
+unnecessary secrets and bypass switches. Verify on the actual Coolify parser
+that required entries are blank, safe defaults stay defaults, Shared
+references resolve **without showing secret values**, and the agent's
+observable controls do not expose resolved runtime secrets. A passing YAML
+parse alone does not meet this gate.
+
 ## Repository and build-path contract
 
 When a Compose manifest contains orchestrator-specific semantics, prefer a layout that names the orchestrator explicitly:
@@ -74,7 +190,7 @@ Classify every configurable value before writing the manifest.
 
 | Kind | Compose treatment | Coolify treatment |
 | --- | --- | --- |
-| secret/credential/private key/token | reference only | shared variable at the narrowest useful scope |
+| secret/credential/private key/token | reference only | protected shared-variable scope selected by ownership and access policy |
 | mutable external address, bind IP, remote endpoint, externally meaningful listen port | required: `${VAR:?}` | resource variable, intentionally empty until set |
 | safe portable default such as timezone or non-sensitive DNS | optional: `${VAR:-default}` | generated resource variable may keep default |
 | internal service-to-service host/port | literal service DNS + container port | do not externalize unless a real consumer needs it |
@@ -88,12 +204,12 @@ Do not turn every literal into an environment variable. Parameterization is usef
 
 Prefer the application's canonical environment variable when it already expresses the right meaning. Do not invent a stack-specific alias merely to forward the same value.
 
-For infrastructure-owned variables that have no upstream canonical name, encode the system and semantic role in the key:
+For infrastructure-owned variables with no upstream canonical name, include only the distinction needed at **their actual scope**:
 
-- prefer `VPN_PUBLIC_ENDPOINT`, `ADMIN_BIND_IP`, `VICTORIA_METRICS_ENDPOINT`;
-- prefer `<SYSTEM>_ENDPOINT` for a canonical HTTP(S) destination when the transport role is obvious from the consumer;
-- use a transport-specific suffix such as `_REMOTE_WRITE_URL` only when distinguishing several different endpoints is operationally useful;
-- pair credentials consistently, for example `VICTORIA_METRICS_AUTH_USERNAME` and `VICTORIA_METRICS_AUTH_PASSWORD`;
+- inside one service, use `METRICS_ENDPOINT`, `AUTH_USERNAME` or `AUTH_PASSWORD` when the purpose is unambiguous; adding the service name again conveys nothing;
+- in a shared namespace serving several systems, qualify colliding concepts, for example `VPN_PUBLIC_ENDPOINT` and `VICTORIA_METRICS_ENDPOINT`; a shared-store key may be more qualified than the consuming application's own key;
+- use a transport-specific suffix such as `_REMOTE_WRITE_URL` only when distinguishing several endpoints is operationally necessary;
+- pair credentials consistently, including qualified shared keys such as `VICTORIA_METRICS_AUTH_USERNAME` and `VICTORIA_METRICS_AUTH_PASSWORD` when needed;
 - avoid ambiguous names such as `PUBLIC_ENDPOINT`, `HOST`, `PORT`, `URL` when several endpoints/hosts/ports exist;
 - avoid awkward implementation verbs in long-lived variable names when a stable noun communicates the contract better;
 - distinguish container-local ports from externally meaningful listen ports;
@@ -231,7 +347,7 @@ Rules:
 - do not treat `is_shared=true` on a resource variable as proof that resolution succeeded;
 - an unresolved shared reference can remain literal and reach the container, so validate the runtime value indirectly through application behavior/logs without printing secrets;
 - on versions where direct `{{scope.KEY}}` inside Git Compose has not been proven, do not hard-code shared references as service environment values; prefer `${VAR}` in Git and put the shared reference in the Coolify resource variable;
-- choose the narrowest scope covering all consumers;
+- choose the scope that protects secret ownership and visibility while covering authorized consumers;
 - an agent usually needs variable names, scopes and references, not plaintext values;
 - never reveal or log secret values merely to verify that the reference exists;
 - absence of a required shared reference is a deployment/configuration error, not a reason to hard-code a temporary credential.
