@@ -36,70 +36,33 @@ artifact locator, document or direct user request). Preserve useful and
 negative search results. Target code and observed behavior take precedence
 over analogies to another version or platform.
 
-## Import analysis gate and decompiler-first workflow
+## Mandatory high-level-first analysis after import
 
-For native code supported by the selected decompiler, **analyzer-generated
-C-like pseudocode MUST be the primary working representation**. Importing a
-binary is not sufficient preparation for behavior recovery. Do not default to
-continuous instruction-by-instruction, register-by-register or byte-signature
-reconstruction when usable pseudocode can be obtained.
-
-### Required post-import sequence
-
-1. Verify the canonical program, architecture/language, loader, image base and
-   mapped code/data. Run the applicable automatic analysis to establish usable
-   function boundaries, references and decompiler inputs. If analysis was
-   deferred during import, explicitly run it before substantive native-code
-   tracing; an import flag is not a waiver. Scope the analysis to the relevant
-   module/region when supported, rather than repeatedly analyzing an entire
-   firmware image. Do not analyze data-only regions as machine code.
-2. Confirm analysis actually completed, then generate and **read** the
-   decompiler's pseudocode for the relevant entries and connected functions.
-   A queued analysis, successful import or available decompile command does
-   not establish a usable high-level view. Reuse already valid saved analysis
-   on subsequent sessions instead of rerunning this gate mechanically.
-3. Trace control and data through that pseudocode. Recover evidence-backed
-   parameter/local/global names, prototypes and calling conventions, structure
-   and buffer layouts, field names and enums in the canonical analyzer. A
-   renamed function with opaque variables and numeric pointer arithmetic is
-   not a substitute for applying already established type/layout knowledge.
-   Do not invent types or semantics merely to make output look like clean C.
-4. Regenerate and inspect pseudocode after relevant metadata repairs; check
-   that the corrected argument, field or call is represented as intended.
-   Save and read back the semantic metadata. Analyzer-generated exports may
-   be used for inspection, but do not maintain a manually rewritten C mirror
-   as a second behavioral authority or claim the original C source was recovered.
-
-### Bounded instruction/register fallback
-
-Decompiler output can be incomplete or wrong. Direct instructions, registers,
-bytes and IR remain permitted and authoritative for resolving a **specific**
-question: ambiguous arguments or widths, incorrect function boundaries or
-calling conventions, indirect targets, missing side effects, unsupported
-instructions, or a disagreement between pseudocode and actual code.
-
-Before dropping to the low-level view, identify the concrete uncertainty and
-bound the function/region to inspect. Repair supported analysis metadata,
-regenerate the high-level view and return to pseudocode-based tracing once
-that uncertainty is resolved. Do not patch target bytes to beautify output.
-If the backend fails or decompilation genuinely cannot represent the target,
-record the limitation and the affected scope, then use the best available
-representation there; do not silently turn that exception into a permanent
-assembly-first workflow for other functions. No arbitrary quota restricts
-necessary low-level verification, but convenience is not an exception.
-
-Hardware registers may still be the objects being studied: express their
-proven accesses and fields in typed pseudocode where possible. **Studying
-registers does not require continuously reading assembly.**
-
-### Format-appropriate high-level view
-
-ACPI AML is not native machine code: use a supported AML disassembler to
-obtain and inspect ASL (commonly a `.dsl` file), with source bindings and
-namespace dependencies preserved. Do not force AML or data-only tables
-through a native C decompiler or invent a C translation as the source of
-truth. Other non-native formats likewise use their supported high-level
-representation, with byte-level checks reserved for concrete ambiguities.
+1. **Identify and enable the architecture.** Inspect the imported program's
+   format, processor/bytecode ISA, ABI, loader and address mapping. Attach the
+   correct analyzer language/processor/loader. If support is absent, implement
+   or integrate the needed decoder/language/loader and decompiler support;
+   record any remaining unsupported scope explicitly, never guess an ISA.
+2. **Analyze before tracing.** Run the analyzer's applicable automatic analysis
+   for executable code and confirm it completed: function boundaries, CFG,
+   references and data flow. Reuse valid saved analysis rather than rerunning
+   it each session; do not treat data-only regions as machine code.
+3. **Decompile and work at a high level.** Generate and read C-like pseudocode
+   for the relevant native functions and their callers/callees. This is the
+   mandatory **primary** representation wherever supported. Recover semantic
+   names, prototypes, structures, field types and constants in the canonical
+   analyzer; regenerate pseudocode after corrections, then save and read back.
+   Do not maintain a hand-written C mirror as a second source of truth.
+4. **Use low-level evidence only when necessary.** Decompilers may misread an
+   ABI, argument width, indirect call, branch, register or side effect. For a
+   *specific, bounded* ambiguity, inspect instructions/registers/IR/raw bytes,
+   correct supported metadata and return to pseudocode. Such inspection is
+   permitted and authoritative, but continuous assembly/register/hex-first
+   analysis is **not** the default while a usable high-level view exists.
+5. **Use the right representation.** For ACPI AML inspect decompiled ASL;
+   for VM/bytecode or unusual packet formats attach/implement the appropriate
+   decoder and high-level model. Do not force data tables into a native C
+   decompiler or substitute raw hexadecimal reading for available structure.
 
 ## Trace and recovery process
 
@@ -117,9 +80,8 @@ not by naming isolated functions or repeatedly proving known facts.
    externally visible effects (files, network, UI, services, peripherals).
 4. **Reconstruct behavior:** identify the algorithm/contract, parameters,
    preconditions, outputs, modes, limits, errors, resource ownership and
-   interaction with other modules. Start from the high-level view required
-   above; resolve critical ambiguities through targeted instructions/IR,
-   references or authorized runtime evidence, not a second full assembly pass.
+   interaction with other modules. Work from the high-level representation
+   above; verify disputed claims with targeted instructions/IR or observations.
 5. **Materialize:** apply defensible semantic names, types, structures,
    transitions, references, evidence comments and uncertainty to the
    canonical Analysis project. Save, then read back the changed objects.
@@ -349,13 +311,7 @@ especially for:
 - exhaustive writer/reader audits of a program field, global, protocol state or hardware register when present;
 - reproducible verification after a targeted metadata correction.
 
-Prefer decompiler/IR APIs for scripted call and data-flow recovery when
-available. Raw-byte checks can verify identity or a disputed instruction;
-they do not replace reading and refining the high-level representation.
-
-Do **not** script questions already answered by pseudocode, XREF/CFG,
-instructions or a saved contract. Rewriting confirmed behavior to increase
-script counts is not progress.
+Do **not** script questions already answered by XREF/CFG/instructions or a saved contract. Rewriting confirmed behavior to increase script counts is not progress.
 
 ### Required two-stage script lifecycle
 
