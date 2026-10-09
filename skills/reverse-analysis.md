@@ -38,31 +38,39 @@ over analogies to another version or platform.
 
 ## Mandatory high-level-first analysis after import
 
-1. **Identify and enable the architecture.** Inspect the imported program's
-   format, processor/bytecode ISA, ABI, loader and address mapping. Attach the
-   correct analyzer language/processor/loader. If support is absent, implement
-   or integrate the needed decoder/language/loader and decompiler support;
-   record any remaining unsupported scope explicitly, never guess an ISA.
-2. **Analyze before tracing.** Run the analyzer's applicable automatic analysis
-   for executable code and confirm it completed: function boundaries, CFG,
-   references and data flow. Reuse valid saved analysis rather than rerunning
-   it each session; do not treat data-only regions as machine code.
-3. **Decompile and work at a high level.** Generate and read C-like pseudocode
-   for the relevant native functions and their callers/callees. This is the
-   mandatory **primary** representation wherever supported. Recover semantic
-   names, prototypes, structures, field types and constants in the canonical
-   analyzer; regenerate pseudocode after corrections, then save and read back.
-   Do not maintain a hand-written C mirror as a second source of truth.
-4. **Use low-level evidence only when necessary.** Decompilers may misread an
-   ABI, argument width, indirect call, branch, register or side effect. For a
-   *specific, bounded* ambiguity, inspect instructions/registers/IR/raw bytes,
-   correct supported metadata and return to pseudocode. Such inspection is
-   permitted and authoritative, but continuous assembly/register/hex-first
-   analysis is **not** the default while a usable high-level view exists.
-5. **Use the right representation.** For ACPI AML inspect decompiled ASL;
-   for VM/bytecode or unusual packet formats attach/implement the appropriate
-   decoder and high-level model. Do not force data tables into a native C
-   decompiler or substitute raw hexadecimal reading for available structure.
+1. **Identify and enable the architecture.** Inventory every imported module
+   and classify executable code, ACPI/bytecode and data. Verify format, ISA,
+   ABI, loader and mapping; attach the correct analyzer support. If missing,
+   implement/integrate the decoder, language/loader and decompiler before
+   claiming native-code coverage; record unsupported regions explicitly.
+2. **Preserve the known-good project first.** Before any full-system pass,
+   checkpoint/backup the canonical project and verify that saved names, types,
+   structures, links and comments can be recovered. Never erase prior analysis,
+   overwrite annotated programs or run destructive reanalysis just to get C.
+3. **Analyze and decompile the complete inventory.** Complete (or reuse proven
+   completed) auto-analysis for every executable module, then run a bounded,
+   resumable **bulk decompilation of every discovered native function**, not
+   just individually selected functions. Record total/success/failed/unsupported
+   per program, the exact failure, and a project-linked index of generated
+   C-like pseudocode. Do not claim full conversion with unprocessed functions.
+   Native tracing/refactoring starts from this complete high-level baseline.
+4. **Work on analyzer-generated pseudocode.** Generated C-like output is the
+   primary representation: recover names, prototypes, types, structures and
+   fields in the canonical analysis database; regenerate affected C after
+   repairs and save/read back. **Do not hand-write, invent or maintain your
+   own pseudocode/C translations of functions** as a substitute for a complete
+   analyzer pass. A separately authored model is allowed only for a documented,
+   narrow unsupported/ambiguous construct and must be labeled as a model,
+   never recovered source or a second authoritative codebase.
+5. **Use low-level evidence only when necessary.** Decompilers can misread an
+   ABI, width, indirect call, branch, register or side effect. Inspect bounded
+   instructions/registers/IR/bytes for that specific uncertainty, repair
+   metadata and return to regenerated pseudocode. Continuous assembly/hex-first
+   analysis is not the default while high-level output is available.
+6. **Use the right representation.** Inspect ACPI AML as decompiled ASL;
+   use an appropriate high-level decoder for other bytecode/packet formats.
+   Do not force data-only regions into native C or claim missing support was
+   successfully decompiled.
 
 ## Trace and recovery process
 
