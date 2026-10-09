@@ -345,6 +345,27 @@ execute the registered script → retain findings in the canonical project.**
    links and evidence to the canonical analysis program; save and read back
    those edits. Scripts and reverse annotations are different artifacts.
 
+### Project-owned Java script libraries
+
+Every canonical Analysis project owns a **distinct persistent script library**,
+keyed by its stable project identity rather than worker number. Script listing,
+installation and execution must show and accept only that project's scripts,
+including after worker reassignment. Another project's scripts must not appear
+in its Script Manager/search results or be executable through its project API.
+An explicitly authorized shared library is a separate opt-in exception.
+
+Confirm the project's effective `get_storage_info(project_id).script_root`
+and enforce root containment on both reads and writes. A common global root,
+filename prefix or subdirectory **without server-side project scoping** is not
+isolation: treat it as an infrastructure blocker, not as completed migration.
+Do not move scripts through a different target's project session.
+
+For migration, inventory and hash all sources, stage no-clobber copies in
+distinct project-owned roots, then verify listing, allowed execution and
+cross-project denial **for each affected project**. Preserve the old library
+until the new route and rollback are proven; never silently delete, overwrite,
+relabel ownership or count a migrated file as a newly recovered behavior.
+
 ### How to register and run a persistent GhidraScript
 
 First call `get_storage_info(project_id)` and read the **live**
@@ -357,9 +378,11 @@ On an Analysis installation without a dedicated upload API, a **one-time,
 narrowly scoped, authorized inline Java/GhidraScript bootstrap** may register
 the reviewed source from inside the running Ghidra process:
 
-- Resolve the configured `GHIDRA_MCP_SCRIPT_ROOT` and cross-check it with
-  `get_storage_info.script_root.path`; refuse missing, unexpected or
-  non-writable roots. Do not invent a mount path.
+- Resolve the **project-specific** script root reported by
+  `get_storage_info(project_id)`, check it is writable and confined to the
+  configured storage parent, and refuse a global/shared effective root.
+  `GHIDRA_MCP_SCRIPT_ROOT` alone may identify only that parent; do not
+  infer the project's own directory from it without backend confirmation.
 - Verify the expected canonical program and guard the target filename
   against directory traversal. Place only the intended `<ClassName>.java`
   under that root (not under a worker-specific temporary cache).
