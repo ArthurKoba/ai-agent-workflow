@@ -80,6 +80,29 @@ The same sticky-progress rules apply to full reports: if percentages are establi
 
 ## Progress metric discipline
 
+### In-scope progress versus external dependencies
+
+- Anchor each percentage to the **current task's artifact, declared
+  deliverable and acceptance boundary** before computing it. For a
+  single-version firmware reversal, the denominator covers behavior
+  recoverable from that target, not unrequested research into other BIOS
+  versions, EC internals, hardware tests, driver support or application
+  development. Include an external dependency only when the active task
+  explicitly owns and requires it.
+- Report a complete in-scope deliverable as **100% of that named scope**
+  when its acceptance evidence is closed, even when external behavior is
+  unknown; record the external condition separately without penalizing
+  the current progress. Conversely, completing one API or command must
+  not be reported as 100% of a larger feature with other unfinished
+  in-scope contracts.
+- Do not keep an unjustified 95% or 98% because of unrelated external
+  unknowns or an impression that implementation is never fully proven.
+  Require traceable remaining gates or a defensible estimation basis.
+  When an earlier percentage included out-of-scope obligations,
+  explicitly **retire/rebaseline** it, explain the changed denominator
+  and report the external work separately; do not show this metric
+  correction as new technical recovery.
+
 A report percentage is a communication metric, not objective truth by itself.
 
 - Scope the percentage to a named direction or denominator.

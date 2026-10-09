@@ -1,5 +1,18 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Progress is bounded by the active recovery task
+
+Changes:
+- reverse-analysis now scores a named behavior contract against the
+  target artifact and its actual in-scope code, not unknown EC internals,
+  foreign firmware versions, hardware acceptance or future OS adapters;
+- reporting protocol now requires explicit denominator boundaries,
+  separate external unknowns and rebaselining misleading near-100 figures.
+
+Reason: an agent held otherwise recovered target-side contracts at
+unjustified near-completion percentages because unrelated downstream
+firmware and product-validation tasks remained open.
+
 ## 2026-10 — Flat Reverse Analysis skill
 
 Changes:
