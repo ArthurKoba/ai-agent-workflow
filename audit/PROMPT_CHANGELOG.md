@@ -1,5 +1,24 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Required post-import analysis and decompiler-first recovery
+
+Changes:
+- made completed native analysis and inspection of generated C-like pseudocode
+  an explicit post-import gate in `skills/reverse-analysis.md`;
+- required evidence-backed names/types/layouts in the canonical analyzer and
+  renewed decompilation after metadata repair;
+- prohibited routine assembly/register-first recovery when usable pseudocode
+  is available, while preserving bounded low-level verification and the
+  authority of original instructions when the decompiler is wrong;
+- kept ACPI AML on its ASL path, reused valid saved analysis and excluded
+  hand-written C mirrors as a second behavioral authority.
+
+Reason:
+Optional decompiler wording allowed agents to spend most of a recovery pass
+reading instructions and checking bytes despite available high-level output.
+The owning skill now requires using and improving that output, not merely
+requesting it once, without hiding decompiler errors or unsupported formats.
+
 ## 2026-10 — Flat Reverse Analysis skill
 
 Changes:
