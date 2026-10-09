@@ -59,4 +59,42 @@ A **saved project**, an active **worker/project session** and an **open program 
 - **Long analysis:** prefer genuine analyzer-native async task/status APIs if provided; do not invent job IDs for synchronous calls. Otherwise use the approved persistent job surface to run a bounded client against the **same canonical project**. Capture job ID, target/script/scope, progress counts and expected evidence; read status and incremental output by cursor until terminal completion. Confirm both runner exit and analyzer-level success. A live process or elapsed time is not proof of progress.
 - **Timeout:** inspect the existing job, session and saved analysis before retrying; do not stack equivalent expensive scripts or replace a busy worker speculatively. Use bounded chunks/checkpoints, cancellation checks and only authorized scoped writes. Treat tool/provider/safety blocks as tooling incidents rather than evidence of target behavior; record sanitized invocation and error in the owning tracker, never bypass permission decisions.
 
+### Headless Analysis MCP: concrete invocation pattern
+
+The following is a **tool-call pattern**, not a shell recipe or a promise that every MCP exposes the same names. Resolve the current provider's signatures first.
+
+1. `list_projects()` → stable `project_id`; `project_session_info(project_id)` → session state; `list_active_programs(project_id)` → **exact saved program name/path**. If no program is open, reopen the existing project program; do not import it again.
+2. `get_storage_info(project_id)` → verified artifact/project/script roots. A headless `list_scripts` may report only desktop Script Manager instructions; it is **not** proof a script file is absent. Inspect the configured persistent script root or a verified built-in script location.
+3. **One-off probe:** `run_analysis_script_inline(project_id, program, code=<complete Java GhidraScript source>, dry_run=false)`. Require `success=true` and inspect `console_output`, not just transport success. Inline code is compiled under a **temporary worker cache** and is not registered for reuse.
+4. **Installed source:** `run_analysis_script(project_id, program, script_name=<verified absolute .java path>, capture_output=true, timeout_seconds=<bounded limit>)`. The server may copy that installed source to its compilation cache before executing it; the original remains at its installed path. Inspect `success`, `script_path`, output and findings.
+
+Minimal safe probe (read-only; use as `code` for step 3):
+
+```java
+import ghidra.app.script.GhidraScript;
+public class FunctionInventoryProbe extends GhidraScript {
+    @Override public void run() throws Exception {
+        if (currentProgram == null) throw new IllegalStateException("No program");
+        println("program=" + currentProgram.getName());
+        println("functions=" + currentProgram.getFunctionManager().getFunctionCount());
+        monitor.checkCancelled();
+    }
+}
+```
+
+### Monitored-job pattern for slow scripts
+
+`run_analysis_script` may be **synchronous** and return no native job ID. Do not invent a script-task poll endpoint. Only when a longer operation needs durable supervision, use the approved Terminal job interface with an **authorized Analysis MCP client** that calls the same `project_id`, `program` and installed script:
+
+```text
+job_start(workspace_id, command=<approved client invoking run_analysis_script>, label, timeout_seconds=outer_limit)
+    -> job_id
+job_status(job_id)                         -> running/completed/failed
+job_read(job_id, cursor=0)                -> output, next_cursor
+job_read(job_id, cursor=next_cursor)      -> only new output
+job_wait(job_id, timeout_seconds=...)     -> intermediate or terminal state
+```
+
+The runner is **not** the analyzer and does not automatically inherit the agent's MCP connection. Establish the authorized client and its routing before starting such a job; never substitute an unrelated local Java execution. Set the script's own timeout separately from a larger outer job limit. Some synchronous scripts buffer console output until completion: use bounded batches and observed counts, not the absence of incremental logs, to assess progress. Final `exit_code=0` is insufficient unless the **inner Analysis response also reports success**.
+
 Script output is evidence, **not** the recovered program. Commit supported semantics to the canonical analyzer project and read them back. If a necessary decoder, tool, script-storage or execution capability is absent, state that limitation instead of fabricating coverage or an alternative authority.
