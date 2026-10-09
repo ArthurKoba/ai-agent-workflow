@@ -275,3 +275,16 @@ Changes:
 
 Reason:
 A mature product workspace had accumulated reusable engineering knowledge inside a legacy shared-context tree. Keeping that knowledge there created duplicate global authority and made it unavailable to unrelated projects. The reusable parts now live in the universal workflow library; project-specific facts remain with their project owners.
+
+
+## 2026-10 — Issue-state ownership and defensible coverage
+
+Changes:
+- reporting protocol now owns the distinction between editable task checkpoints,
+  conversation reports and private execution/recovery artifacts;
+- reverse-analysis now distinguishes discovered objects, register windows and
+  semantic completion, and requires explicit aggregate scope and deduplication;
+- no account prompt or project-specific runtime values were added.
+
+Reason: repeated issue-log duplication and proxy-based percentages obscured
+current tasks and made progress appear more complete than the evidence allowed.

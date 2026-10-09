@@ -105,3 +105,14 @@ Static/syntax checks are necessary but insufficient when production uses wrapper
 
 ## B-036 — Upstream ownership first
 Before replacing or wrapping a third-party service lifecycle, inspect its supported deployment modes, installer/source and ownership of enrollment, runtime probing, persistence, upgrades and recovery. Custom provisioning should fill a proven integration gap, not duplicate upstream policy.
+
+
+## B-037 — Current-state issues with evidence separation
+Issues retain goals, acceptance, semantic checkpoints, scoped progress and
+blockers. Chat reports and private execution/recovery detail stay with their
+respective owners. Preserve unique evidence when cleaning an overgrown issue.
+
+## B-038 — Inventory-based, non-overlapping progress
+Count discovered objects or acceptance contracts with explicit evidence states.
+Separate address-window classification, register semantics and pipeline closure;
+aggregate only with a declared scope and deduplication or weighting method.
