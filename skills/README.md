@@ -4,6 +4,7 @@ Load only the module matching the current task.
 
 - software implementation/refactoring/backend/Python/PostgreSQL → `software-engineering/README.md`
 - frontend/Vue/TypeScript/FSD/UI/tables → `frontend-engineering/README.md`
+- project/environment bootstrap, Bun/uv, strict quality gates, hooks → `project-bootstrap.md`
 - Git commits and commit-message discipline → `git-workflow.md`
 - independent review → `code-review.md`
 - shell/PowerShell/WSL/SSH/UART/bootloader → `terminal-operations.md`

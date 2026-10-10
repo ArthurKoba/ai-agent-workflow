@@ -35,6 +35,16 @@ Do not create deeper instruction chains unless there is a real need. Three meani
 
 It routes the agent to the relevant role, skill, audit or architecture document. It must not require rereading account/project prompts; those are assumed already injected by the harness.
 
+## Local quality gates for this workflow repository
+
+This documentation/skill library has a tracked `.githooks/pre-push`.
+Install it once in each fresh checkout using
+`git config --local core.hooksPath .githooks`. The hook executes
+`scripts/verify-workflow.sh`, checking skill routes and changed-commit
+whitespace; a failing check blocks Git push. The setup policy for new
+TypeScript/Python code projects lives in
+[`skills/project-bootstrap.md`](skills/project-bootstrap.md).
+
 ## Repository map
 
 - `prompts/` — account-level and generic Project prompt source templates.

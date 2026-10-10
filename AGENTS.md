@@ -28,6 +28,7 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 
 - implementation/refactoring/backend/Python/PostgreSQL → `skills/software-engineering/README.md`
 - frontend/Vue/TypeScript/FSD/UI/tables → `skills/frontend-engineering/README.md`
+- project bootstrap / toolchain / lint, types, hooks and CI setup → `skills/project-bootstrap.md`
 - Git commit/message work → `skills/git-workflow.md`
 - independent review → `skills/code-review.md`
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations.md`
