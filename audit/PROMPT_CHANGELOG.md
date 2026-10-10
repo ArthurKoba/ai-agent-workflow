@@ -1,5 +1,22 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Reproducible project bootstrap and enforced pre-push validation
+
+Changes:
+- introduced a standalone project-bootstrap skill for greenfield TypeScript
+  (Bun/Biome/strict TS) and Python (uv/Ruff/strict mypy) projects;
+- made installed, active and executable pre-push verification a mandatory
+  check in the existing Git workflow, with CI as independent enforcement;
+- linked language modules to the bootstrap owner without overriding
+  established repository-specific toolchains.
+
+Reason:
+A project may have a quality script and tracked hook yet lack an active hook
+in a new checkout, allowing pushes without local verification. The project
+setup skill now owns environment creation; Git workflow owns the per-operation
+check. Existing projects require an explicit migration decision.
+
+
 ## 2026-10 — Terminal commands grouped by decision boundary
 
 Changes:
