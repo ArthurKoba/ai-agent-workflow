@@ -16,6 +16,12 @@ A large always-on context creates three costs:
 
 Prefer progressive disclosure over mandatory bulk reading.
 
+**Progressive disclosure selects files, not fragments.** Once a map, role,
+skill or contract is required for the current decision, read the **entire**
+file and honor the missing-source STOP/user-approval gate in
+`../docs/BOOTSTRAP_PROTOCOL.md`. A summary or truncated response cannot
+substitute for the complete required authority.
+
 ## Documentation ownership
 
 Documentation must not become a second implementation.

@@ -12,7 +12,7 @@ Read them only when the task is to design, audit or update prompts.
 
 ## Hard startup gate
 
-For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the first implementation/mutation/human-operated command block. Do not claim a map/skill was read unless it was actually retrieved or injected into the current context.
+For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the first implementation/mutation/human-operated command block. Every **selected mandatory document** (the project map, this workflow's bootstrap/role/skills and any task-triggered authority) must be retrieved and **read completely**, not merely opened, summarized or partially displayed. A truncated or unavailable source is **not loaded**. Use the configured GitHub MCP for this library; if required context remains incomplete, **STOP and request explicit task-scoped user approval** before proceeding without it. Never assume approval from the original task request. The detailed single owner of this gate is `docs/BOOTSTRAP_PROTOCOL.md`.
 
 ## Start
 

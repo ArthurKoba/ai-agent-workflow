@@ -23,11 +23,63 @@ The repository map should keep this mandatory set intentionally small. Additiona
 
 Do not proceed past this gate by merely claiming that the files were read.
 
-A document counts as loaded only if:
-- it was actually retrieved/read through an available tool in the current task context; or
-- its content is explicitly injected into the current context by the harness.
+## Complete-document loading gate (mandatory)
 
-If the required map/skill cannot be accessed, state that once and continue only where the missing context cannot affect correctness.
+**Selection is conditional; completeness is not.** Select the smallest relevant
+set of required authorities using the repository map, role, active task and
+skill router. Read **each selected required file from beginning to end** before
+performing work governed by it. When a new skill/module or project contract
+becomes mandatory later, read that whole document before crossing its decision
+boundary. Do not preload unrelated skills or reread the whole library after
+every tool call.
+
+A document is **LOADED** only when its full current contents were actually
+retrieved and read through the authoritative tool in this task context, or
+were explicitly injected in full by the harness. Opening a file, obtaining its
+path/metadata, reading a search snippet/preview/summary, reading just a
+heading or section, trusting a prior chat recollection, or seeing an
+incomplete/truncated tool response **does not count**.
+
+- Use the Project's declared primary repository/connector authority. For
+  `ArthurKoba/ai-agent-workflow`, retrieve the current GitHub repository
+  through the **configured GitHub MCP**, not a stale local clone, a remembered
+  excerpt, or an unapproved alternate HTTP/browser route.
+- If the tool limits output, retry using supported pagination/chunked reads
+  with complete start-to-end coverage and verified continuity. Inspect every
+  chunk, including the final one; check completeness against available
+  length/size/truncation metadata. A failed, missing or unverifiable chunk
+  leaves the **entire required document unloaded**.
+- For traceability keep the required file's locator/ref and whether full
+  reading succeeded in the existing Task Context. Do not paste full rules,
+  credentials or large tool outputs into a second tracked planning document.
+
+## Unavailable mandatory context — STOP and ask
+
+If any required file cannot be **fully** loaded, or the configured GitHub MCP
+needed to read this library is absent, disconnected, denied or failing:
+
+1. Attempt only bounded **read-only access recovery**, such as inspecting
+   configured connector availability, reconnecting through an authorized
+   interface or fetching the missing chunks. Do not bypass the declared tool
+   authority or use a stale local checkout to claim success.
+2. **STOP before substantial implementation, mutations, side-effecting
+   tests/operations, reviews relying on that authority, or human-operated
+   command blocks.** Do not continue another implementation slice on the
+   unsupported assumption that the missing rules probably do not matter.
+3. Tell the user exactly which required documents/MCP access are missing and
+   why the context is incomplete. Offer to connect/restore the configured MCP
+   and retry full loading, **or explicitly ask whether this specific task
+   may start/continue in a degraded mode without those named documents**.
+4. **Wait for an unambiguous, task-scoped user approval** before proceeding
+   without them. Silence, an unrelated instruction, a generic earlier
+   permission to work, or self-assessed low risk is not approval. Record the
+   exception and its known risks in Task Context; it does not remove
+   independent safety, security, permissions or correctness requirements.
+   A new task or newly missing mandatory source needs its own decision.
+
+If approval is refused or not given, stay stopped at this boundary. The
+agent may still help diagnose/reconnect the missing access, but must not
+describe the task as bootstrapped or approved for implementation.
 
 ## Task Context
 

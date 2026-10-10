@@ -19,7 +19,10 @@ Evidence/artifact authority:
 - <system/repo>
 
 ## Workspace map
-Whenever entering a repository, read its `AGENTS.md`.
+Whenever entering a repository, read its `AGENTS.md` **completely**.
+Read every selected mandatory workflow/role/skill/contract document completely
+through its authoritative connector, as required by the workflow Bootstrap
+Protocol. A snippet or truncated tool response is not successful loading.
 
 AGENTS is a router, not a replacement for this project prompt.
 
@@ -44,7 +47,11 @@ local_context: <REQUIRED | OPTIONAL | NOT_USED>
 Source:
 - <source>
 
-If REQUIRED context is missing, report degraded-start once and do not guess environment-specific values.
+If REQUIRED context is missing, inaccessible or incompletely read, **STOP**
+before substantial work. Report the missing source/connector and seek an
+explicit user decision for this particular task: restore access and reread it,
+or authorize a degraded start without the named context. Do not treat an
+earlier general work request as permission to ignore the missing authority.
 
 ## Roles
 Default implementation role:
