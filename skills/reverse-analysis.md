@@ -53,8 +53,15 @@ over analogies to another version or platform.
    just individually selected functions. Record total/success/failed/unsupported
    per program, the exact failure, and a project-linked index of generated
    C-like pseudocode. Do not claim full conversion with unprocessed functions.
-   Native tracing/refactoring starts from this complete high-level baseline.
-4. **Work on analyzer-generated pseudocode.** Generated C-like output is the
+   The next stage for a multi-program target is cross-program linking, before
+   deep semantic tracing.
+4. **Link the program/module graph early.** After the bulk C-like pseudocode
+   baseline, run the mandatory cross-program reference/indexing pass for
+   targets with multiple executable programs or runtime-loaded modules.
+   Start with automated discovery and guarded linking, then investigate
+   residual edges manually and automate the proven fixes. Follow
+   **Mandatory cross-program linking after bulk decompilation** below.
+5. **Work on analyzer-generated pseudocode.** Generated C-like output is the
    primary representation: recover names, prototypes, types, structures and
    fields in the canonical analysis database; regenerate affected C after
    repairs and save/read back. **Do not hand-write, invent or maintain your
@@ -62,15 +69,74 @@ over analogies to another version or platform.
    analyzer pass. A separately authored model is allowed only for a documented,
    narrow unsupported/ambiguous construct and must be labeled as a model,
    never recovered source or a second authoritative codebase.
-5. **Use low-level evidence only when necessary.** Decompilers can misread an
+6. **Use low-level evidence only when necessary.** Decompilers can misread an
    ABI, width, indirect call, branch, register or side effect. Inspect bounded
    instructions/registers/IR/bytes for that specific uncertainty, repair
    metadata and return to regenerated pseudocode. Continuous assembly/hex-first
    analysis is not the default while high-level output is available.
-6. **Use the right representation.** Inspect ACPI AML as decompiled ASL;
+7. **Use the right representation.** Inspect ACPI AML as decompiled ASL;
    use an appropriate high-level decoder for other bytecode/packet formats.
    Do not force data-only regions into native C or claim missing support was
    successfully decompiled.
+
+## Mandatory cross-program linking after bulk decompilation
+
+For a multi-program, multi-library or runtime-loaded target, **this is the
+required next stage after import, auto-analysis and bulk generation/indexing of
+analyzer-produced C-like pseudocode**, before extensive per-function semantic
+reconstruction. A single self-contained program with no external components
+may record this stage as not applicable. Unsupported or failed decompilation
+must stay in the inventory; it does not license invented C or guessed links.
+
+1. **Establish identities and boundaries.** Reuse the canonical project and
+   verify each program's architecture, image base, load/relocation mapping,
+   executable/data ranges, load slot and persistent project path where known.
+   Separate distinct address spaces (CPU, DSP, coprocessor, overlays), and do
+   not assume two modules share an ABI or direct-call mechanism.
+2. **Automate the first full pass.** Prefer a bounded, resumable
+   GhidraScript/analyzer script to inventory direct calls, imports/exports,
+   references, dispatch/callback tables and provable data dependencies.
+   Decode native instruction targets where necessary, compare them against
+   saved XREFs and actual function entries, and generate a per-program,
+   per-callsite evidence/eligibility manifest. Use monitored jobs for heavy
+   scans. Distinguish `native target decoded`, `indexed address XREF`,
+   `external library/path registered` and a persisted individual external
+   callsite reference: these are **different completion states**.
+3. **Apply only verified links in safe batches.** Register actual external
+   libraries/project paths first, then attach individual external callsite
+   references only to defensible target entries. Preserve existing correct
+   native calls and references; refuse conflicting paths, unexpected ISA/base,
+   duplicate symbols, incorrect rebase targets or ambiguous function boundaries.
+   Fix proven stale references in a separate guarded transaction instead of
+   stacking speculative link changes. Save and read back each bounded batch,
+   with a final independent whole-inventory regression check. A symbolic
+   library registration or an annotation alone is not a completed callsite
+   link.
+4. **Investigate the remainder rather than forcing it.** Classify missing
+   code/modules, incorrect load addresses/rebases, incomplete function
+   boundaries, indirect calls, false-positive disassembly, unsupported
+   architectures and genuinely unknown owners. Manually trace enough high-
+   and low-level evidence to establish the failure cause or a bounded
+   hypothesis. Preserve exact source/target identities and mark uncertain
+   relationships `UNKNOWN` or `LIKELY` in the canonical analysis; do not
+   create fictitious callee bodies, exports or strong semantic names.
+   CPU-to-DSP, coprocessor and other cross-ISA links may be
+   loader/mailbox/shared-memory/producer-consumer contracts rather than
+   direct call references.
+5. **Feed discoveries back into automation.** Once a load map, function
+   boundary, call target or other uncertainty is proved, repair its owning
+   metadata and rerun the affected script pass to connect newly eligible
+   edges. Keep the reusable script in the analyzer's persistent script
+   library, with verified source and registered-path execution. Measure
+   discovered callsites, linked callsites, unresolved targets, rebase/XREF
+   repairs and saved/read-back links **separately**. A missing external
+   component or provider safety block remains an explicit boundary; do not
+   bypass the provider or report an unresolved edge as linked.
+
+The goal is a navigable inter-program control/data graph **early**, so later
+behavior tracing sees real callers, consumers, loaders and module boundaries
+instead of reconstructing each program in isolation. This stage does not prove
+runtime execution or complete semantic recovery.
 
 ## Trace and recovery process
 
