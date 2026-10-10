@@ -1,5 +1,24 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Make cross-program linking a mandatory early reverse-analysis stage
+
+Changes:
+- put a mandatory inter-program linkage pass immediately after the complete
+  analyzer-generated C-like pseudocode baseline for multi-module targets;
+- require automated, evidence-backed call/import/reference discovery and
+  guarded library/callsite linking before manual residual investigation;
+- feed proven manual repairs back into automation, saving and reading back
+  links while preserving native XREFs and marking unknown cross-ISA or
+  missing-module edges without fabricated callees;
+- distinguish discovery, address XREF, library-path registration and actual
+  persisted external callsite references as separate progress measures.
+
+Reason:
+Independent analysis of imported modules obscures real control/data
+dependencies and repeatedly forces agents to rediscover call boundaries.
+An automated-first linkage phase after decompilation makes later semantic
+tracing faster while keeping uncertain and unsupported edges explicit.
+
 ## 2026-10 — Reproducible project bootstrap and enforced pre-push validation
 
 Changes:
