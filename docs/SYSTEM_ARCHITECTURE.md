@@ -47,7 +47,7 @@ Context size is an architectural constraint. Repository maps and skill routers s
 
 Documentation should preserve durable contracts, ownership and navigation; source code remains the authority for ordinary implementation detail. Avoid giant mandatory current-state documents that mirror the codebase.
 
-For the full operating model, use `../skills/context-engineering/README.md`.
+For the full operating model, use `../skills/context-engineering.md`.
 
 ## Maximum depth
 Prefer `account → project → skill`.

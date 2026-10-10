@@ -200,15 +200,15 @@ Load from https://github.com/ArthurKoba/ai-agent-workflow :
 - general source implementation/refactoring:
   `skills/software-engineering/README.md`
 - independent review:
-  `skills/code-review/README.md`
+  `skills/code-review.md`
 - shell/PowerShell/WSL/SSH/UART/bootloader:
-  `skills/terminal-operations/README.md`
+  `skills/terminal-operations.md`
 - embedded reverse:
   `skills/reverse-analysis.md`
 - OpenIPC migration/porting/upstream contribution:
-  `skills/openipc-porting/README.md`
+  `skills/openipc-porting.md`
 - workflow/chat/prompt audit:
-  `skills/workflow-audit/README.md`
+  `skills/workflow-audit.md`
 
 Load only relevant skills; do not reread the entire library by default.
 
@@ -305,7 +305,7 @@ A missing build or hardware result is a pending evidence gate.
 ## 10. OpenIPC workflow
 
 For any OpenIPC migration/port/contribution task:
-1. load `skills/openipc-porting/README.md`;
+1. load `skills/openipc-porting.md`;
 2. read target repository startup docs;
 3. read ANJIA/project coordination docs if the task belongs to the FH8626 case;
 4. refresh live OpenIPC upstream repository ownership/contribution rules;

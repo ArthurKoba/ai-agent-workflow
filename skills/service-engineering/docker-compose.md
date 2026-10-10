@@ -68,7 +68,7 @@ docker compose pull
 docker compose up -d --remove-orphans
 ```
 
-These are examples, not commands to emit blindly. Human-operated commands still require `terminal-operations/README.md` and the active project/local execution contract.
+These are examples, not commands to emit blindly. Human-operated commands still require `terminal-operations.md` and the active project/local execution contract.
 
 ## Validation
 
