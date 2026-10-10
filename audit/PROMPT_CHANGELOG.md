@@ -1,5 +1,16 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Coolify public-route and startup acceptance corrections
+
+Changes:
+- clarified public/private route inventory before Application creation, including OAuth issuer versus MCP resource ingress;
+- made generated-domain magic-key/service/port matching explicit and removed unsafe nested generated-URL interpolation from the example;
+- distinguished Required and Shared metadata from effective ENV values and preserved existing scoped secrets;
+- added published-ref, auto-deploy, runtime restart and real consumer acceptance gates, while treating live resource recreation as a last-resort exception.
+
+Reason: repeatable Coolify release errors occurred despite existing general parser rules; these additions resolve specific decision gaps without creating a duplicate deployment skill or error-registry category.
+
+
 ## 2026-10 — Reproducible project bootstrap and enforced pre-push validation
 
 Changes:
