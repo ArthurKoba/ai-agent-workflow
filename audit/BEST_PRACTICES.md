@@ -79,8 +79,43 @@ Once an active workstream is reported with a scoped percentage, preserve that pe
 
 
 ## B-028 — Parser-aware Coolify Compose
-Treat Coolify's Compose parser as an explicit deployment API. Encode required external topology with empty `:?` expressions in owning service environments, keep secrets behind scoped shared references, keep internal traffic on Docker DNS, use one generated-domain owner per service, use inline `content:` for managed file templates, and validate parser-generated UI state on a fresh resource before runtime acceptance.
+Treat Coolify's Compose parser as an explicit deployment API. Encode required external topology with empty `:?` expressions in owning service environments, keep secrets behind scoped shared references, keep internal traffic on Docker DNS, use one generated-domain owner per service, use inline `content:` for managed file templates, scope Watch paths to actual runtime inputs (not incidental docs in the same directory), and validate parser-generated UI state on a fresh resource before runtime acceptance.
+
+## B-029 — Evidence-state semantic lifecycle
+Persistent behavior-analysis metadata is confidence-aware. Unknown objects stay structural; likely conclusions may use conservative provisional names; confirmed behavior is promoted to canonical semantic names and synchronized comments/types/boundaries/links; contradictions demote misleading metadata; withdrawn interpretations are retired. One semantic object keeps one canonical name across references, and stale strong names are treated as defects rather than harmless history.
 
 
-## B-029 — One copy/paste block per current decision boundary
-Human-operated terminal instructions should minimize operator overhead without crossing decision boundaries: group all commands needed for the current evidence-collection or routine stage into one copyable block. Use the shell-native clear command only when prior output is no longer needed for comparison or evidence, and keep it inside that same block.
+## B-030 — Freeze acceptance invariants before implementation
+Write the small set of non-negotiable outcome/architecture invariants before substantial implementation. Local failures may change implementation details but do not silently change entrypoint, user flow, trust model, persistence or validation requirements.
+
+## B-031 — Correction-triggered narrow re-bootstrap
+Repeated explicit user correction or strong dissatisfaction after a technical mismatch triggers a bounded recovery of requirements, durable state and the owning rule/source. Diagnose the drift before more mutation; do not dismiss the signal as tone and do not reload unrelated documentation.
+
+## B-032 — Lifecycle-first deployment design
+Before rollout, model clean install, repeat deploy, partial/stale state, restart/reboot, upgrade, migration and rollback where they are materially distinct. Convert the important transitions into regression or live acceptance gates.
+
+## B-033 — Prefer behavioral invariants
+Define acceptance in terms of the operation the real consumer must perform. Treat ownership IDs, parser records, generated paths and similar metadata as supporting evidence unless the platform contract makes them authoritative.
+
+## B-034 — Security boundaries follow authority
+Separate services/templates/resources are not separate trust domains unless permissions, identities, credentials, approval or deployment authority actually differ. Protect untrusted runtime workloads from the trusted infrastructure control plane instead of counting resources as isolation.
+
+## B-035 — Validate the exact execution mode
+Static/syntax checks are necessary but insufficient when production uses wrappers, stdin, sourcing, namespace entry, orchestrator interpolation or generated helper commands. Test the real invocation shape before claiming runtime readiness.
+
+## B-036 — Upstream ownership first
+Before replacing or wrapping a third-party service lifecycle, inspect its supported deployment modes, installer/source and ownership of enrollment, runtime probing, persistence, upgrades and recovery. Custom provisioning should fill a proven integration gap, not duplicate upstream policy.
+
+
+## B-037 — Current-state issues with evidence separation
+Issues retain goals, acceptance, semantic checkpoints, scoped progress and
+blockers. Chat reports and private execution/recovery detail stay with their
+respective owners. Preserve unique evidence when cleaning an overgrown issue.
+
+## B-038 — Inventory-based, non-overlapping progress
+Count discovered objects or acceptance contracts with explicit evidence states.
+Separate address-window classification, register semantics and pipeline closure;
+aggregate only with a declared scope and deduplication or weighting method.
+
+## B-039 — One copy/paste block per decision boundary
+When an operator must run commands, group all operations in the **current** evidenced or proven routine stage into one copyable block. Stop before a real decision boundary rather than supplying a speculative chain. Clear an interactive screen only if its previous output is no longer needed, within the same block.

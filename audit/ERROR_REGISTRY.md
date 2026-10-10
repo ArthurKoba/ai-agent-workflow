@@ -109,12 +109,58 @@ A report replaces an established or meaningfully estimable percentage with count
 Mitigation: percentage reporting is sticky per active direction/workstream, including an established overall-goal percentage. Preserve the same scoped denominator across reports; if the previous numeric value is temporarily unrecoverable, report the current approximate percentage and mark the prior baseline unavailable rather than downgrading to counters/status.
 
 ## E-027 — Generic Compose validity is mistaken for Coolify parser correctness
-Agent writes syntactically valid Compose but ignores the orchestrator parser contract, causing required variables to receive placeholder values, variables used only in ports/commands to disappear from the UI, multiple domains to collapse onto one service, managed files to fail to materialize, internal ports to be published unnecessarily, or secrets to be copied into Git/resource envs.
-Mitigation: load the Coolify Compose contract; classify each value as secret/shared, required external topology, safe default, internal literal or generated parser state; validate the result on a freshly parsed Coolify resource before deployment.
+Agent writes syntactically valid Compose but ignores the orchestrator parser contract, causing required variables to receive placeholder values, variables used only in ports/commands to disappear from the UI, multiple domains to collapse onto one service, managed files to fail to materialize, internal ports to be published unnecessarily, secrets to be copied into Git/resource envs, or broad watch paths to redeploy production on docs-only commits.
+Mitigation: load the Coolify Compose contract; classify each value as secret/shared, required external topology, safe default, internal literal or generated parser state; validate the result on a freshly parsed Coolify resource before deployment; scope Watch paths to actual deployment inputs rather than directory ownership alone.
+
+## E-028 — Semantic metadata claims stronger certainty than the evidence
+A behavior-analysis project leaves generic names after semantics are closed, keeps provisional/candidate names after confirmation, or preserves strong semantic names/types/links after evidence weakens or contradicts them. Future agents then inherit either lost knowledge or false certainty from the persistent analysis surface.
+Mitigation: use the evidence-state semantic lifecycle. Keep names/comments/types/boundaries/links synchronized with `UNKNOWN`/`LIKELY`/`CONFIRMED`/`CONTRADICTION`, retire withdrawn interpretations, reuse canonical semantic objects across references, and save after each coherent materialization pass.
+
+## E-029 — Local failure silently rewrites the acceptance contract
+An agent reacts to the latest deployment/test failure by changing topology, trust model, user flow or ownership without checking whether the new design still satisfies the already accepted requirements. A local fix becomes an accidental product/architecture decision.
+Mitigation: freeze the acceptance contract before implementation. Failures may change implementation details; changing an invariant requires an explicit contradiction/contract decision first.
+
+## E-030 — Repeated user correction is treated as conversational noise
+The user explicitly rejects the same technical direction or signals escalating dissatisfaction after a mismatch, but the agent treats it only as tone and continues from the same task model.
+Mitigation: trigger a narrow re-bootstrap/self-audit. Recover the latest explicit requirements and durable state, identify the drifted assumption/owner, reload only the relevant authority, and persist the corrected contract before continuing.
+
+## E-031 — Deployment lifecycle is designed only for the happy path
+A deployment is designed around first startup while repeat deploy, partial prior state, stale parser/runtime artifacts, reboot, upgrade, rollback or migration are not modeled. The first pass works, then ordinary lifecycle transitions fail.
+Mitigation: define a lifecycle matrix before rollout and add regression/acceptance coverage for every materially different state transition.
+
+## E-032 — Incidental metadata is promoted to a functional invariant
+An implementation requires a representation detail (numeric owner/group equality, path shape, parser record, container count) even though the real consumer contract is behavioral and the representation can legitimately differ under namespaces/orchestrators.
+Mitigation: define acceptance from the real consumer operation first; require metadata equality only when the underlying system contract explicitly guarantees it.
+
+## E-033 — Validation path does not match the real execution path
+Syntax/static checks pass, but production executes through a materially different wrapper/mode such as stdin, `bash -s`, sourcing, `set -u`, `nsenter`, generated Compose interpolation or an orchestrator helper.
+Mitigation: retain fast static checks, then reproduce the exact invocation path or the closest faithful harness before rollout.
+
+## E-034 — Nominal resource separation is mistaken for a security boundary
+A privileged operation is moved to another service/template/resource under the same repository, credentials and deployment authority, and the split is described as isolation even though the same actor can still control both sides. Operational complexity increases without materially reducing authority.
+Mitigation: draw the authority/credential graph. A boundary is real only when permissions, identities, approval or deployment authority differ; otherwise protect untrusted workloads from the trusted control plane without inventing a fake boundary.
+
+## E-035 — Upstream lifecycle ownership is discovered after custom policy was built
+An agent reimplements enrollment, service lifecycle, backend probing, cgroup/runtime policy or upgrade behavior before reading the third-party system's installer/source. Custom code duplicates upstream ownership and creates invented invariants.
+Mitigation: inspect upstream source/installer and supported deployment modes before designing custom provisioning; implement only the uncovered integration gap and validate against upstream behavior.
+
+## E-036 — Task issues become private execution journals
+An agent copies chat reports, private script inventories and recovery paths into
+an issue, obscuring the current goal and implying repository deliverables that
+readers cannot access.
+Mitigation: keep one editable semantic checkpoint in the issue; detailed evidence
+and recovery state remain in their owning surfaces. See the reporting protocol.
+
+## E-037 — A coverage proxy is presented as recovered behavior
+A fixed checklist, name/comment density, raw opcode hits or mapped address slots
+are labelled as complete hardware or pipeline coverage; overlapping views then
+inflate an overall percentage.
+Mitigation: use discovered identities and explicit closure evidence, distinguish
+register windows from implemented registers, and declare aggregate scope and
+weights. See the reverse-analysis progress inventory contract.
 
 Add a new class only when root cause or mitigation is materially different.
 
-
-## E-029 — One decision boundary is fragmented into multiple copy/paste blocks
-Agent asks the operator to run several command blocks even though all commands belong to the same current evidence-collection or routine stage, creating unnecessary copy/paste overhead and obscuring the real decision boundary. The inverse failure is clearing the terminal blindly and destroying still-useful evidence.
-Mitigation: one current decision boundary per copyable block; group all commands needed for that boundary together, and clear the screen only when the prior output is no longer needed.
+## E-038 — A single operator decision boundary is fragmented into separate command blocks
+An agent issues several copy/paste commands for the same read-only collection or routine stage, increasing operator work; alternatively it clears evidence in a separate step before the next decision.
+Mitigation: map one current decision boundary to one copyable block, combining its needed commands while preserving useful prior terminal output and not crossing into dependent future actions.

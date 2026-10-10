@@ -1,15 +1,97 @@
 # Prompt / Workflow Changelog
 
-## 2026-10 — Terminal command grouping by decision boundary
+## 2026-10 — Terminal commands grouped by decision boundary
 
 Changes:
-- strengthened `skills/terminal-operations/README.md` so one current decision boundary maps to one copyable command block;
-- commands required for the same evidence-collection/routine stage must stay together instead of being fragmented into multiple blocks;
-- added an explicit rule for shell clearing: clear only when prior output is no longer useful, and keep the clear command in the same copyable block;
-- added E-029 / B-029 for operator-overhead caused by fragmented command blocks and blind terminal clearing.
+- clarified that one current operator decision boundary receives one copyable block, even when collecting several related evidence points;
+- made terminal clearing conditional on no longer needing the previous output, with no separate clearance block;
+- recorded the operator-overhead failure in E-038 and the matching practice in B-039 (avoiding pre-existing E-029/B-029 IDs).
 
 Reason:
-A firmware-analysis interaction split one read-only collection step into two PowerShell blocks, forcing unnecessary repeated copy/paste even though no decision boundary existed between them. The existing wording prohibited microstep noise but did not make the one-boundary/one-block contract explicit enough.
+The old rule could lead an agent to fragment a single routine collection into multiple blocks and inadvertently discard the information needed at the next decision.
+
+## 2026-10 — Progress is bounded by the active recovery task
+
+Changes:
+- reverse-analysis now scores a named behavior contract against the
+  target artifact and its actual in-scope code, not unknown EC internals,
+  foreign firmware versions, hardware acceptance or future OS adapters;
+- reporting protocol now requires explicit denominator boundaries,
+  separate external unknowns and rebaselining misleading near-100 figures.
+
+Reason: an agent held otherwise recovered target-side contracts at
+unjustified near-completion percentages because unrelated downstream
+firmware and product-validation tasks remained open.
+
+## 2026-10 — Flat Reverse Analysis skill
+
+Changes:
+- renamed the general program-behavior skill to `skills/reverse-analysis.md` at the root of `skills/`;
+- removed the one-file `program-analysis/README.md` folder and redirected active maps;
+- set flat `skills/<skill-name>.md` as the normal standalone skill format, retaining folder/README only for genuinely multi-file skills;
+- preserved the reverse-analysis method for executables, BIOS/UEFI, libraries, drivers and firmware, including semantics, tracing, script persistence and monitored jobs.
+
+Reason:
+The previous correction consolidated content but still created an unnecessary folder/README indirection. A single cohesive skill should be a single named file. Historical references below are provenance, not active router paths.
+
+## 2026-10 — Standalone program-analysis skill
+
+Changes:
+- renamed the former hardware-reverse skill to `skills/program-analysis/README.md`, maintaining a single file and no nested analysis subskills;
+- broadened analyzer tracing, semantic naming, evidence states and Java/GhidraScript lifecycle to executables, BIOS/UEFI, libraries, drivers, services and firmware;
+- updated active workflow routing; historical references to the old directory remain only in chronological audit records.
+
+Reason:
+The analysis skill is about investigating program behavior, not inherently hardware reverse. A standalone cohesive skill avoids unnecessary navigation and applies to high- and low-level code equally.
+
+## 2026-10 — Coolify watch-path input isolation
+
+Changes:
+- Coolify/Git-backed infrastructure now scopes Watch paths to actual deployment inputs instead of assuming the entire service directory should trigger redeploy;
+- README/runbook/audit-only files are explicitly excluded from deployment triggers unless they are real runtime inputs;
+- E-027/B-028 now include docs-only redeploy as parser/orchestrator-contract failure.
+
+Reason:
+A documentation-only update inside a watched deployment directory triggered a live service redeploy even though no runtime input changed. Directory ownership is not the same thing as deployment-input ownership.
+
+## 2026-10 — Contract recovery after repeated correction
+
+Changes:
+- bootstrap now treats repeated explicit technical correction or escalating dissatisfaction after a mismatch as a narrow re-bootstrap trigger;
+- context-engineering defines a correction-triggered recovery flow: stop patch stacking, recover the latest acceptance contract and durable state, identify the drifted assumption/owner, reload only the relevant authority, then persist the corrected contract;
+- audit now distinguishes acceptance-contract drift from ordinary local defects and treats repeated user correction as workflow evidence rather than conversational noise;
+- added E-029/E-030 and B-030/B-031.
+
+Reason:
+A long infrastructure integration repeatedly optimized for the latest failure and, after user corrections, sometimes continued from the same incorrect task model. The productive turning point was to stop implementation, reconstruct the non-negotiable contract and resolve contradictions before coding again. The reusable lesson is not to preload more context; it is to reload the right context when feedback proves the current model is wrong.
+
+## 2026-10 — Lifecycle-first infrastructure and parser acceptance
+
+Changes:
+- service engineering now freezes deployment-entrypoint, steady-state, privilege, persistence, manual-step and validation invariants before substantial redesign;
+- Git-backed infrastructure now requires lifecycle coverage for clean install, repeat deploy, stale/partial state, restart/reboot, upgrade/migration and rollback;
+- resource/service separation is no longer treated as a security boundary unless permissions, identities, credentials or deployment authority actually differ;
+- Docker/Compose guidance distinguishes one deployment entrypoint from one service/container and allows narrowly scoped one-shot privileged bootstrap only when the accepted trust model requires it;
+- terminal operations now require validation of the exact production invocation mode, not only shell syntax;
+- Coolify guidance now covers generated-route vs application-visible URL separation, nested generated-URL fallback, fresh-resource parser-state diagnosis, narrow legacy storage migration and user-namespace ownership semantics;
+- added E-031 through E-035 and B-032 through B-036.
+
+Reason:
+The same integration exposed several independent failure classes: happy-path-only bootstrap design, invented metadata invariants, syntax tests that did not match stdin/wrapper execution, a nominal resource split that added complexity without a new authority boundary, and duplicated lifecycle/security behavior implemented before upstream ownership was understood. Clean recreation plus behavioral acceptance closed the ambiguity.
+
+
+## 2026-10 — Evidence-state semantic naming lifecycle
+
+Changes:
+- `skills/hardware-reverse/behavior-analysis.md` now defines an explicit semantic lifecycle for actions, states/globals, MMIO/register fields, constants, structures, protocol fields, addresses and action links;
+- `UNKNOWN` stays structural, `LIKELY` may use conservative provisional naming, and `CONFIRMED` promotes the object to canonical semantic metadata;
+- contradictions now require demotion/neutralization of names/types/links that assert too much, while `WITHDRAWN` is defined as a historical marker for invalidated interpretations rather than a live evidence state;
+- semantic promotion/demotion must synchronize names, comments, types/prototypes, boundaries and proven relationships in one coherent materialization pass;
+- repeated references reuse one canonical semantic object instead of accumulating per-action synonyms, while equal numeric values are not merged without identity proof;
+- added E-028 / B-029 for semantic metadata whose apparent certainty drifts away from the actual evidence.
+
+Reason:
+Long-running firmware behavior recovery can accumulate two opposite defects: confirmed behavior remains hidden behind generic addresses/FUN names, while older speculative names survive after later evidence disproves their owner or hardware interpretation. The persistent Analysis surface is a handoff authority, so its names and relationships must communicate the current evidence strength rather than merely preserve the chronology of guesses.
 
 ## 2026-10 — Coolify Compose parser contract
 
@@ -216,3 +298,16 @@ Changes:
 
 Reason:
 A mature product workspace had accumulated reusable engineering knowledge inside a legacy shared-context tree. Keeping that knowledge there created duplicate global authority and made it unavailable to unrelated projects. The reusable parts now live in the universal workflow library; project-specific facts remain with their project owners.
+
+
+## 2026-10 — Issue-state ownership and defensible coverage
+
+Changes:
+- reporting protocol now owns the distinction between editable task checkpoints,
+  conversation reports and private execution/recovery artifacts;
+- reverse-analysis now distinguishes discovered objects, register windows and
+  semantic completion, and requires explicit aggregate scope and deduplication;
+- no account prompt or project-specific runtime values were added.
+
+Reason: repeated issue-log duplication and proxy-based percentages obscured
+current tasks and made progress appear more complete than the evidence allowed.
