@@ -37,6 +37,13 @@ If a specialized MCP exists, use it instead of rebuilding/installing the same wo
 
 If capability is missing, report the gap. Do not silently bypass the project’s primary tool surface unless allowed.
 
+For the universal AI Agent Workflow library, the configured GitHub MCP is the
+authoritative live read surface. Missing MCP access or an incomplete required
+document invokes the **STOP and explicit user-approval** gate in
+`docs/BOOTSTRAP_PROTOCOL.md`. Do not treat local clones, search previews or
+alternate transport as equivalent merely because they return some text.
+An agent cannot install or authorize an MCP connection on the user's behalf.
+
 Concrete endpoints, installation IDs, credentials and transient infrastructure values belong in infrastructure authority, not the account prompt. Stable role aliases may be documented when they define an agent workflow contract.
 
 ## GitHub identity separation
