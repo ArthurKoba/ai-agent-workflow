@@ -62,7 +62,7 @@ and do not create a folder merely to hold a single README. The central
 One meaning should have one owner. A skill may link to another owner but should not copy its rule text.
 
 Examples:
-- commit-message format → `skills/git-workflow/`;
+- commit-message format → `skills/git-workflow.md`;
 - Python/package/PostgreSQL engineering → `skills/software-engineering/`;
 - FSD/UI/table engineering → `skills/frontend-engineering/`;
 - independent review responsibilities → `roles/REVIEWER.md`;
