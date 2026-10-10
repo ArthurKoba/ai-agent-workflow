@@ -157,5 +157,5 @@ Before browser operations, confirm:
 This skill defines workflow decisions. Project/local infrastructure owns
 concrete endpoints, authentication transport, session IDs and connector
 implementation. For tool or transport defects, investigate the authoritative
-MCP implementation through `../service-engineering/README.md` rather than
+MCP implementation through `service-engineering/README.md` rather than
 circumventing the provider's access control.

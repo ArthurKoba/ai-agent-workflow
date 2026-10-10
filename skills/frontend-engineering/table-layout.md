@@ -14,7 +14,7 @@
 - UX таблиц: empty/loading/error states, toolbar, bulk actions, dense layout, sticky header, horizontal scroll.
 
 
-Если задача касается reusable table shell/entity wrapper/slots/mobile mode/FSD-размещения, дополнительно читать `standalone-table/README.md`.
+Если задача касается reusable table shell/entity wrapper/slots/mobile mode/FSD-размещения, дополнительно читать `standalone-table.md`.
 
 ## Актуальная документация TanStack Table
 
@@ -64,7 +64,7 @@ npx @tanstack/cli search-docs "pagination sorting filtering" --library table --f
 
 Действия пользователя, подтверждения, API-команды и сценарные состояния размещать в `features`, а в таблицу подключать через slots, action column или composition верхнего слоя.
 
-Подробный порядок проектирования и чеклист хранит `standalone-table/README.md`. Эта заметка остаётся владельцем обязательных frontend/table правил, а скилл описывает повторяемый workflow разработки и ревью.
+Подробный порядок проектирования и чеклист хранит `standalone-table.md`. Эта заметка остаётся владельцем обязательных frontend/table правил, а скилл описывает повторяемый workflow разработки и ревью.
 
 ## Вёрстка и UX таблиц
 

@@ -78,6 +78,13 @@ never at the start.
 
 The same sticky-progress rules apply to full reports: if percentages are established or meaningfully estimable for an active direction/workstream, include them; exact counters may supplement them but do not silently replace them. Use state/counter-only reporting only when percentage progress is genuinely undefined or misleading, and say why. Never use min/max percentage ranges. Preserve validation-level distinctions; implementation proof, execution proof, board proof and integration proof are not interchangeable.
 
+## Reports after context refresh
+
+A request to re-read rules or refresh context does not itself request a full
+report. Use the same results-first compact delta format unless the user asks
+for a comprehensive snapshot. Reading rules is not implementation progress;
+report only newly established decisions, fixes, contradictions or blockers.
+
 ## Progress metric discipline
 
 ### In-scope progress versus external dependencies

@@ -71,7 +71,7 @@ Stable layout означает, что UI сохраняет предсказу�
 
 Toolbar, filters, table body и pagination должны иметь постоянные зоны. Появление bulk actions, errors, empty state или column settings не должно менять внешний каркас блока так, чтобы пользователь терял контекст.
 
-Если задача касается reusable table shell или table slots, дополнительно подключать `standalone-table/README.md`.
+Если задача касается reusable table shell или table slots, дополнительно подключать `standalone-table.md`.
 
 ## Цвета, темы и Tailwind
 

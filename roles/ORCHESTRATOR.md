@@ -2,7 +2,7 @@
 
 Use when several agents, repositories or non-trivial work slices must be coordinated.
 
-Role describes coordination responsibility; task-domain rules still come from the relevant skills. For documentation/context architecture or staged multi-pass agent workflows, also load `../skills/context-engineering/README.md`.
+Role describes coordination responsibility; task-domain rules still come from the relevant skills. For documentation/context architecture or staged multi-pass agent workflows, also load `../skills/context-engineering.md`.
 
 ## Responsibilities
 

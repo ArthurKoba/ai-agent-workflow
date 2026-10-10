@@ -64,8 +64,8 @@ Do not block repo/code analysis merely because this future repo is not yet avail
 Use:
 - `skills/service-engineering/README.md`
 - `skills/software-engineering/README.md`
-- `skills/terminal-operations/README.md`
-- `skills/code-review/README.md`
+- `skills/terminal-operations.md`
+- `skills/code-review.md`
 - `docs/MCP_STRATEGY.md`
 
 from the AI workflow library.

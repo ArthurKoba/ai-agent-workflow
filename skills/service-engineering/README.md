@@ -7,10 +7,10 @@ Use for services, deployment, networking, hosts, runtime maintenance and infrast
 - Coolify-parsed Docker Compose → `coolify-compose.md` (mandatory when Coolify owns parsing/deployment)
 - Git-backed infrastructure / orchestrator-owned deployments → `git-backed-infrastructure.md`
 - reusable service deployment presets/examples → `../../examples/services/README.md`
-- terminal/remote execution → `../terminal-operations/README.md`
+- terminal/remote execution → `../terminal-operations.md`
 - infrastructure/tooling architecture → `../../docs/MCP_STRATEGY.md`
 - source/config changes → `../software-engineering/README.md`
-- independent review → `../code-review/README.md`
+- independent review → `../code-review.md`
 
 ## Principles
 - Discover actual runtime/service topology before changing it.

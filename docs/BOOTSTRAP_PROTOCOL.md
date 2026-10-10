@@ -65,7 +65,7 @@ If the patch identity cannot be recovered, stop and reconstruct it from reposito
 
 ## Human-operated commands
 
-If the task will emit commands for a human to run, `skills/terminal-operations/README.md` is mandatory.
+If the task will emit commands for a human to run, `skills/terminal-operations.md` is mandatory.
 
 Do not emit the first command block until the terminal skill is loaded or its rules are already injected in current context.
 
@@ -91,6 +91,19 @@ For a correction-triggered re-bootstrap, do not reread the whole library. Stop s
 Strong negative feedback is not itself technical proof, but it is operational evidence that the current task model may be wrong. Do not dismiss repeated direct correction as tone or continue the same strategy without a bounded self-audit.
 
 Do not reread everything mechanically after every tool call.
+
+## Explicit context refresh
+
+An explicit request to refresh/re-read context is a re-bootstrap trigger, not a
+request to recite chat memory. Before the next technical decision, actually
+re-open the active repository map and phase/task authority, the selected task
+skill and any owning terminology/evidence module, the reporting protocol if a
+report is requested, and the smallest current source/status checkpoint.
+
+Re-read only the relevant authoritative subset; do not reload unrelated
+modules. A context refresh does not authorize new work, a broader acceptance
+scope or a full report by itself. Continue implementation only when the user
+also requests continuation.
 
 ## User-visible startup signal
 

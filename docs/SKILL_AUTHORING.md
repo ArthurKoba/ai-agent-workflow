@@ -43,12 +43,26 @@ split one coherent analysis/recovery process into subordinate documents,
 and do not create a folder merely to hold a single README. The central
 `skills/README.md` map must link directly to whichever entrypoint exists.
 
+## Migration and structure gate
+
+- A folder containing only `README.md` is a standalone skill in the wrong
+  shape: move it to `skills/<name>.md`, not another nested folder.
+- A subdirectory within a modular skill is justified only when it contains
+  multiple independently useful modules. A router, repetitive rules and a
+  checklist for **one** workflow should normally be one adjacent file.
+- On any move, update all inbound routes (root and domain maps, role/project
+  templates and neighboring skills), and fix relative paths **inside** the
+  moved file. Search for the old path before requesting review.
+- Keep the migrated content and proof; do not resurrect superseded modules
+  merely to preserve old commit history. If behavior already exists under a
+  newer canonical owner, record the overlap and omit the duplicate.
+
 ## Rule ownership
 
 One meaning should have one owner. A skill may link to another owner but should not copy its rule text.
 
 Examples:
-- commit-message format → `skills/git-workflow/`;
+- commit-message format → `skills/git-workflow.md`;
 - Python/package/PostgreSQL engineering → `skills/software-engineering/`;
 - FSD/UI/table engineering → `skills/frontend-engineering/`;
 - independent review responsibilities → `roles/REVIEWER.md`;
