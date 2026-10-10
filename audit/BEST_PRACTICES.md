@@ -116,3 +116,6 @@ respective owners. Preserve unique evidence when cleaning an overgrown issue.
 Count discovered objects or acceptance contracts with explicit evidence states.
 Separate address-window classification, register semantics and pipeline closure;
 aggregate only with a declared scope and deduplication or weighting method.
+
+## B-039 — One copy/paste block per decision boundary
+When an operator must run commands, group all operations in the **current** evidenced or proven routine stage into one copyable block. Stop before a real decision boundary rather than supplying a speculative chain. Clear an interactive screen only if its previous output is no longer needed, within the same block.

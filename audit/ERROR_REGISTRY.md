@@ -160,3 +160,7 @@ register windows from implemented registers, and declare aggregate scope and
 weights. See the reverse-analysis progress inventory contract.
 
 Add a new class only when root cause or mitigation is materially different.
+
+## E-038 — A single operator decision boundary is fragmented into separate command blocks
+An agent issues several copy/paste commands for the same read-only collection or routine stage, increasing operator work; alternatively it clears evidence in a separate step before the next decision.
+Mitigation: map one current decision boundary to one copyable block, combining its needed commands while preserving useful prior terminal output and not crossing into dependent future actions.

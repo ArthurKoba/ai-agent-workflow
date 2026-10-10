@@ -1,5 +1,15 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Terminal commands grouped by decision boundary
+
+Changes:
+- clarified that one current operator decision boundary receives one copyable block, even when collecting several related evidence points;
+- made terminal clearing conditional on no longer needing the previous output, with no separate clearance block;
+- recorded the operator-overhead failure in E-038 and the matching practice in B-039 (avoiding pre-existing E-029/B-029 IDs).
+
+Reason:
+The old rule could lead an agent to fragment a single routine collection into multiple blocks and inadvertently discard the information needed at the next decision.
+
 ## 2026-10 — Progress is bounded by the active recovery task
 
 Changes:

@@ -20,13 +20,15 @@ Know which lane every command belongs to:
 Do not silently switch lanes.
 
 ## Human-operated command format
-- one logical step per copyable code block;
+- one current decision boundary per copyable code block; keep commands required for that boundary together so the operator copies once;
+- do not split one current-stage evidence collection or routine check into separate blocks merely because it contains multiple commands;
 - each command on its own physical line;
 - explicit `cd` before cwd-dependent commands;
 - avoid ordinary `&&`, `;` and backslash continuation when separate lines are clearer;
 - group proven routine commands, but stop at real decision boundaries;
 - do not combine separate decision boundaries merely to reduce the number of code blocks;
 - do not split one proven routine stage into one-code-block-per-command noise.
+- in an interactive shell clear the screen only when its existing output is no longer needed as evidence or comparison; when appropriate, put the shell-native clear command at the beginning of that same copyable block, not in a separate step.
 
 ## Minimal targets
 Do not assume GNU coreutils, Python, `file`, full shell features, SSH/SFTP or writable storage.
