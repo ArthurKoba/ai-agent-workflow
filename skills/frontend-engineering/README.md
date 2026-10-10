@@ -9,7 +9,7 @@ Use this skill for frontend architecture, Vue/TypeScript applications, Feature-S
 - FSD placement examples → `feature-sliced-design-examples.md`
 - UI/layout and design-system integration → `ui-layout.md`
 - table/TanStack Table engineering → `table-layout.md`
-- reusable standalone table workflow → `standalone-table/README.md`
+- reusable standalone table workflow → `standalone-table.md`
 - responsive-table lessons/case-derived reference → `responsive-table-reference.md`
 
 Load only the modules relevant to the current change. A layout-only task does not require all FSD/table documents; an architecture/table refactor normally does.

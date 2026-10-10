@@ -1,3 +1,32 @@
+# Standalone Table
+
+Use this subskill when designing, refactoring or reviewing a reusable table shell, entity table wrapper, responsive/mobile rendering or table composition across FSD layers.
+
+## Read with
+
+- `table-layout.md`
+- `ui-layout.md`
+- `feature-sliced-design.md` when the project uses FSD or the task changes FSD boundaries
+- `feature-sliced-design-examples.md` when placement is ambiguous
+- the design rules and acceptance checklist below
+
+## Responsibility
+
+The subskill owns the reusable design workflow: separate generic mechanics from entity presentation and scenario composition; design stable slots/overrides; keep server/client table state explicit; avoid duplicating shell behavior across consumers.
+
+It does not define the project's domain DTOs, backend API, design system or package manager.
+
+## Workflow
+
+1. Identify whether the change belongs to generic shell, entity wrapper, feature action, widget/page composition or route state.
+2. Reuse an existing table shell before creating another.
+3. Place responsibilities at their natural owner; do not solve reuse by creating same-layer cross-imports.
+4. Design stable extension points rather than scenario-specific shell forks.
+5. Verify loading/empty/error, long content, actions, pagination and mobile behavior.
+6. For non-trivial library API behavior, confirm the current framework/library contract from an authoritative source.
+7. Apply the acceptance checklist below.
+
+---
 
 # Standalone Table Rules
 
@@ -96,3 +125,24 @@ Loading, empty и error states должны занимать предсказу�
 - feature actions из соответствующих feature slices.
 
 Внешние consumers не должны импортировать внутренние файлы `ui`, `model`, `api` чужого slice напрямую, если это не локально разрешённый паттерн проекта.
+
+---
+
+# Standalone Table Checklist
+
+Перед завершением задачи со standalone-таблицей проверить:
+
+- Подключены релевантные table/UI rules; FSD и examples загружены только если проект использует FSD или задача затрагивает эти границы.
+- Generic table shell находится в `shared` и не знает домен, маршруты, роли, статусы сущностей или бизнес-сценарии.
+- Имя/path общей таблицы соответствует проектному стандарту; при отсутствии стандарта выбран понятный neutral default.
+- Entity table содержит только нейтральное отображение сущности: базовые колонки, labels, filters, форматтеры, mobile card и entity UI.
+- Widget/page содержит только композицию контекста: toolbar, actions, query/page state, сценарные колонки, wiring и route/page context.
+- Feature-компоненты отвечают за действия пользователя, а не за копию всей таблицы.
+- Pagination, column visibility, loading, empty, error и mobile fallback не продублированы в каждом widget.
+- Slots спроектированы как стабильные layout-зоны; содержимое приходит сверху, а новый slot добавлен только при новой повторяемой зоне.
+- Row actions и bulk actions подключены через feature/widget composition, а не зашиты в entity или shared shell.
+- Server-side pagination/sorting/filtering явно отделены от client-side режима и имеют владельца state.
+- Mobile view выбран осознанно: horizontal scroll, сокращённый набор колонок или entity mobile card, без наложений и нечитаемых колонок.
+- Stable layout проверен для длинных значений, пустого списка, loading/error, disabled pagination, скрытых колонок и узкого viewport.
+- Public API не раскрывает лишние внутренние файлы slice и не создаёт deep imports.
+- Если нужно менять TanStack Table API или поведение, актуальная Vue-документация получена по правилам table-layout.
