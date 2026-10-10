@@ -13,7 +13,7 @@ Before the first implementation/mutation/human-operated command block:
    - `AGENTS.md` if present;
    - otherwise `CLAUDE.md`;
    - otherwise `README.md` + contribution/review docs;
-3. read the universal workflow library root `AGENTS.md` / `README.md` when available;
+3. read the universal workflow library root `AGENTS.md` and `README.md` in full through its designated authority; if unavailable, apply the mandatory STOP gate below;
 4. select and read the relevant task skill(s);
 5. identify the active role;
 6. read current state/tasks/authority documents required by the repository map;
