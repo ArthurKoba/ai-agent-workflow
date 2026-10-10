@@ -310,11 +310,11 @@ On every such block during behavior analysis:
 
 1. Re-read the terminology/evidence section of this reverse-analysis skill from the current authority before the next analysis invocation. This is a narrow re-bootstrap step intended to restore the active terminology, evidence model and routing constraints; it does not require rereading the whole workflow library.
 2. Record the incident while the exact invocation is still available. Preserve the tool/provider surface, operation or method name, sanitized arguments sufficient to identify the request shape, intended evidence goal, exact block/error text, whether the backend was reached, and the result of any legitimate alternate evidence path. Never copy credentials, secrets or unnecessary sensitive payloads into an issue.
-3. Check the configured infrastructure/provider incident tracker for an existing issue with the same failure class. If one exists, append the current invocation and result as a new evidence point. Otherwise open a new issue. Repeated occurrences belong in the same issue when they share the same root symptom so the evidence base grows instead of fragmenting.
+3. Route the incident to the **actual MCP service owner**, not to a generic infrastructure repository or the analyzed target's repository. For **Briareus Analysis MCP** (`/analysis/mcp`, including Ghidra-backed tools), the issue tracker is **[ArthurKoba/briareus Issues](https://github.com/ArthurKoba/briareus/issues)**. Check that tracker for the same failure class; append the new sanitized evidence point to the matching issue or open a new one only if none exists. **Do not file Briareus Analysis MCP incidents in `ArthurKoba/infrastructure` or a target BIOS/firmware repository.** For other MCP services use their explicitly configured issue tracker. If no tracker is specified, retain the evidence in the current task context and identify the missing owner; never guess a repository.
 4. Continue through a narrower or otherwise legitimate evidence path when one exists. Do not blindly repeat the same blocked call and do not use another tool merely to evade the safety/policy decision.
 5. If the same class blocks again later, repeat the terminology re-read and append the new occurrence. Treat recurrence count and invocation diversity as useful diagnostic evidence.
 
-The project/infrastructure layer owns the incident tracker. This skill requires blocked analysis invocations to be observable and deduplicated.
+The failing MCP service owns incident tracking; the analyzed project may record the task blocker without duplicating the service incident. Blocked analysis invocations must remain observable and deduplicated.
 
 ### Completion
 

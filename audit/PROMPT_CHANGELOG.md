@@ -1,5 +1,19 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Route Briareus Analysis MCP incidents to their service owner
+
+Changes:
+- named `https://github.com/ArthurKoba/briareus/issues` as the tracker for
+  Briareus Analysis MCP (`/analysis/mcp`) failures and pre-tool policy blocks;
+- require deduplication against existing Briareus issues instead of
+  reporting them to `ArthurKoba/infrastructure` or the analyzed project;
+- require an explicit provider-owned tracker for other services, and a
+  local incident checkpoint when no owner has been configured.
+
+Reason: a reverse-analysis pre-tool block was incorrectly filed in an
+unrelated infrastructure repository because the skill did not identify
+the Analysis MCP service's actual issue tracker.
+
 ## 2026-10 — Terminal commands grouped by decision boundary
 
 Changes:
