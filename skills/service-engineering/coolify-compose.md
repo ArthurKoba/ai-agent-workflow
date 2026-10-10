@@ -352,6 +352,10 @@ Rules:
 - never reveal or log secret values merely to verify that the reference exists;
 - absence of a required shared reference is a deployment/configuration error, not a reason to hard-code a temporary credential.
 
+### Required state is not an unset-value diagnosis
+
+Coolify's **Required** flag describes a configuration obligation; it may remain visible after the value is supplied. Likewise a name-only API returning `is_shared=false` proves neither that the variable is empty nor that its content is correct; `is_shared=true` does not prove the reference resolved. When the user says Shared credentials already exist, read the exact current scope and key metadata, preserve them and configure only the Application reference. Never guess `{{project.KEY}}` versus `{{environment.KEY}}` from a project name or a previous example, invent undocumented `{{scope.name}}` magic properties, recreate existing Shared entries, or replace an owner-scoped principal with a general database administrator just to make startup pass. Validate resolution without revealing secrets.
+
 ## Internal vs external networking
 
 Internal traffic should stay internal.
@@ -379,6 +383,10 @@ Rules:
 - do not publish metrics/admin/debug endpoints merely because another container consumes them;
 - mutable remote hosts, cross-server targets, bind addresses and externally meaningful ports belong in required runtime variables.
 
+## Public-route inventory before generating domains
+
+Before supplying Coolify Application settings, derive the public/private route inventory from the **accepted product/API contract**, not from whichever containers happen to exist or which endpoints are currently mounted. For each intended route identify its owner Compose service, externally used hostname/protocol, internal listener port, consumer, and activation/security prerequisite. When OAuth is split from MCP resource ingress, check whether the Authorization Server needs its own public issuer, discovery, login and token routes while the Gateway owns MCP resource endpoints. A health-only stub does **not** satisfy the required OAuth route, and a not-yet-active public service must not be mistakenly classified as permanently internal. Do not expose the private identity/data owner merely because it participates in authentication.
+
 ## Generated domains
 
 Coolify can generate domains from service magic variables.
@@ -393,6 +401,9 @@ services:
     expose:
       - '8080'
 ```
+
+
+Match the magic variable to the **actual Compose service name** (uppercase with service separators normalized to underscores) and the port exposed by that service: for example `auth-server` on `8000` uses `SERVICE_URL_AUTH_SERVER_8000: /` if that magic form is supported by the deployed parser. Declare it under the owning service's `environment:` in the **Coolify-parsed Compose input**, including an explicit override when the source uses `extends`; a declaration hidden in an unresolved base file is not sufficient evidence of parser discovery. Choose the parser-supported `SERVICE_FQDN_*` or `SERVICE_URL_*` form from the exact deployed version, rather than inventing variants or manually populating managed `SERVICE_*` entries. Avoid ordinary application configuration keys starting with `SERVICE_*` when they could collide with Coolify's generated-variable namespace.
 
 The port suffix tells Coolify which internal service port the generated domain targets.
 
@@ -423,21 +434,17 @@ A port-qualified magic variable such as:
 SERVICE_URL_APP_8080: /
 ```
 
-primarily declares a Coolify-managed public route to internal port 8080. If the application also needs to know its own public URL for webhooks, secure-cookie derivation, OAuth redirects or generated links, prefer an ordinary overridable application variable with a generated default, for example:
+primarily declares a Coolify-managed public route to internal port 8080. If the application also needs to know its own public URL for webhooks, secure-cookie derivation, OAuth redirects or generated links, use a separate ordinary explicitly configured application variable, for example:
 
 ```yaml
 environment:
   SERVICE_URL_APP_8080: /
-  APP_EXTERNAL_URL: ${APP_EXTERNAL_URL:-${SERVICE_URL_APP}}
+  APP_EXTERNAL_URL: ${APP_EXTERNAL_URL:?}
 ```
 
-This preserves three properties:
+Only declare `APP_EXTERNAL_URL` when the application actually consumes a canonical public URL. If needed, set this ordinary required Application variable **after** the managed domain has been established, through a verified operator/source binding. Do not promise that a generated route automatically becomes an application ENV value; omitting the unnecessary ordinary variable is preferable.
 
-- Coolify owns route generation/target-port state;
-- the application gets a canonical URL by default;
-- operators can override the application-level URL without changing Git.
-
-Observed on a Git-backed Coolify 4.4.1 path: directly assigning an application variable from a port-qualified magic variable in the same Compose environment could reach the final Docker Compose interpolation before that generated value was present, producing an unset-variable warning and an empty application value even though the public proxy route later existed. Treat this as parser/runtime ordering, not generic Compose behavior.
+Observed on a Git-backed Coolify 4.4.1 path: directly assigning an application variable from a port-qualified magic variable in the same Compose environment could reach the final Docker Compose interpolation before that generated value was present, producing an unset-variable warning and an empty application value even though the public proxy route later existed. **Do not put `${SERVICE_URL_*}`, including nested fallback interpolation, in Compose values unless the actual parser/runtime contract was explicitly validated.** Keep the literal magic route directive separate from application configuration. Treat this as parser/runtime ordering, not generic Compose behavior.
 
 Therefore validate both surfaces separately:
 
@@ -514,7 +521,7 @@ Observed consequences on Coolify 4.3.23:
 - variables removed from Compose can remain as stale resource variables until explicitly deleted;
 - generated file/domain/storage records can survive source changes;
 - a successful reparse does not prove stale state was removed;
-- recreating a resource is often the cleanest diagnostic path when parser-managed state has diverged materially.
+- a disposable **diagnostic** resource can distinguish fresh-parser behavior from stale state, but never recreate a real existing application merely to diagnose a domain/ENV mismatch; inspect and preserve its domains, variables, live credentials, volumes and rollout history first.
 
 During migration or refactors, compare current Git requirements with the actual resource variable/storage/domain inventory and remove only entries proven obsolete. Do not delete unknown state merely because it is absent from the latest Compose.
 
@@ -533,6 +540,14 @@ For a layout migration:
 5. re-run the same migration on a regression fixture so repeat deploy remains idempotent.
 
 In user-namespace/rootless scenarios, files created by runner/container identities may appear on the host with subordinate mapped IDs. That alone is not corruption.
+
+## Deploy and restart acceptance
+
+A Git change does not configure an existing Coolify resource until the **reviewed commit is on the resource's real configured branch** and the orchestrator has parsed/deployed that exact revision. Before telling an operator to deploy, verify the published ref, native Base Directory/Compose location, saved Watch Paths, and whether merge/webhooks will auto-deploy a resource whose database or security prerequisites are still unapproved. A source-level `activation: blocked` label is not an orchestrator stop mechanism. Avoid telling the operator to recreate a resource or to set manually generated magic variables as a workaround.
+
+Choose `restart:` from the accepted failure lifecycle: when an unrepairable configuration/credential/schema/trust failure must stop a service, a policy such as `unless-stopped` causes an endless startup loop, while `restart: "no"` allows inspection after one failure. Do not impose fail-stop on healthy long-lived workers without that contract. Verify the **effective** policy/container after Coolify reparse, rather than assuming that updating Git changed a running container. Diagnose failures from safe, actionable error categories and bounded runtime evidence; an intentionally redacted generic startup exception is not proof of a particular SQL/password cause.
+
+A successful image build, a Coolify deployment marked `finished`, a container marked `running:healthy`, application `/health/live`, readiness/authorization and an external user-facing HTTPS/OAuth/MCP operation are **different acceptance levels**. Check the intended consumer's actual route, DNS/TLS and expected response; missing top-level `fqdn` on a Compose Application alone is not evidence that the service-specific managed domain is absent.
 
 ## Fresh-parse validation
 
