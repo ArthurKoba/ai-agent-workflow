@@ -144,4 +144,19 @@ Mitigation: draw the authority/credential graph. A boundary is real only when pe
 An agent reimplements enrollment, service lifecycle, backend probing, cgroup/runtime policy or upgrade behavior before reading the third-party system's installer/source. Custom code duplicates upstream ownership and creates invented invariants.
 Mitigation: inspect upstream source/installer and supported deployment modes before designing custom provisioning; implement only the uncovered integration gap and validate against upstream behavior.
 
+## E-036 — Task issues become private execution journals
+An agent copies chat reports, private script inventories and recovery paths into
+an issue, obscuring the current goal and implying repository deliverables that
+readers cannot access.
+Mitigation: keep one editable semantic checkpoint in the issue; detailed evidence
+and recovery state remain in their owning surfaces. See the reporting protocol.
+
+## E-037 — A coverage proxy is presented as recovered behavior
+A fixed checklist, name/comment density, raw opcode hits or mapped address slots
+are labelled as complete hardware or pipeline coverage; overlapping views then
+inflate an overall percentage.
+Mitigation: use discovered identities and explicit closure evidence, distinguish
+register windows from implemented registers, and declare aggregate scope and
+weights. See the reverse-analysis progress inventory contract.
+
 Add a new class only when root cause or mitigation is materially different.

@@ -148,3 +148,15 @@ Before rollout, substantial deployment work models clean install, repeat deploy,
 Coolify-specific work also separates parser-generated routing state from application-visible canonical URLs and treats a fresh resource as a diagnostic tool when parser-managed state may be stale.
 
 Automation/quality effect: live failures are less likely to trigger architecture drift, repeat deployments become first-class acceptance cases, and orchestrator/parser behavior is validated as part of the deployment API rather than discovered one production patch at a time.
+
+
+## Issue checkpoints and evidence-based aggregation
+
+Task issues now remain compact current-state workspaces rather than copies of
+conversation reports or private execution journals. Semantic anchors survive;
+recovery detail stays with its owning analysis/artifact surface.
+
+Coverage is based on identified scope and evidence, with register-window slots,
+observed registers, documentation and recovered behavior kept distinct. Overall
+metrics require a declared aggregation basis and do not double-count overlapping
+processor, hardware and pipeline views.

@@ -127,6 +127,40 @@ When the task already maintains durable Task Context, status, handoff or structu
 
 Do not create a second planning database only for reports. Reuse the project's existing durable task/state authority.
 
+## Issues and project boards are current state, not execution logs
+
+Keep user-facing reports in the conversation. An issue or project-board item is
+an editable work checkpoint: goal, scope, acceptance criteria, current progress,
+important decisions, next tasks and material blockers. Update the existing state
+instead of appending a new report after every work session.
+
+Keep concise technical findings when they help a reader understand or resume the
+task: semantic names, register ranges/fields, behavior contracts, evidence level,
+remaining unknowns and useful references. A logical object identity in the
+canonical analysis is useful even when its storage is private; a private
+filesystem path presented as a repository deliverable is not.
+
+Do not copy chat reports, tool transcripts, step-by-step activity, script counts,
+private script inventories, temporary files, worker/job identifiers, checksums or
+backup/archive paths into an ordinary task issue. Do not imply that a file exists
+in the repository merely because it exists in an analysis service. A dedicated
+infrastructure incident or explicitly requested runbook may contain the minimal
+operational detail required to diagnose its own task; do not copy that detail
+back into the product issue.
+
+Keep detailed traces, script sources and recovery locators in their owning
+analysis/artifact/local-context surface. The task issue may identify the
+canonical project and semantic objects, or link accessible evidence, without
+mirroring its internal storage. Use the existing durable authority rather than
+creating a second planning database. The report checkpoint is a compact set of
+facts and metrics, not a copy of the last report.
+
+When cleaning an existing issue, preserve unique conclusions, unresolved
+contradictions, acceptance criteria and meaningful evidence references. Verify
+that unique technical evidence survives in its owning surface before removing
+it. Do not move the same execution log into a new issue comment and call that
+cleanup. Keep historical decisions only where their history remains useful.
+
 ## Interaction semantics
 
 - `report` by itself means: provide the report and stop there.
