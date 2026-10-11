@@ -81,6 +81,98 @@ The session handle belongs in existing secure task/workspace state, not in
 a tracked skill, source document, chat transcript or exposed logs if sensitive.
 Never store credentials, authentication cookies or access tokens.
 
+### External Playwright MCP via Koba Web — concrete connection path
+
+Apply this subsection **only** when the Project selects the external Playwright
+MCP provider exposed by Koba Web. These are provider-specific tool names, not
+rules for all remote browsers. Resolve tool signatures and the endpoint from
+**live MCP discovery/settings**; never hardcode an IP, port, browser profile,
+protocol version or credentials in this reusable skill.
+
+1. Discover `mcp__Koba_MCP_Bridge__bridge_backends`, then
+   `bridge_tools({backend: "web"})`. The root tool catalog may expose only a
+   subset of Web MCP's tools. Use
+   `mcp__Koba_MCP_Bridge__bridge_call({backend: "web", tool_name: ...,
+   arguments: ...})` for the backend's actual tools. Do **not** infer that
+   `browser_devtools_connect` or `browser_pages` attaches to the operator's
+   external Playwright session: those are distinct managed/DevTools surfaces.
+2. Call `browser_external_status` **first**. Check `configured`, `enabled`,
+   `connected`, provider and configured endpoint. `enabled: false` means the
+   operator must enable **External Browser** in Admin; managed-browser
+   Developer Access is a separate switch. If a usable external session is
+   already connected, reuse it instead of requesting another grant.
+3. For a new approved session, call `browser_external_connect` **once**.
+   When it succeeds, retain its session and use the `external` browser tools
+   through the same provider; select an existing permitted tab. The browser
+   permission prompt may occur only when the first tab operation is attempted.
+4. If this specialized connector fails **during MCP initialization** with a
+   generic server error, inspect `browser_external_status` and connector
+   diagnostics before changing anything. A confirmed server response to a
+   proper MCP `initialize` request means it is reachable; it does **not**
+   prove the wrapper completed its own handshake. Do not keep retrying
+   `browser_external_connect`, ask for an endpoint already in Admin, reset
+   another agent's browser or switch silently to managed Chromium.
+5. **Conditional recovery when the native Web connector itself is broken:**
+   with the operator's permission for this external browser and the confirmed
+   configured MCP HTTP endpoint, use Koba Web's `curl_request` through the
+   bridge to perform **one** MCP Streamable HTTP session. Send JSON-RPC
+   `initialize` with `clientInfo` identifying this agent, supported
+   `protocolVersion`, and `capabilities`; accept
+   `application/json, text/event-stream`. Read the negotiated version and
+   `Mcp-Session-Id` response header. Then send
+   `notifications/initialized` **on the same session**. Invoke
+   `tools/list` if tool names are not already verified, followed by
+   `tools/call` with `{name: "browser_tabs", arguments: {action: "list"}}`.
+   This tab-discovery call may be the actual **extension authorization
+   trigger**: an operator-visible request identifies the `clientInfo.name`.
+   This is an explicit fallback for a diagnosed connector defect, not the
+   default route or a way around the extension permission dialog.
+6. For every subsequent fallback `tools/call`, send that **same**
+   `Mcp-Session-Id` and negotiated `MCP-Protocol-Version` headers. Parse MCP
+   JSON-RPC responses from JSON or `event: message` / `data:` SSE frames,
+   not from a guessed HTML page. Keep the session identifier only in secure,
+   nontracked task state. Once the operator grants access, call
+   `browser_tabs` with `action: "list"` again on that session, choose the
+   already-open application tab, then inspect it with `browser_snapshot`,
+   `browser_console_messages`, `browser_network_requests` and, if needed,
+   read-only `browser_evaluate`. Never reopen or replace the tab just to find
+   it. Browser interaction or mutation still requires its actual grant.
+
+**Minimal Streamable HTTP fallback sequence (illustrative JSON-RPC):**
+
+```text
+POST <configured MCP endpoint>
+Accept: application/json, text/event-stream
+Content-Type: application/json
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"<supported>","capabilities":{},"clientInfo":{"name":"<agent and task>","version":"1.0"}}}
+
+POST <same endpoint> with Mcp-Session-Id: <response header>
+{"jsonrpc":"2.0","method":"notifications/initialized"}
+
+POST <same endpoint> with Mcp-Session-Id: <same header>
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"browser_tabs","arguments":{"action":"list"}}}
+```
+
+Use the negotiated `MCP-Protocol-Version` on subsequent requests. The first
+request returns an MCP session handle; **the tab-list request may prompt the
+human**. Do not confuse these two separate phases. After an actual grant,
+repeat only the permitted tab operation using the same session handle.
+
+**Observed failure distinctions:** `browser_external_status.connected: false`
+means the specialized wrapper has no session; it does not by itself invalidate
+an independently established, explicitly authorized fallback MCP session.
+A plain HTTP `GET` returning `400 Invalid request` is **not** a valid MCP
+handshake test. `Server returned an error response` from the wrapper can be an
+MCP-client negotiation defect even when a valid JSON-RPC `initialize` gets
+`200` with a session ID. An initialized MCP session is **not** proof of tab
+access: wait for the operator's separate extension grant, then confirm tab
+list and effective permissions before using it.
+
+**Tooling owner:** diagnose or fix the wrapper in its owning MCP service so
+agents can normally use `browser_external_connect` without the fallback.
+Do not embed the external server address, a real session ID, authorization
+headers, target tab URL or operator-specific extension state in this skill.
+
 ### 4. Wait for the operator's grant
 
 Once a permission dialog is pending:
