@@ -31,6 +31,7 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 - project bootstrap / toolchain / lint, types, hooks and CI setup → `skills/project-bootstrap.md`
 - Git commit/message work → `skills/git-workflow.md`
 - independent review → `skills/code-review.md`
+- interface/UX design review and acceptance → `skills/interface-design-review.md`
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations.md`
 - any task that emits human-operated commands → `skills/terminal-operations.md` (mandatory)
 - service/deployment/infrastructure operations → `skills/service-engineering/README.md`
