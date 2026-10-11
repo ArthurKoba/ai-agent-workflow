@@ -31,12 +31,14 @@ Each new editor mapping belongs in this section with the same four keys:
 (editor activation text), and `instructions_source` (repository-root-relative
 path to the canonical Markdown). Do not add placeholder entries for skills
 whose editor metadata has not been reviewed.
+For ChatGPT, `name` must use lowercase ASCII letters, digits and hyphens
+(no spaces or uppercase characters); e.g. `reverse-analysis`.
 
 ### Reverse Analysis
 
 ```yaml
 id: reverse-analysis
-name: Reverse Analysis
+name: reverse-analysis
 description: >-
   Reverse engineer executable programs and firmware (EXE/PE/ELF, DLLs,
   BIOS/UEFI, ACPI/WMI, drivers, libraries and embedded binaries). Use for
