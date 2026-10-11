@@ -30,3 +30,7 @@ if missing:
     raise SystemExit('Missing skill routes:\n' + '\n'.join(missing))
 print('Workflow maps and changed-commit whitespace verified')
 PY
+
+# The installable snapshot must exactly track the canonical skill sources.
+python3 scripts/build-agent-skill.py --check
+python3 -m unittest discover -s scripts/tests -p "test_build_agent_skill.py"
