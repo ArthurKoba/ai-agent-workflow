@@ -7,6 +7,7 @@ Load only the module matching the current task.
 - project/environment bootstrap, Bun/uv, strict quality gates, hooks → `project-bootstrap.md`
 - Git commits and commit-message discipline → `git-workflow.md`
 - independent review → `code-review.md`
+- UI/UX design review and browser acceptance → `interface-design-review.md`
 - shell/PowerShell/WSL/SSH/UART/bootloader → `terminal-operations.md`
 - deployment/services/infrastructure operations → `service-engineering/README.md`
 - remote browser sessions / Chrome tabs / DevTools / extension permissions → `remote-browser-session.md`

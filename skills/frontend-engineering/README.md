@@ -8,6 +8,7 @@ Use this skill for frontend architecture, Vue/TypeScript applications, Feature-S
 - Feature-Sliced Design → `feature-sliced-design.md`
 - FSD placement examples → `feature-sliced-design-examples.md`
 - UI/layout and design-system integration → `ui-layout.md`
+- Review an existing interface and define acceptance **before editing** → `../interface-design-review.md`
 - table/TanStack Table engineering → `table-layout.md`
 - reusable standalone table workflow → `standalone-table.md`
 - responsive-table lessons/case-derived reference → `responsive-table-reference.md`
