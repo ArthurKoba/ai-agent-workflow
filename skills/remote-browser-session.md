@@ -14,6 +14,28 @@ time to approve it, and keep using that same session throughout the task.
 Never multiply browser sessions, tabs or permission prompts through polling or
 connection retries.
 
+## Reuse-before-reconnect gate (mandatory)
+
+**Before any `initialize`, `browser_external_connect`, tab grant or new
+session, test an already-approved session handle if one is available.** A
+broken intermediary or its `connected: false` flag does not prove that an
+upstream Playwright MCP session or its operator grant was lost.
+
+1. Recover endpoint, `Mcp-Session-Id`, negotiated `MCP-Protocol-Version`,
+   ownership and grant state from **restricted, untracked task/workspace
+   state**. Never guess a handle or read another agent's secrets.
+2. Test **the same handle** by calling `browser_tabs` with `action: list`
+   via Streamable HTTP at the **same confirmed endpoint**. Check the MCP
+   result and actual permitted tab, not merely an HTTP status.
+3. If Koba Web fails, try the same approved session through its HTTP tool.
+   If Koba Web itself is unavailable, a Project-authorized terminal/runner
+   may POST to that **same endpoint and same handle**. This is transport
+   recovery, not permission bypass. Do not switch to managed Chromium,
+   reset sessions, or probe arbitrary hosts.
+4. A timeout, `connected: false` or broken wrapper is **not** a revocation.
+   Confirm invalid/expired state before requesting one replacement with
+   explicit operator approval.
+
 ## Procedure
 
 ### 1. Discover the existing browser and session state
@@ -36,6 +58,8 @@ Before any connect, initialize, open-tab, or permission-request operation:
    active session belonging to another agent.
 4. Choose the required tab from existing accessible tabs when permitted.
    Do not open a duplicate of an existing application tab to discover it.
+5. Locate the existing session handle and negotiated protocol in secure
+   Task Context; wrapper connection state is not an upstream session registry.
 
 **Decision:** If a usable session already has the needed permissions and
 target access, select it and continue. Do **not** create another session.
@@ -54,12 +78,20 @@ permission model:
   authorized mechanisms.
 
 Check whether grants are scoped to a browser, profile, tab, origin, extension
-or operation. Request the smallest sufficient set **together at the initial
+or operation. For an approved extension-debugging task, establish up front
+whether the operator's grant includes **tab read/navigation/click/type,
+DOM/Console/Network, debugger/CDP, and installed-extension
+inspect/reload/install**. Uninstall remains a separate destructive
+authorization. Request the smallest sufficient set **together at the initial
 authorization opportunity**; include extension management up front if the
 task requires it. Do not claim permission exists merely because a tool is
 listed. If the provider exposes grants only when a specific operation is
 attempted, use its documented grant mechanism and await the operator; do not
-invent scope flags or bypass its approval UI.
+invent scope flags or bypass its approval UI. MCP `initialize.capabilities`
+describes protocol/client capabilities, **not browser permissions**. If
+the connector offers no grant-scope parameters, describe the required
+permissions to the operator and rely on its browser authorization UI.
+Changing `clientInfo.name` cannot grant CDP or extension control.
 
 If the required capability is unavailable in the selected provider, report
 that boundary; do not work around it with a different, unapproved profile.
@@ -74,6 +106,11 @@ capacity/isolation requirement makes another session necessary.
 2. Start **one** supported connector session and trigger **one** access request.
 3. Capture its durable session/connection handle, provider, target browser
    identity, selected tab (when known), requested permissions and state.
+   **Persist `Mcp-Session-Id`, negotiated protocol and approved endpoint
+   immediately after `initialize`, BEFORE `browser_tabs` or any approval
+   request. Verify recovery from approved, access-restricted, untracked
+   task state before telling the operator to approve.** Keep sensitive
+   handles out of chat, commits, logs, and tool-output transcripts.
 4. Keep the connector process/session alive across tool calls and context
    changes; subsequent operations must use **the same handle**.
 
@@ -100,8 +137,11 @@ protocol version or credentials in this reusable skill.
    `connected`, provider and configured endpoint. `enabled: false` means the
    operator must enable **External Browser** in Admin; managed-browser
    Developer Access is a separate switch. If a usable external session is
-   already connected, reuse it instead of requesting another grant.
-3. For a new approved session, call `browser_external_connect` **once**.
+   already connected, reuse it instead of requesting another grant. Even
+   when `connected: false`, **check an existing upstream handle first**;
+   the value describes only the proxy's local persistent client.
+3. For a new approved session, call `browser_external_connect` **once**,
+   **only when no reusable approved handle exists**.
    When it succeeds, retain its session and use the `external` browser tools
    through the same provider; select an existing permitted tab. The browser
    permission prompt may occur only when the first tab operation is attempted.
@@ -114,12 +154,21 @@ protocol version or credentials in this reusable skill.
    another agent's browser or switch silently to managed Chromium.
 5. **Conditional recovery when the native Web connector itself is broken:**
    with the operator's permission for this external browser and the confirmed
-   configured MCP HTTP endpoint, use Koba Web's `curl_request` through the
-   bridge to perform **one** MCP Streamable HTTP session. Send JSON-RPC
+   configured MCP HTTP endpoint, **first probe an existing approved session
+   using that same handle, without `initialize`.** Try Koba Web's
+   `curl_request` through the bridge. If `bridge_tools(web)` is
+   `not_available`, the Web backend reports `Client is not connected`,
+   or `curl_request` fails, use a **Project-authorized terminal/runner**
+   capable of reaching that **same** confirmed endpoint with the **same
+   approved session ID**. Do not invent a new endpoint or use a different
+   browser profile. This recovers transport, not user permissions.
+   Only when the old handle is conclusively unavailable and the operator
+   has authorized a replacement should Koba Web's `curl_request` create
+   **one** new MCP Streamable HTTP session. Send JSON-RPC
    `initialize` with `clientInfo` identifying this agent, supported
    `protocolVersion`, and `capabilities`; accept
-   `application/json, text/event-stream`. Read the negotiated version and
-   `Mcp-Session-Id` response header. Then send
+   `application/json, text/event-stream`. **Immediately persist the
+   negotiated version and `Mcp-Session-Id` response header**. Then send
    `notifications/initialized` **on the same session**. Invoke
    `tools/list` if tool names are not already verified, followed by
    `tools/call` with `{name: "browser_tabs", arguments: {action: "list"}}`.
@@ -138,7 +187,84 @@ protocol version or credentials in this reusable skill.
    read-only `browser_evaluate`. Never reopen or replace the tab just to find
    it. Browser interaction or mutation still requires its actual grant.
 
-**Minimal Streamable HTTP fallback sequence (illustrative JSON-RPC):**
+**First: recover an existing approved Streamable HTTP session (NO
+`initialize`, NO new permission prompt):**
+
+```text
+POST <same confirmed upstream MCP endpoint>
+Accept: application/json, text/event-stream
+Content-Type: application/json
+Mcp-Session-Id: <previously granted session from restricted state>
+MCP-Protocol-Version: <protocol negotiated by that session>
+{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"browser_tabs","arguments":{"action":"list"}}}
+```
+
+A correct `200` MCP response with the actual approved operator tab
+demonstrates that the **original session is still usable**. A `200` from
+`tools/list` alone tests only the protocol, not the tab grant. Verify
+`result.isError`, `error` and actual `result.content`; parse either
+JSON or `event: message` / `data:` SSE frames. Avoid printing raw
+session headers, user tab URLs or network bodies.
+
+When Koba Web's MCP backend is unavailable, a scoped terminal's Python
+standard library (`urllib.request`) can issue this exact POST via the
+already-authorized infrastructure path. The terminal must use the **same
+existing handle**, and its URL/handle/version must be injected from
+protected local task state, never hardcoded into a reusable skill or a
+tracked helper:
+
+```python
+# Run only inside a Project-approved terminal with an approved session.
+import json
+import os
+from urllib.request import Request, urlopen
+
+endpoint = os.environ["APPROVED_MCP_ENDPOINT"]
+session_id = os.environ["APPROVED_MCP_SESSION_ID"]
+version = os.environ["APPROVED_MCP_PROTOCOL_VERSION"]
+payload = {
+    "jsonrpc": "2.0", "id": 1, "method": "tools/call",
+    "params": {"name": "browser_tabs", "arguments": {"action": "list"}},
+}
+headers = {
+    "Accept": "application/json, text/event-stream",
+    "Content-Type": "application/json",
+    "Mcp-Session-Id": session_id,
+    "MCP-Protocol-Version": version,
+}
+request = Request(endpoint, data=json.dumps(payload).encode(),
+                  headers=headers, method="POST")
+with urlopen(request, timeout=15) as response:
+    raw = response.read(65536).decode()
+json_text = (
+    raw if raw.lstrip().startswith("{")
+    else "\n".join(line[6:] for line in raw.splitlines()
+                    if line.startswith("data: "))
+)
+reply = json.loads(json_text)
+if reply.get("error") or reply.get("result", {}).get("isError"):
+    raise RuntimeError("Existing MCP session could not list tabs")
+blocks = [
+    item.get("text", "")
+    for item in reply.get("result", {}).get("content", [])
+    if item.get("type") == "text"
+]
+# Inspect tab identities only in the approved private task context.
+# Never print session headers, private URLs, credentials or full snapshots.
+if not blocks:
+    raise RuntimeError("No browser tab-list result; grant not verified")
+print("Existing MCP session returned a tab-list response")
+```
+
+This example is a transport template, **not** an invitation to place
+session identifiers in environment dumps, shell history or ordinary logs.
+Use a protected mechanism to supply the variables and avoid echoing them.
+If that mechanism is unavailable, stop and recover the credential locator
+instead of bypassing permissions.
+
+**Only when reuse is impossible and the operator approves a new grant:**
+
+**New-session initialize sequence (illustrative JSON-RPC):**
 
 ```text
 POST <configured MCP endpoint>
@@ -158,15 +284,32 @@ request returns an MCP session handle; **the tab-list request may prompt the
 human**. Do not confuse these two separate phases. After an actual grant,
 repeat only the permitted tab operation using the same session handle.
 
-**Observed failure distinctions:** `browser_external_status.connected: false`
-means the specialized wrapper has no session; it does not by itself invalidate
-an independently established, explicitly authorized fallback MCP session.
-A plain HTTP `GET` returning `400 Invalid request` is **not** a valid MCP
-handshake test. `Server returned an error response` from the wrapper can be an
-MCP-client negotiation defect even when a valid JSON-RPC `initialize` gets
-`200` with a session ID. An initialized MCP session is **not** proof of tab
-access: wait for the operator's separate extension grant, then confirm tab
-list and effective permissions before using it.
+**Failure classifier — do not infer a cause from one symptom:**
+
+| Observed response | What it proves / next action |
+| --- | --- |
+| `browser_external_status.connected: false` | Only that wrapper's in-memory client is not connected. Verify the existing upstream handle first. |
+| `bridge_tools(web): not_available` or `Client is not connected` | Koba Web proxy/backend unavailable; the approved upstream MCP may still work. Try the same handle via a permitted terminal. |
+| Wrapper `Server returned an error response` | Non-specific: the failure may be MCP initialization, tool listing, tab listing or permission wait. Inspect source/logs, do not assume the grant expired. |
+| `POST tools/call(browser_tabs)` returns a real tab under an existing handle | Existing session and tab access confirmed at that moment. **Do not create another session.** |
+| `initialize` returns HTTP 200 + `Mcp-Session-Id` | MCP transport initialized only. Persist ID **before** first tab-grant request; permissions still unverified. |
+| `tools/call` timeout or browser click stalls | Could be pending permission, transport, page execution or proxy timeout. Keep handle; investigate, don't immediately reinitialize. |
+| Plain GET returns `400 Invalid request` | Not a valid MCP handshake test; cannot diagnose session from it. |
+| Managed `devtools_list_pages` / `browser_pages` lists unrelated tabs | Different Chrome/profile. Don't manipulate it or claim external browser access. |
+| Snapshot/evaluate reads work | Page read/DOM permissions only. Doesn't establish click, real CDP/debugger or extension management. |
+
+**Evidence levels:** a server's MCP `200` is not a browser grant; a tab
+listing is not debugger authorization; DOM and Network observations alone
+do not prove Chrome extension-install/reload privileges. Also, a service
+restart seen near a failure is correlation, **not proof** that the restart
+caused the session failure.
+
+**Incorrect shortcuts:** `browser_devtools_connect`,
+`browser_devtools_target`, managed `browser_pages` and
+`devtools_list_pages` do not inherently bind to the operator's external
+Playwright session; they may control a different managed browser. Don't
+call them as an alternate session recovery path unless the exact external
+browser identity and permissions are independently established.
 
 **Tooling owner:** diagnose or fix the wrapper in its owning MCP service so
 agents can normally use `browser_external_connect` without the fallback.
