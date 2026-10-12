@@ -23,6 +23,24 @@ The repository map should keep this mandatory set intentionally small. Additiona
 
 Do not proceed past this gate by merely claiming that the files were read.
 
+## Model-visible completeness check (mandatory)
+
+A complete MCP/API response is not proof that its content reached the agent:
+the tool output renderer may truncate combined outputs separately. For each
+required authority verify (1) returned UTF-8 bytes against source metadata
+where available, and (2) complete, gap-free text actually exposed to the model.
+Never claim LOADED from a byte-count check performed only inside a tool script.
+
+Default to one required file per read; at most two when their total estimated
+serialized output fits a *measured* safe output budget with headroom. Do not
+bulk-emit full files. If content is large or output limits are uncertain, emit
+labelled consecutive chunks with file/ref, offsets, total length and continuity
+checks; shrink chunk size on any truncation and re-read missing sections.
+Record requested/returned/fully-read counts, reported/observed byte sizes,
+truncation flags, and exact cutoff only when measured. A warning without an
+offset does not establish a numerical threshold. If any selected authority
+remains incompletely visible, use the existing STOP / explicit approval gate.
+
 ## Complete-document loading gate (mandatory)
 
 **Selection is conditional; completeness is not.** Select the smallest relevant
