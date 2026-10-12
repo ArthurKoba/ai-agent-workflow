@@ -164,3 +164,16 @@ Add a new class only when root cause or mitigation is materially different.
 ## E-038 — A single operator decision boundary is fragmented into separate command blocks
 An agent issues several copy/paste commands for the same read-only collection or routine stage, increasing operator work; alternatively it clears evidence in a separate step before the next decision.
 Mitigation: map one current decision boundary to one copyable block, combining its needed commands while preserving useful prior terminal output and not crossing into dependent future actions.
+
+## E-039 — Complete fetch but truncated agent-visible output
+Multiple full documents returned by MCP are aggregated into one tool result;
+the output is truncated before the model sees all text. A later MCP-side
+byte-count match cannot prove the model read it.
+Mitigation: verify source byte integrity **and** contiguous model-visible
+coverage, normally one file at a time, at most two if observed output limits
+allow, with numbered bounded chunks and fail-closed handling.
+Observed 2026-10-13: a seven-file combined read reported `truncated output`
+(33,937 original output tokens); a ten-file combined read also reported
+truncation (11,232 original output tokens). Subsequent individual reads of
+seven files matched source sizes, including one 111,792-byte file. Exact
+renderer cutoff and first lost character were not measured.

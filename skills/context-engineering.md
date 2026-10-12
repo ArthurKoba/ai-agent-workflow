@@ -16,7 +16,14 @@ A large always-on context creates three costs:
 
 Prefer progressive disclosure over mandatory bulk reading.
 
-**Progressive disclosure selects files, not fragments.** Once a map, role,
+**Progressive disclosure selects files, not fragments.**
+Complete fetch and complete model-visible reading are separate checks.
+Follow the two-stage byte-integrity and delivered-content coverage gate in
+`../docs/BOOTSTRAP_PROTOCOL.md`: read required files singly by default,
+chunk large responses with verified continuous coverage, and fail closed on
+output truncation.
+
+ Once a map, role,
 skill or contract is required for the current decision, read the **entire**
 file and honor the missing-source STOP/user-approval gate in
 `../docs/BOOTSTRAP_PROTOCOL.md`. A summary or truncated response cannot
