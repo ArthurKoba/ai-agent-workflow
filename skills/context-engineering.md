@@ -23,7 +23,7 @@ Follow the two-stage byte-integrity and delivered-content coverage gate in
 chunk large responses with verified continuous coverage, and fail closed on
 output truncation.
 
- Once a map, role,
+Once a map, role,
 skill or contract is required for the current decision, read the **entire**
 file and honor the missing-source STOP/user-approval gate in
 `../docs/BOOTSTRAP_PROTOCOL.md`. A summary or truncated response cannot
