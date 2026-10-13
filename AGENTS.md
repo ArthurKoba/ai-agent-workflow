@@ -41,6 +41,7 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 - OpenIPC migration/porting/contribution → `skills/openipc-porting.md`
 - context-efficient documentation/bootstrap/multi-agent workflow design → `skills/context-engineering.md`
 - chat/workflow/prompt audit → `skills/workflow-audit.md`
+- registrar/domain procurement, long-term cost, transfers and DNS continuity → `skills/domain-acquisition.md`
 
 ## GitHub writer/reviewer identity contract
 

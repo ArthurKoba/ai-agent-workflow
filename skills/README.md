@@ -15,5 +15,6 @@ Load only the module matching the current task.
 - OpenIPC migration/porting/contribution → `openipc-porting.md`
 - context-efficient documentation/bootstrap/multi-agent workflow design → `context-engineering.md`
 - workflow/chat/prompt audit → `workflow-audit.md`
+- domain purchase/transfer/renewal cost and continuity → `domain-acquisition.md`
 
 Skills may reference another skill when a task genuinely crosses domains. Avoid loading the full library by default.
