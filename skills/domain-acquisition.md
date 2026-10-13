@@ -1,6 +1,6 @@
-# Domain Acquisition and Long-Term Registration
+# Low-Cost, High-Reliability Domain Acquisition
 
-Use when researching, purchasing, transferring, renewing, or safeguarding internet domain registrations. Optimize **total cost of ownership and continuity**, not the promotional first-year price. This is provider-neutral; Cloudflare Registrar is one candidate, not a mandatory destination.
+Use for **low-cost, high-reliability domain purchases and long-term ownership**: researching discounts, purchasing, transferring, renewing, and safeguarding registrations. Treat a good deal as the lowest verified total ownership cost at an acceptable reliability level, not merely the lowest checkout price. Optimize **total cost of ownership and continuity**, not the promotional first-year price. This is provider-neutral; Cloudflare Registrar is one candidate, not a mandatory destination.
 
 ## Trigger and scope
 
@@ -13,6 +13,12 @@ Apply to a single name, TLD portfolio, or domain procurement policy. Never embed
 3. Confirm whether the exact name is **standard, premium, reserved, unavailable or aftermarket**. Premium purchase and premium renewal can differ; aftermarket listing price is not the registration rate.
 4. Inspect official registrar price/checkout/API for the exact name and TLD, noting date, source, currency, registration, renewal, transfer, restoration, ICANN/registry fees, taxes, discounts, restrictions and potential future increases. Favor registrar/registry and ICANN policy over comparison aggregators.
 5. Confirm Cloudflare Registrar support **for registration and for transfer separately**; use its official TLD list and exact-domain registration/transfer eligibility checks. Cloudflare DNS availability alone does not imply Registrar support. API limitations may differ from dashboard eligibility.
+
+## Find verified deals and monitor opportunities
+
+Discover discounts through independent comparison directories such as https://tld-list.com/, https://tldtab.com/ and https://www.tldprice.com/; check official registrar promotion pages (for example https://www.spaceship.com/promos/) and direct checkout at Cloudflare, Spaceship, Porkbun, Dynadot, Sav or another eligible accredited registrar. Comparison sites are discovery tools, **never authoritative proof** of availability, eligibility or final price. Verify promotional code validity, first-year-only restrictions, new-customer eligibility, per-account limits, tax/ICANN fees, premium exclusions and effective renewal rate at the registrar itself. Search other providers when the listed promotion is stale or limited.
+
+For repeat procurement or deferred transfers, track promotion expiration, registration timestamp, earliest *verified* transfer eligibility date, any pending registrant-change lock, proposed transfer fee, target renewal window and current registry price. Use alerts/tasks only when authorized and available; recheck pricing and eligibility at execution, never assume a discovered deal remains active. Prefer dependable providers and clear support/recovery paths over marginal savings; distinguish registry-level costs from registrar-added fees.
 
 ## Compare acquisition strategies
 
@@ -41,11 +47,23 @@ Before recommending a registrar-to-registrar transfer, verify all:
 
 Cloudflare-specific sequence, **only when eligibility is confirmed**: add domain to Cloudflare DNS; copy and verify records; manage DNSSEC/DS safely before nameserver change; set Cloudflare-assigned nameservers; confirm zone Active; unlock at losing registrar; request short-lived EPP code; initiate transfer and approve notifications; verify new registrar, expiration, services, renewal settings, and re-enable DNSSEC appropriately. Cloudflare notes DNSSEC removal/propagation requirements before NS changes: follow current documentation to prevent DNS outages.
 
+## Two-stage acquisition and migration playbook
+
+**Stage A — purchase when the deal is real:** shortlist eligible TLDs and registrars, verify the exact-domain standard/premium status, model 5/10-year ownership at the same target expiry, review security and country/identity restrictions, and obtain explicit purchase approval. Register at the selected provider, save receipt and original expiration date, validate control, DNS/email, MFA and account recovery, and record the eligible transfer window. Do not prematurely initiate transfer or change registrant details if doing so would impose a fresh lock.
+
+**Stage B — transfer only after registration and eligibility:** revisit Cloudflare's current TLD/transfer rules and true fee; check elapsed lock period, expiration/renewal edge cases, premium status and whether transfer adds a year. Compare the updated stay-versus-transfer TCO. Take a record inventory/backup and a DNS continuity plan. Add and activate the Cloudflare DNS zone, migrate records and manage DNSSEC safely; verify email and service continuity. Request approval for the charged registrar transfer, unlock at the losing registrar, retrieve the authorization code securely, initiate/authorize transfer and monitor until registrar and expiry confirm completion. Re-enable locks and appropriately configure DNSSEC, renewal and account security. Only then separately prepay further renewal years if the verified savings and permitted term justify them.
+
+If Cloudflare does not support the exact TLD or its authoritative-DNS requirement conflicts with the customer's architecture, stop that route: retain an eligible registrar and optionally use Cloudflare DNS/CDN separately. Do not conflate migrating DNS with transferring registration.
+
 ## Purchase and operational controls
 
 Purchases, transfers, registrar changes, contact changes and multi-year renewals are chargeable or operationally consequential. Produce a dated **decision record and cost breakdown** first; require explicit authorized approval before executing payment or a transfer. Confirm final checkout totals immediately before the irreversible step. Cloudflare states registrar charges are generally non-refundable.
 
 After completion: verify registry/registrar status and expiry (not just success UI); verify website, authoritative DNS, DNSSEC, email and critical service records; enable MFA, keep registrar account recovery contacts current, restrict API tokens, enable appropriate transfer/registry locks, record receipt and renewal date. Enable auto-renew where desired and monitor payment validity; auto-renew can fail. Maintain an independent advance renewal reminder and review registry/registrar price changes periodically. Never let a low first-year promotion displace renewal security.
+
+## Decision-oriented report style
+
+Title the user-facing recommendation **"Низкая стоимость — выгодное и надёжное приобретение домена"** (or an accurate equivalent in the user's language). Lead with the best **verified** offer and total 5/10-year expense, then savings against a defensible baseline, security trade-offs, immediate purchase path, and time-gated transfer plan. Prefer concrete monetary differences and exact future decision dates to vague statements such as "cheap" or "Cloudflare is always the best". Explain why Cloudflare can be a reliable long-term registrar candidate—at-cost pricing, integrated DNS and account controls—without asserting that any provider is risk-free or the cheapest for every TLD.
 
 ## Output contract
 
