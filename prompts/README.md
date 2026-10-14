@@ -23,3 +23,7 @@ They live under `../skills/` and are selected through repository `AGENTS.md`.
 Runtime hierarchy:
 
 `account → project → skill`
+
+## Active program-analysis Project
+
+The compact active source is [projects/reverse-analysis.md](projects/reverse-analysis.md); the larger repository coordination map lives at [../projects/reverse-engineering/PROJECT_PROMPT.md](../projects/reverse-engineering/PROJECT_PROMPT.md) and must not be injected as a second Project prompt.
