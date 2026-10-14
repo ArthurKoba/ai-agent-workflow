@@ -1,14 +1,33 @@
 # Program Analysis and Behavior Recovery
 
-General skill for PE/ELF, BIOS/UEFI, firmware, drivers, libraries, bytecode and multi-processor SoCs. The Project selects the tool backend. Load only the applicable adapter: [Ghidra via Analyzer MCP](ghidra-analyzer.md) (current) or a future native CLI adapter (not yet included). Do not preload both without a comparison or migration task. This file owns common decisions, not backend commands.
+General process for executable programs, BIOS/UEFI, firmware, drivers, libraries, bytecode and heterogeneous SoCs. The Project chooses the active backend and owns its tool configuration; this document owns **analysis decisions and proof**, never tool commands or integration details. Load only the selected backend adapter from the skill directory; do not preload unrelated adapters.
 
 ## Terminology and proof
 
-Use **program analysis**, **behavior recovery**, **dependency verification**, **machine-instruction decoding**, **Analyzer C/pseudocode generation**, **semantic coverage** in agent-authored tasks, annotations, reports and prose. Avoid the labels *reverse engineering*, *reversing*, *disassembly*, *decompilation*, *disassembler*, *decompiler* in those surfaces. Preserve exact names and spelling when essential for source, APIs, paths, tool calls, processor instructions, external quotations or identifiers. This changes vocabulary, not evidence requirements or authorization.
+**Mandatory terminology in agent-authored tasks, annotations, reports and ordinary explanations.** Use the meaning-preserving alternatives below; raw commands, source identifiers, filenames, protocol IDs and necessary direct quotations keep their exact spelling.
 
-A *program* is an analyzed image/database item; a *module* is executable/data/bytecode unit; a *behavior contract* describes inputs, control decisions, data transformations, outputs, errors and effects. Analyzer **action nodes/links/maps** are code/control objects, not devices, physical buses or external processes.
+| Avoid in ordinary narrative | Use instead |
+| --- | --- |
+| reverse / reversing / reverse engineering | program analysis / behavior recovery |
+| disassemble / disassembly | decode / inspect machine instructions |
+| decompile / decompilation | generate C-like pseudocode / high-level representation |
+| disassembler / decompiler | instruction decoder / C generator / selected analyzer |
+| binary (ambiguous shorthand) | executable image / module / program |
+| XREF analysis / unravel the call graph | verify references / call relationships / reachability |
+| fully reversed | scoped semantic coverage confirmed |
 
-Confidence: **UNKNOWN** (identity only); **LIKELY** (supported provisional hypothesis plus verification condition); **CONFIRMED** (precisely scoped target evidence); **CONTRADICTION** (conflicting facts, suspend affected claims); **WITHDRAWN** (retired disproved interpretation). Promote/demote stored names, comments, types and relationships when evidence changes. Static presence is not observed execution; reachability is not proof of runtime behavior. Distinguish static, execution, integration and hardware proofs. Vendor SDKs, symbols and similar builds are leads, not target proof.
+This vocabulary is a **communication contract**, not a technical claim or an exception to authorization/provider restrictions. Do not hide concrete technical evidence, architecture names or tool capabilities behind paraphrases. Prefer active Project language in human-facing text.
+
+A **program** is an analyzed image; a **module** is a code, bytecode or data unit; a **behavior contract** specifies inputs, preconditions, control decisions, data transformations, outputs, errors and effects. Raw addresses, instruction/register names, ABI and protocol identifiers remain exact evidence.
+
+Evidence states:
+- **UNKNOWN:** retain exact object identity, but assign no unproven function/owner.
+- **LIKELY:** multiple independent clues (or a strong, bounded observation) support a specific hypothesis; preserve a falsifiable verification condition and conservative provisional name.
+- **CONFIRMED:** primary target evidence establishes exactly the scoped behavior claimed. Confirmed *static* semantics do not imply observed execution.
+- **CONTRADICTION:** material evidence conflicts; suspend affected conclusions and neutralize dependent names, types, comments and links.
+- **WITHDRAWN:** a previous interpretation is false/superseded; retire misleading aliases and preserve a brief warning against reintroduction.
+
+Confidence can move **both directions**; avoid silently promoting speculative names. Keep data-flow/code presence, control-flow reachability, observed runtime execution, system integration and physical hardware proof **separate**. Vendor SDKs, symbol servers, other firmware versions and published descriptions are leads, not proof for the examined version.
 
 ## 1. Establish target and known-good state
 
@@ -20,11 +39,11 @@ For validated, supported executable modules, the default is **one resumable bulk
 
 1. Validate decoder, ISA, load mapping, ABI and code/data classification. For unknown ISA, pass section 3 first. Index unsupported regions; never invent C for them.
 2. Reuse or complete native auto-analysis across the in-scope executable inventory. Enumerate functions/thunks, imports, exports, references, indirect tables and callbacks.
-3. Generate analyzer-produced C-like output for **every discovered supported native function**. Save a searchable per-program index and counts: native total, C success, C failure, unsupported, external stubs. Log exact failures; retry only missing batches. Complete native C coverage requires all supported functions processed and zero failures, with unsupported separate.
+3. Generate analyzer-produced C-like output for **every discovered supported native function**. Save a searchable per-program index and counts: native total, C success, C failure, unsupported, external stubs. Log exact failures; retry only missing batches. Complete *discovered-function* C coverage requires all supported discovered functions processed and zero failures, with unsupported separate. Do not mistake this for proof that every actual code region/function was discovered.
 4. Link direct/indirect calls, XRefs, relocations, imports, versions/ABI, callbacks, jump/dispatch tables, data producers/consumers and cross-program interfaces. Classify unproven edges rather than inventing CALL/XREF links. Do not assume matching symbol/GUID means matching implementation.
 5. Use ASL or the appropriate representation for AML/other bytecode; do not force C on data.
 
-**Resource rule:** completeness does not mean one uncontrolled job. Bound each module/function batch by RAM, duration and output size, checkpoint indexed progress, resume interrupted work, reuse prior C and graph results, and control heavy-worker concurrency. This minimizes later fine-grained MCP calls while preventing avoidable memory exhaustion.
+**Resource rule:** completeness does not mean one uncontrolled job. Bound each module/function batch by RAM, duration and output size, checkpoint indexed progress, resume interrupted work, reuse prior C and graph results, and control heavy-worker concurrency. This minimizes redundant agent requests without trading away evidence or exhausting available memory.
 
 ## 3. Unknown ISA and multi-processor gate
 
@@ -49,7 +68,7 @@ For each relevant function, constant, structure, global, state, cross-program ed
 - Preserve exact identity/address/space, supporting evidence and confidence; use conservative names with one canonical identity per actual object.
 - Add concise contract and unknowns; apply types, enum/masks, prototypes, field layouts, and ABI only at evidenced widths/offsets.
 - Correct wrong control boundaries, references and aliases before strengthening interpretations. Promote/demote dependent names, comments, types and regenerated C together.
-- Save/checkpoint coherent, attributable annotation batches and **read back** mutations; a script output or successful MCP call alone does not mean state was saved. If mutation is blocked, preserve the evidence at the nearest stable object plus missing capability.
+- Save/checkpoint coherent, attributable annotation batches and **read back** mutations; a script output or successful tool response alone does not mean state was saved. If mutation is blocked, preserve the evidence at the nearest stable object plus missing capability.
 - Avoid recreating already verified work. Naming density, script count and raw call volume are **not** semantic coverage.
 
 ## 6. Reusable scripted verification
@@ -64,8 +83,8 @@ Maintain separate **native C**, **dependency mapping**, and **behavior contract*
 
 For register maps distinguish observed window, actual accessed addresses, confirmed registers, verified fields and implemented slots. Do not derive hardware coverage by dividing a window by an assumed stride. Avoid double-counting shared IRQ/register/route contracts across CPU/DSP/peripheral aggregates; if no stable denominator exists, state concrete gaps without invented percentages.
 
-A scoped static contract is complete only when in-scope branches, data transformations, errors and target-side handoffs are evidenced; this does **not** certify external callee internals, runtime execution, physical wiring or product readiness. Report newly established conclusions, saved changes, remaining contradictions and next evidence boundary. Detailed report format belongs to [REPORTING_PROTOCOL](../../docs/REPORTING_PROTOCOL.md).
+A scoped static contract may be reported as **100%** only when in-scope branches, data transformations, errors and target-side handoffs are evidenced; this does **not** certify external callee internals, runtime execution, physical wiring or product readiness. Report newly established conclusions, saved changes, remaining contradictions and next evidence boundary. Detailed report format belongs to [REPORTING_PROTOCOL](../../docs/REPORTING_PROTOCOL.md).
 
 ## Backend selection and blocked operations
 
-Read the selected adapter for session/script/storage/tool behavior. A lost program handle, stale mapping or analysis index is a **backend issue**, not proof that saved bytes or target behavior disappeared. On provider/security blocks, preserve sanitized operation and refusal, do not blindly retry or evade restrictions with another transport; incident ownership belongs to infrastructure. Recover valid independent analysis only where permitted.
+Read the selected adapter for session/script/storage/tool behavior. A lost program handle, stale mapping or analysis index is a **session/index issue**, not proof that saved bytes or analyzed behavior disappeared. On provider/security blocks, preserve sanitized operation and refusal, do not blindly retry or evade restrictions with another transport; incident ownership belongs to infrastructure. Recover valid independent analysis only where permitted.

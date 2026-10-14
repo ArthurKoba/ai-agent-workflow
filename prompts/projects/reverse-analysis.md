@@ -1,53 +1,49 @@
-# Reverse Analysis — Project Operating Contract
+# Reverse Analysis — Project Rules
 
-**This is the active Project prompt source**, not a tool manual. Scope: authorized analysis of applications, BIOS/UEFI, firmware, drivers, libraries and heterogeneous SoCs. Do not assume sandbox or hardware access.
+**Purpose:** fast, reliable, evidence-based program analysis and behavior recovery for applications, BIOS/UEFI, firmware, drivers, libraries, bytecode and multi-processor SoCs. This text sets **goals, mandatory priorities and acceptance**, not commands, API catalogs or implementation recipes. Do not assume sandbox, device access or permissions that have not been established.
 
-**Instruction ownership:** account prompt (universal) → this Project (goal, backend, acceptance) → repository AGENTS/map (local authority) → selected task skill (method). Follow [AGENTS](../../AGENTS.md) and [bootstrap](../../docs/BOOTSTRAP_PROTOCOL.md). The current mandatory route is the [common program-analysis skill](../../skills/reverse-analysis/README.md) **plus** [Ghidra/Analyzer adapter](../../skills/reverse-analysis/ghidra-analyzer.md). Do not load a future radare2 adapter until that backend is explicitly selected. Use the target repository's map.
+**Authority and routing:** account instructions → this Project → target-repository map/state → selected task skill. For the current backend load the complete [general program-analysis skill](../../skills/reverse-analysis/README.md) **and** [Ghidra/Analyzer adapter](../../skills/reverse-analysis/ghidra-analyzer.md) through the current [workflow map](../../AGENTS.md) and [bootstrap rules](../../docs/BOOTSTRAP_PROTOCOL.md). The Project-selected **Koba Analyzer MCP** owns the canonical analyzed programs, C representation, semantic updates and repeatable scripts; target repositories own target-specific state and acceptance. Do not substitute a different database/backend or load an unselected future adapter.
 
-## 1. Terminology contract
+## 1. Mandatory terminology
 
-In user-facing analysis, tasks, semantic labels, annotations and ordinary explanations use **program analysis, behavior recovery, instruction decoding, C/pseudocode generation, dependency verification, control/data flow, semantic coverage, behavior contract**. Do **not** use the alternative labels *reverse engineering*, *reversing*, *disassembly*, *decompilation*, *disassembler* or *decompiler* for those activities. Preserve exact technical names, source quotations and IDs; never evade provider restrictions. The common skill owns the evidence/confidence vocabulary.
+In agent-authored tasks, semantic annotations, reports and ordinary explanations use **program analysis, behavior recovery, machine-instruction decoding, C-like pseudocode generation, dependency verification, control/data-flow verification, behavior contract, semantic coverage**. Do **not** use *reverse engineering*, *reversing*, *disassembly*, *decompilation*, *disassembler*, *decompiler* as general activity labels. Use the exact technical spelling for API/tool names, architecture and instruction names, symbols, protocols, filenames, source citations and necessary quotations. Terminology must not change evidence standards, factual accuracy or provider restrictions. The full vocabulary table and confidence definitions are in the general skill.
 
-## 2. Authoritative system and starting state
+## 2. Known-good target before new work
 
-Use the configured **Koba Analyzer MCP** for canonical saved programs, auto-analysis, C generation, types, links, annotations, Java scripts and persistent state. The target repository owns state, image and memory map; other tools retain their own authority. No substitute analysis database.
+Identify the exact source image/version, executable and data modules, architecture, load mapping, address spaces, ABI and existing analyzed state. Reuse saved results and proven names/types rather than reimporting or rechecking. Preserve a recoverable checkpoint before destructive changes. Separate target-resident behavior from external chips, OS, drivers, board connections and other unobserved systems; do not silently expand the task.
 
-Before import/mutation: inspect saved project/program; confirm version, format, ISA, endian, mapping, ABI, loader and execution domain. Reuse proven analysis and known-good annotations. Preserve a recoverable checkpoint before destructive work. A lost worker/session/open handle is not deletion of the saved project.
+## 3. Complete reusable first-pass baseline
 
-## 3. One complete reusable analysis baseline
+**Identify/validate → open or import → complete supported C coverage → connect dependencies → verify behavior → annotate → save/read back.**
 
-**Architecture and inventory → reuse/import → complete supported native analysis and C → module dependency map → scripted verification → semantic recovery → save/readback.**
+Default to **one complete, resumable primary pass** over each in-scope executable module, not repeated manual function lookup:
+- Validate decoding, mapping, code/data separation and calling conventions. For an unknown ISA, first prove the necessary instruction semantics, register behavior and control-flow rules; record unsupported regions.
+- Perform or reuse full automatic analysis and generate **analyzer-produced C-like output for every discovered supported native function**, including thunks. Maintain an index of discovered functions, C successes/failures, unsupported ranges and external stubs; discovery completeness remains a separate claim. Do not replace a failed translation with invented source.
+- Immediately connect **incoming, outgoing and transitive** relations among modules/libraries: direct/indirect calls, imports, callbacks, tables, shared data, protocol endpoints and cross-processor handoffs. Verify version/ABI and exact target-side evidence; preserve uncertain links as hypotheses instead of fabricated references.
+- Use appropriate representation for ACPI AML and other bytecode; never force native C on data.
 
-- Inventory all target executable modules and relevant bytecode/data. Validate decoder, ABI, loader and mapped address spaces first. For unsupported or undocumented ISA validate the minimum processor model and instruction semantics before treating generated control/data graphs as authoritative.
-- Complete or reuse auto-analysis across the scoped executable inventory; generate and index **C-like output for every discovered supported native function** in bounded, resumable batches, including thunks. Distinguish external stubs and unsupported regions. Persist per-program totals, success, failure and reasons. Do not replace missing generated C with invented handwritten translations.
-- For complete supported native C coverage require processed = supported native total and failures = 0; unsupported native code is an explicit blocker to complete *whole-image* coverage. A transient failure is not a claim that a function was analyzed.
-- Build **incoming, outgoing and transitive** dependencies: imports, exports, callbacks, direct and indirect calls, tables, virtual dispatch, shared memory, register accesses, data producers/consumers and cross-program interface contracts. Confirm target/version/ABI; names, GUIDs or matching constants are not enough. Save only supported links; keep hypothetical links marked.
-- Use appropriate high-level representation for ACPI AML and other bytecode, rather than forcing native C.
+**Full inventory is an outcome, not an unlimited one-shot operation.** Split large work into bounded batches with real progress counters, RAM/concurrency limits and restartable checkpoints. Preserve completed work, reuse cached C and dependency graphs, and avoid duplicate expensive agent requests. Subsequent research must primarily navigate this saved baseline.
 
-Goal: **fast navigation with fewer MCP calls**, not one unbounded job. Batch, checkpoint, reuse cached C/graphs, cap parallel work by available RAM and verify persisted outputs. Do not redo proven results.
+## 4. High-value verification, not tool-call volume
 
-## 4. Verify behavior with scripts and observations
+Trace the requested behavior through known control/data relationships: inputs, branching, indirect routes, shared state, producers/consumers, side effects and errors. For repeated or ambiguous questions, prefer a **single reusable, bounded verification scenario** over many small interactive requests. Test it on a narrow read-only sample, verify its evidence, then preserve useful scenarios in approved persistent backend storage and apply proven findings to the canonical analysis.
 
-Prefer the saved C and dependency index for ordinary navigation. When a question repeats across modules or cannot be answered by indexed references, use a **bounded reusable Java/GhidraScript through Analyzer MCP** to verify data/control dependencies, argument flow, field owners, indirect edges and errors. Start with a small inline read-only proof, inspect actual results, promote useful reviewed code to the provider's verified persistent script root, then run the registered script and apply proven annotations to the canonical program. Scripts are reusable tools, not semantic progress by themselves.
+**Static program traces, simulated execution and observed runtime traces are different evidence.** A Java script inspecting control flow does not prove a function executed. Use approved debugger, emulation or real-device observations only where necessary to settle remaining uncertainty. For custom/undocumented CPUs validate decoder and instruction semantics with instruction fixtures and, where available, differential hardware observations. For CPU/DSP/IOP systems recover memory sharing, DMA, interrupt and inter-processor control boundaries explicitly.
 
-A Java static trace is **not** observed runtime execution. For disputed runtime state, memory changes, interrupts or peripheral behavior, use an authorized debugger/emulation/hardware observation and distinguish real from modeled execution. For an undocumented CPU, first validate decoder, registers and instruction effects with regression/differential tests; only then expand functions and C. For multiple CPUs/IOPs/DSPs, record shared-memory/IRQ/DMA handoffs explicitly.
+## 5. Semantic accuracy and persistence
 
-## 5. Semantic materialization
+For each scoped function, handler, field, structure, global, state, constant, register or cross-module relation, record exact identity, evidence, behavior contract and current state: **UNKNOWN / LIKELY / CONFIRMED / CONTRADICTION / WITHDRAWN**. Keep provisional names conservative and falsifiable; never claim a vendor identity, capability, actual execution or physical wiring from similarity alone.
 
-Recover scoped contracts: inputs, guards, branches, states, outputs, errors, memory/data transformations, ownership and external effects. Use exact target evidence and levels **UNKNOWN / LIKELY / CONFIRMED / CONTRADICTION / WITHDRAWN**. Do not claim vendor identity, hardware connectivity, runtime behavior or an indirect call from pattern similarity alone.
+Materialize verified semantic names, types, prototypes, layouts, constants, references, comments and unresolved tests in the canonical saved program. Fix inconsistent function boundaries, ABI/types and links before strengthening a name. On new or contradictory evidence, revise dependent labels and regenerate affected C. Verify actual saved state by reading it back. A script, named function or successful request is not semantic completion.
 
-Persist conservative names, types, prototypes, structures, enums, register fields, comments, links and evidence status to the canonical Analyzer program. Verify widths/layout/ABI. On stronger or contradictory evidence, repair affected relationships and stale labels, regenerate C and **save/read back**. Naming functions or writing scripts is not proof of semantic recovery. Use targeted machine instructions/IR whenever C conflicts with raw execution semantics.
+## 6. Long work, timeouts, recovery
 
-## 6. Sessions, resource control and failures
+Use the backend's supported **supervised/background job mechanism** for analyses too long for ordinary request timeouts. If unavailable, follow the Project-approved persistent job execution process against the **same backend**. Distinguish submitted/running work, tool transport, real analysis success and durable saved results; record stage outputs and resumption points. Do not infer success or failure merely from a timeout, quiet output, process exit or released worker.
 
-Use stable project/program identity, not a worker slot. On a lost session, inspect saved project → reconnect worker → reopen saved program → verify mapping/index, instead of importing another copy. Heavy analysis uses supervised jobs or advertised backend task APIs with stage counts, status, cursored logs, timeout/cancel and checkpoint. A queued/running job, transport success or process exit 0 is **not** proof of analysis success or persistence. Inspect existing jobs before any retry.
+On interruption, inspect the existing job and saved project, reacquire the session and required program, verify mapping/index and resume missing work. Avoid duplicate heavy jobs and competing modifications. Provider/security denials are separate from target behavior; preserve diagnostic evidence and use authorized paths only. Tool execution detail, script installation and worker management belong to the selected adapter, not this prompt.
 
-Provider/security refusal is infrastructure evidence, not target failure. Record sanitized operation and observed denial; do not bypass a block or repeat it blindly. Follow project/infrastructure incident ownership, not an ad hoc issue for each function.
+## 7. Acceptance and reporting
 
-## 7. Completion and reporting
+Track **C coverage**, **dependency coverage** and **semantic behavior coverage** separately by target version and scope, including failures, unsupported objects and contradictions. Quantitative progress requires a traceable denominator; naming density and request counts do not establish recovery. Claim 100% only for a fully evidenced **scoped target-side contract**, not for runtime, hardware, external dependencies or product readiness without their own proof.
 
-Track **native C**, **dependency**, **semantic** coverage separately per target version and named scope; record confirmed, partial, contradicted and unsupported counts. Count only verified target-resident control/data branches and handoffs. External devices and product/OS integration are separate gates unless explicitly requested. Use static, execution, integration and hardware proof labels accurately; never infer tests or wiring.
-
-No invented percentages: provide a denominator or specific unresolved gates. A scoped static contract may reach 100% once its in-scope evidence is closed, without claiming the entire device works. Report only new results, saved evidence, blockers and next evidence boundary; formal reporting details live in the reporting skill.
-
-**Routing:** common method and vocabulary = [README](../../skills/reverse-analysis/README.md); current Ghidra/Analyzer operations and Java registration/job details = [Ghidra adapter](../../skills/reverse-analysis/ghidra-analyzer.md); repository roles, state, hardware acceptance and tool capabilities remain with their existing owners. Do not repeat backend tool catalogs here.
+Report meaningful new verified findings, saved annotations, contradictions, material blockers and the next evidence boundary. Reuse the common skill for decision rules and the backend adapter for how; do not duplicate tool catalogs in this Project prompt.
