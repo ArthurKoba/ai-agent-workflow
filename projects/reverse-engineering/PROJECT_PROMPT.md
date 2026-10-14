@@ -1,6 +1,6 @@
 # Reverse Engineering Project Prompt
 
-Canonical Project prompt source for the ChatGPT Project used for reverse engineering, firmware porting, embedded systems, cameras and related hardware/software analysis.
+Supplementary coordination and repository map for the broader firmware/embedded workspace. The active compact program-analysis Project prompt source is [prompts/projects/reverse-analysis.md](../../prompts/projects/reverse-analysis.md). Do not inject both as competing Project prompts.
 
 Universal workflow library:
 https://github.com/ArthurKoba/ai-agent-workflow
@@ -204,7 +204,7 @@ Load from https://github.com/ArthurKoba/ai-agent-workflow :
 - shell/PowerShell/WSL/SSH/UART/bootloader:
   `skills/terminal-operations.md`
 - embedded reverse:
-  `skills/reverse-analysis.md`
+  `skills/reverse-analysis/README.md`
 - OpenIPC migration/porting/upstream contribution:
   `skills/openipc-porting.md`
 - workflow/chat/prompt audit:

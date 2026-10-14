@@ -11,7 +11,7 @@ Load only the module matching the current task.
 - shell/PowerShell/WSL/SSH/UART/bootloader → `terminal-operations.md`
 - deployment/services/infrastructure operations → `service-engineering/README.md`
 - remote browser sessions / Chrome tabs / DevTools / extension permissions → `remote-browser-session.md`
-- program behavior analysis, reconstruction and Ghidra/Analysis scripting (EXE, BIOS/UEFI, firmware, drivers, libraries) → `reverse-analysis.md`
+- program behavior analysis, reconstruction and Ghidra/Analysis scripting (EXE, BIOS/UEFI, firmware, drivers, libraries) → `reverse-analysis/README.md`
 - OpenIPC migration/porting/contribution → `openipc-porting.md`
 - context-efficient documentation/bootstrap/multi-agent workflow design → `context-engineering.md`
 - workflow/chat/prompt audit → `workflow-audit.md`

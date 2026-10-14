@@ -2,6 +2,6 @@
 
 Canonical hardware reverse skill:
 
-`../skills/reverse-analysis.md`
+`../skills/reverse-analysis/README.md`
 
 This compatibility stub exists only so old links do not break. Do not add rules here.

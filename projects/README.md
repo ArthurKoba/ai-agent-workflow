@@ -1,6 +1,6 @@
 # Project Prompt Sources
 
-Project prompts are harness-level configuration sources.
+Project prompts are harness-level configuration sources. For the active program-analysis Project use the compact source at ../prompts/projects/reverse-analysis.md; the longer reverse-engineering file below is a supplementary repository/coordination map.
 
 They are **not** repository startup documents and ordinary agents should not reread them from Git.
 

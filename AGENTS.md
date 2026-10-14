@@ -37,7 +37,7 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 - service/deployment/infrastructure operations → `skills/service-engineering/README.md`
 - remote browser sessions / Chrome tabs / DevTools / extension permissions → `skills/remote-browser-session.md`
 - reusable service deployment examples/presets → `examples/services/README.md` after loading the relevant service-engineering skill
-- program analysis (EXE, BIOS/UEFI, firmware, libraries, drivers), behavior tracing and Ghidra/Analysis → `skills/reverse-analysis.md`
+- program analysis (EXE, BIOS/UEFI, firmware, libraries, drivers), behavior tracing and Ghidra/Analysis → `skills/reverse-analysis/README.md`
 - OpenIPC migration/porting/contribution → `skills/openipc-porting.md`
 - context-efficient documentation/bootstrap/multi-agent workflow design → `skills/context-engineering.md`
 - chat/workflow/prompt audit → `skills/workflow-audit.md`
