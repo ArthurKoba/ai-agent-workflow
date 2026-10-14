@@ -29,7 +29,7 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 - implementation/refactoring/backend/Python/PostgreSQL → `skills/software-engineering/README.md`
 - frontend/Vue/TypeScript/FSD/UI/tables → `skills/frontend-engineering/README.md`
 - project bootstrap / toolchain / lint, types, hooks and CI setup → `skills/project-bootstrap.md`
-- Git commit/message work → `skills/git-workflow.md`
+- Git / Issues / branches / commits / PR-MR / Git-backed coordination → `skills/git-workflow.md`
 - independent review → `skills/code-review.md`
 - interface/UX design review and acceptance → `skills/interface-design-review.md`
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations.md`
@@ -48,8 +48,8 @@ For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the f
 When both GitHub App identities are available:
 - `koba-ai-agent` is the writer/Implementer identity. It may create working branches, commits, issues and pull requests, update its PR branch, and respond to review findings.
 - `koba-ai-reviewer` is the independent Reviewer identity. It reads the proposed diff and current authority, submits review state, and is the only identity that merges pull requests into reserved/default branches.
-- The writer must not merge its own pull request. The reviewer must not edit the implementation under review; requested changes return to the writer for a new revision.
-- Reserved/default branches such as `main`/`master` are not direct-mutation targets for the writer. Use `writer branch -> PR -> reviewer review -> reviewer merge` unless a repository explicitly has no review surface or the tool authority says otherwise.
+- For PR-governed changes the writer never merges its own PR; the reviewer does not edit its implementation, and requested changes return to the writer.
+- Direct push to an unprotected default branch is permitted only when Project policy and actual tool permissions allow it. Tool-reserved branches, required reviews and protected branches use `writer branch -> PR -> reviewer review -> reviewer merge`. Do not bypass tool restrictions through another transport.
 - Account aliases are stable selectors; concrete App IDs, installation IDs and credentials remain infrastructure state and do not belong in this repository.
 
 ## Rules
