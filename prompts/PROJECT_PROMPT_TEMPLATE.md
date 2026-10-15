@@ -21,9 +21,9 @@ Evidence/artifact authority:
 ## Workspace map
 On entering a repository, read its `AGENTS.md` completely; if absent, use
 `CLAUDE.md`, then `README.md` and relevant contribution/review rules.
-Follow its minimal task routing. The workflow Bootstrap Protocol defines
-complete, model-visible reading and the dependent-work STOP boundary for
-**selected** mandatory authorities. Prompt source templates are not
+Follow its minimal task routing without preloading unrelated roles or skills.
+For selected mandatory authorities, follow the Account/Project rules on
+complete reading and unavailable sources. Prompt source templates are not
 additional runtime prerequisites.
 
 ## Primary tool surfaces

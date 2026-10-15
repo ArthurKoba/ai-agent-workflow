@@ -1,5 +1,19 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Remove compulsory bootstrap document
+
+Changes:
+- deleted the separate Bootstrap Protocol and all active links to it;
+- routed startup through injected Account/Project prompts and repository
+  AGENTS maps, loading only task-relevant roles, skills and contracts;
+- retained complete mandatory-source reading and missing-authority boundaries
+  under existing owners, without creating another mandatory startup skill.
+
+Reason:
+The standalone protocol repeated baseline rules and imposed unnecessary
+context loading. Historical references below remain provenance, not active routes.
+
+
 ## 2026-10 — Restore bootstrap evidence and single-violation recovery
 
 Changes:

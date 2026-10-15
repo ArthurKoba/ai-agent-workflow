@@ -50,8 +50,7 @@ If REQUIRED context is unavailable or cannot be fully read,
 identify the missing source and report degraded execution capability once.
 Stop only work depending on its environment values; unrelated authorized
 repository/source inspection can continue. The Project may declare a
-stricter boundary, and required task/skill authorities still have their
-own full-document reading gate in `../docs/BOOTSTRAP_PROTOCOL.md`.
+stricter boundary; mandatory source reading follows Account/Project rules.
 Do not repeatedly warn or guess missing paths, targets, transports or tools.
 
 ## Precedence: instructions versus observed facts

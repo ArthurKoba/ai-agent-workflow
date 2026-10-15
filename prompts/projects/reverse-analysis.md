@@ -84,4 +84,4 @@ In tasks, annotations, hypotheses, and reports, replace reverse-engineering jarg
 
 ## 9. Other rule owners
 
-Use the separate [bootstrap](https://github.com/ArthurKoba/ai-agent-workflow/blob/main/docs/BOOTSTRAP_PROTOCOL.md), [Git](https://github.com/ArthurKoba/ai-agent-workflow/blob/main/skills/git-workflow.md), and [orchestration](https://github.com/ArthurKoba/ai-agent-workflow/blob/main/roles/ORCHESTRATOR.md) rules as needed.
+Use the separate [Git](https://github.com/ArthurKoba/ai-agent-workflow/blob/main/skills/git-workflow.md) and [orchestration](https://github.com/ArthurKoba/ai-agent-workflow/blob/main/roles/ORCHESTRATOR.md) rules as needed.

@@ -10,28 +10,21 @@ Those are source templates for account/project configuration and are assumed to 
 
 Read them only when the task is to design, audit or update prompts.
 
-## Startup routing
+## Start
 
-For substantial technical work, read and apply `docs/BOOTSTRAP_PROTOCOL.md`.
-It alone defines mandatory-source selection, model-visible completeness,
-bounded recovery and the dependent-work STOP gate. Do not duplicate that
-procedure here or treat a successful tool call as proof of complete reading.
+Use this map and the injected Account/Project prompts. Select only the
+relevant role and task skill(s) below; load further contracts when the task
+requires them. `roles/README.md` and `skills/README.md` are optional
+discovery maps, not additional mandatory startup steps.
 
-Start with this map. Select the role (`roles/README.md` when unclear), the
-relevant skill from the routes below, and task-specific authorities. Read each
-selected mandatory file fully. `skills/README.md` is a discovery index when
-the routes below are insufficient or the skill map itself is being changed;
-it does not add a compulsory extra hop for every task. Read the root
-`README.md` for repository overview or when changing this workflow library,
-not as a second always-on prompt.
+Read selected mandatory sources completely through the Project's designated
+authority. If a required source is unavailable or incomplete, do not perform
+actions that depend on it; follow the injected Account/Project rules.
+Do not reread account/project prompt templates merely to start work.
 
-For changes to the agent system, read `audit/README.md`,
-`audit/CONTEXT_MAINTENANCE.md` and `docs/SYSTEM_ARCHITECTURE.md`. Add
-`docs/SKILL_AUTHORING.md` when creating/restructuring skills,
-`docs/MCP_STRATEGY.md` when changing MCP/tool strategy, and
-`docs/REPORTING_PROTOCOL.md` when preparing governed progress reports.
-The account/project prompt *templates* are not runtime prerequisites;
-read them only when auditing or changing those templates.
+For workflow-library changes, consult the owning audit, architecture or
+skill-authoring document when relevant. For governed progress reports,
+use `docs/REPORTING_PROTOCOL.md`. Avoid loading the whole library.
 
 ## Routing
 
