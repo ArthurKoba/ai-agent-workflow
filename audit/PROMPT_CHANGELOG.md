@@ -1,5 +1,23 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Git-backed task coordination and push verification
+
+Changes:
+- expanded Git workflow to cover Issue lifecycle, conditional direct push,
+  commit scopes, PR/MR descriptions, CI and cleanup without duplicating the
+  Orchestrator's agent-event protocol;
+- integrated the current Issue-backed Orchestrator role into this workspace
+  with explicit Git skill routing and conditional publication rights;
+- extended project-bootstrap CI guidance to main push events and PR/MR;
+  added GitHub Actions verification on push/PR with event base commit;
+- retired the unused hardware-reverse compatibility stub.
+
+Reason:
+Git previously covered mostly commit formatting. The updated owners separate
+Git publication from peer coordination and allow verification on direct-main
+workflows without excessive PR/Issue churn.
+
+
 ## 2026-10 — Coolify public-route and startup acceptance corrections
 
 Changes:

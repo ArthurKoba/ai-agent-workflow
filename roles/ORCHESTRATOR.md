@@ -2,7 +2,7 @@
 
 Use when several agents, repositories or non-trivial work slices must be coordinated.
 
-Role describes coordination responsibility; task-domain rules still come from the relevant skills. For documentation/context architecture or staged multi-pass agent workflows, also load `../skills/context-engineering.md`.
+Role describes coordination responsibility; task-domain rules still come from the relevant skills. For Git-backed coordination, read `../skills/git-workflow.md` before Git/Issue operations: Git workflow owns branching, publication, CI and Issue lifecycle, while this role owns task allocation, peer coordination and integration. For documentation/context architecture or staged multi-pass agent workflows, also load `../skills/context-engineering.md`.
 
 ## Responsibilities
 
@@ -42,7 +42,7 @@ If agents share one checkout, serialize overlapping mutation. Prefer separate br
 
 ## Issue-backed durable orchestration
 
-When a Project chooses GitHub Issues or another work-item tracker as its coordination channel, use the designated issue as **shared recoverable task state** across independent chats and agent sessions. The Project/repository map identifies the tracker, roles, and permissions; this reusable role does not hardcode project names, repository paths or live revisions.
+For Git-backed coordination with an available Issue/work-item tracker, prefer its designated issue as **shared recoverable task state** across independent chats and agent sessions unless Project policy selects another owner. The Project/repository map identifies the tracker, roles, and permissions; this reusable role does not hardcode project names, repository paths or live revisions.
 
 - **One mutable authority.** The designated issue owns active work IDs, assignments, ownership, priority, dependencies, blockers, decisions, acceptance and closure. Keep the issue body as a concise current-state index and substantive events in comments. Git/source, CI artifacts and actual runtime remain the authorities for implementation and observed behavior; the issue links to them.
 - **No second planning database.** Do not mirror active task, progress, requests or issue comments into parallel Markdown trackers. Durable architecture/operational contracts stay in their own source docs, while the issue owns changing task lifecycle. Historic evidence can remain archived but must not compete as a current router.
@@ -94,7 +94,7 @@ Do not blindly repeat every check each executor already ran; validate the integr
 
 ## Publication
 
-Publication cadence follows the Project's release policy; in a local-first Project, publish once a substantial integrated feature has been checked as far as local tools allow, not after every correction. Publication authority still follows the repository/tool contract. In the standard GitHub split, the Implementer/writer owns branches, commits and PR revisions; the independent Reviewer reviews and merges. Orchestrator does not bypass protected branches, required checks, access scope or that identity separation. A development deployment is not authorization to deploy to production.
+Publication cadence follows the Project's Git policy and tool permissions. Direct push to unprotected main is preferred where permitted; otherwise use the required PR/MR path. In a local-first Project, publish a substantial integrated feature after available local checks, not after every correction. Publication authority still follows the repository/tool contract. In the standard GitHub split, the Implementer/writer owns branches, commits and PR revisions; the independent Reviewer reviews and merges. Orchestrator does not bypass protected branches, required checks, access scope or that identity separation. A development deployment is not authorization to deploy to production.
 
 ## Completion
 

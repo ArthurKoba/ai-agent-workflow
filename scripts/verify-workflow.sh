@@ -3,12 +3,26 @@ set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
 
-# Verify the changed commit range when the mainline reference is available.
-if git show-ref --verify --quiet refs/remotes/origin/main; then
+# CI supplies the before/base commit. On a direct main push, origin/main
+# may already equal HEAD: comparing HEAD with itself would miss changes.
+base=""
+if [[ -n "${VERIFY_BASE_SHA:-}" ]]; then
+  if ! git cat-file -e "${VERIFY_BASE_SHA}^{commit}" 2>/dev/null; then
+    echo "Unable to verify change range: base ${VERIFY_BASE_SHA} is missing" >&2
+    exit 1
+  fi
+  base="${VERIFY_BASE_SHA}"
+elif git show-ref --verify --quiet refs/remotes/origin/main; then
   base="$(git merge-base HEAD origin/main)"
+  if [[ "$base" == "$(git rev-parse HEAD)" ]] && git rev-parse -q --verify HEAD^ >/dev/null; then
+    base="$(git rev-parse HEAD^)"
+  fi
+fi
+if [[ -n "$base" ]]; then
   git diff --check "$base" HEAD
 fi
 git diff --check
+git diff --cached --check
 
 # The canonical skill maps must not silently route to missing files.
 python3 - <<'PY'

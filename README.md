@@ -41,7 +41,8 @@ This documentation/skill library has a tracked `.githooks/pre-push`.
 Install it once in each fresh checkout using
 `git config --local core.hooksPath .githooks`. The hook executes
 `scripts/verify-workflow.sh`, checking skill routes and changed-commit
-whitespace; a failing check blocks Git push. The setup policy for new
+whitespace; a failing check blocks Git push. GitHub Actions runs the same
+verification on pushes to `main` and on pull requests. The setup policy for new
 TypeScript/Python code projects lives in
 [`skills/project-bootstrap.md`](skills/project-bootstrap.md).
 
