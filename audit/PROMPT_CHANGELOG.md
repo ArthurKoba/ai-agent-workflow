@@ -1,5 +1,23 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Conditional bootstrap and single-owner task context
+
+Changes:
+- made the repository map route directly to selected role/skill authorities,
+  without a compulsory README/role/skill-map hop on every routine task;
+- kept strict source-completeness and GitHub MCP authority requirements in
+  the single Bootstrap Protocol owner, with bounded missing-context recovery;
+- reconciled REQUIRED local execution context across the Project template and
+  local-context contract: block dependent actions, not independent source reads;
+- separated instruction precedence from fresher observed environment facts;
+- made the Task Context template an optional technical recovery checkpoint
+  rather than a competing Issue-based planning database.
+
+Reason:
+Redundant mandatory startup paths and conflicting missing-context gates
+unnecessarily stalled independent work and made task state ambiguous.
+
+
 ## 2026-10 — Git-backed task coordination and push verification
 
 Changes:

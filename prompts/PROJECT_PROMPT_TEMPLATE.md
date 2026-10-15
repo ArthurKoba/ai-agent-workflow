@@ -19,12 +19,12 @@ Evidence/artifact authority:
 - <system/repo>
 
 ## Workspace map
-Whenever entering a repository, read its `AGENTS.md` **completely**.
-Read every selected mandatory workflow/role/skill/contract document completely
-through its authoritative connector, as required by the workflow Bootstrap
-Protocol. A snippet or truncated tool response is not successful loading.
-
-AGENTS is a router, not a replacement for this project prompt.
+On entering a repository, read its `AGENTS.md` completely; if absent, use
+`CLAUDE.md`, then `README.md` and relevant contribution/review rules.
+Follow its minimal task routing. The workflow Bootstrap Protocol defines
+complete, model-visible reading and the dependent-work STOP boundary for
+**selected** mandatory authorities. Prompt source templates are not
+additional runtime prerequisites.
 
 ## Primary tool surfaces
 Git/repository mutations:
@@ -47,11 +47,14 @@ local_context: <REQUIRED | OPTIONAL | NOT_USED>
 Source:
 - <source>
 
-If REQUIRED context is missing, inaccessible or incompletely read, **STOP**
-before substantial work. Report the missing source/connector and seek an
-explicit user decision for this particular task: restore access and reread it,
-or authorize a degraded start without the named context. Do not treat an
-earlier general work request as permission to ignore the missing authority.
+If REQUIRED local context is unavailable or incomplete, stop actions
+that depend on its machine-specific values (local execution, target access,
+build/deployment, transport, etc.). Report the missing source once; do not
+invent paths, tools or addresses. Independent authorized source reading and
+analysis may continue. If this Project imposes a stricter gate, state it
+explicitly here. Degraded environment-dependent action requires the
+explicit task-specific exception allowed by governing rules, not assumed
+permission from a general work request.
 
 ## Roles
 Default implementation role:

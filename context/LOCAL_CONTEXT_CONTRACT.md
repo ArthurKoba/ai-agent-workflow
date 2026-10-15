@@ -46,25 +46,25 @@ Project/repository bootstrap declares:
 - `local_context: OPTIONAL`
 - `local_context: NOT_USED`
 
-If REQUIRED context is unavailable, report degraded-start once before environment-dependent work:
+If REQUIRED context is unavailable or cannot be fully read,
+identify the missing source and report degraded execution capability once.
+Stop only work depending on its environment values; unrelated authorized
+repository/source inspection can continue. The Project may declare a
+stricter boundary, and required task/skill authorities still have their
+own full-document reading gate in `../docs/BOOTSTRAP_PROTOCOL.md`.
+Do not repeatedly warn or guess missing paths, targets, transports or tools.
 
-> Local execution context is unavailable. I can continue repository/source analysis, but I will not guess local paths, target addresses, transport or build environment.
+## Precedence: instructions versus observed facts
 
-Do not repeat this warning in every message.
+Instruction precedence belongs to the active runtime and governing
+Project/repository/tool contracts, **not** this cached environment file.
+A user-provided value is not permission to override higher-priority rules
+or tool access restrictions.
 
-## Precedence
-
-When values conflict:
-
-1. direct current user instruction;
-2. live tool/repository/target evidence;
-3. injected project/account rules;
-4. repository state/tasks;
-5. local context;
-6. historical handoff/summary;
-7. memory/assumption.
-
-A saved machine-specific value never overrides fresher live evidence merely because it was written earlier.
+For mutable environment facts, prefer recent verified live observations to
+saved or historical notes. Reconcile a conflicting current user value with
+live evidence rather than silently overriding either. Treat saved local
+context as a cached reference, not proof of current machine state.
 
 ## Design goal
 

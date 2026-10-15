@@ -10,22 +10,37 @@ Those are source templates for account/project configuration and are assumed to 
 
 Read them only when the task is to design, audit or update prompts.
 
-## Hard startup gate
+## Startup routing
 
-For substantial technical work, follow `docs/BOOTSTRAP_PROTOCOL.md` before the first implementation/mutation/human-operated command block. Every **selected mandatory document** (the project map, this workflow's bootstrap/role/skills and any task-triggered authority) must be retrieved and **read completely**, not merely opened, summarized or partially displayed. A truncated or unavailable source is **not loaded**. Use the configured GitHub MCP for this library; if required context remains incomplete, **STOP and request explicit task-scoped user approval** before proceeding without it. Never assume approval from the original task request. The detailed single owner of this gate is `docs/BOOTSTRAP_PROTOCOL.md`.
+For substantial technical work, read and apply `docs/BOOTSTRAP_PROTOCOL.md`.
+It alone defines mandatory-source selection, model-visible completeness,
+bounded recovery and the dependent-work STOP gate. Do not duplicate that
+procedure here or treat a successful tool call as proof of complete reading.
 
-## Start
+Start with this map. Select the role (`roles/README.md` when unclear), the
+relevant skill from the routes below, and task-specific authorities. Read each
+selected mandatory file fully. `skills/README.md` is a discovery index when
+the routes below are insufficient or the skill map itself is being changed;
+it does not add a compulsory extra hop for every task. Read the root
+`README.md` for repository overview or when changing this workflow library,
+not as a second always-on prompt.
 
-1. Read `README.md`.
-2. Identify your role from `roles/README.md`.
-3. Select the task module from `skills/README.md`.
-4. If changing the agent system itself, also read `audit/README.md`, `audit/CONTEXT_MAINTENANCE.md` and `docs/SYSTEM_ARCHITECTURE.md`.
-5. If creating/restructuring skills, also read `docs/SKILL_AUTHORING.md`.
-6. If touching tooling/MCP/infrastructure strategy, read `docs/MCP_STRATEGY.md`.
-7. For long-running work or any user-facing progress/report request, read `docs/REPORTING_PROTOCOL.md`.
+For changes to the agent system, read `audit/README.md`,
+`audit/CONTEXT_MAINTENANCE.md` and `docs/SYSTEM_ARCHITECTURE.md`. Add
+`docs/SKILL_AUTHORING.md` when creating/restructuring skills,
+`docs/MCP_STRATEGY.md` when changing MCP/tool strategy, and
+`docs/REPORTING_PROTOCOL.md` when preparing governed progress reports.
+The account/project prompt *templates* are not runtime prerequisites;
+read them only when auditing or changing those templates.
 
 ## Routing
 
+Roles (read the selected role file in full):
+- implementation → `roles/IMPLEMENTER.md`
+- independent review → `roles/REVIEWER.md`
+- multi-agent coordination → `roles/ORCHESTRATOR.md`
+
+Task skills:
 - implementation/refactoring/backend/Python/PostgreSQL → `skills/software-engineering/README.md`
 - frontend/Vue/TypeScript/FSD/UI/tables → `skills/frontend-engineering/README.md`
 - project bootstrap / toolchain / lint, types, hooks and CI setup → `skills/project-bootstrap.md`

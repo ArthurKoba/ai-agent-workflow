@@ -1,50 +1,34 @@
-# Task Context
+# Technical Task Checkpoint (optional)
+
+Use only when an existing Issue/work-item or project state cannot preserve
+the recovery details. Do not duplicate mutable task, backlog, acceptance,
+progress or conversations already held in the designated tracker.
 
 status: ACTIVE
-updated: <timestamp>
+updated: <verified timestamp>
 
-## Objective
-<what must be achieved>
+## Task authority
+issue/work-item or project-state link: <locator>
+objective/acceptance: <link, or inline only when no tracker exists>
 
-## Acceptance
-- <criterion>
-
-## Authority
+## Execution authority
 repository/workspace: <repo>
 branch/ref: <ref>
-state authority: <path/tool>
+role and selected skills: <sources fully read>
+known-good revision: <verified ref>
 
-## Loaded workflow
-role: <Implementer/Reviewer/Orchestrator>
-skills:
-- <skill>
-repository map loaded: <yes + source>
-project context available: <yes/no>
+## Unfinished delta
+kind: <commit/diff/patch/artifact/none>
+locator and applied state: <exact ID; applied/not-applied/partial>
+affected files: <precise list>
 
-## Current known-good state
-<last state that is actually proven>
+## Validation and blockers
+completed: <check + actual result>
+pending: <required check>
+blocking missing source/contradiction: <scope and impact>
 
-## Active delta
-type: <commit/diff/patch/artifact/uncommitted files/none>
-locator: <exact ref/path/artifact id>
-applied_state: <applied/not-applied/partial>
-affected_files:
-- <path>
+## Next decision
+<one actionable boundary>
 
-## Validation
-completed:
-- <validation + result>
-pending:
-- <validation>
-
-## Latest observation
-<latest tool/build/device/user result>
-
-## Contradictions / blockers
-- <item + severity + whether blocking>
-
-## Next decision boundary
-<single next meaningful boundary>
-
-## Notes
-No secrets. No project history. Keep only current recoverable task state.
+No credentials, copied issue history, tool transcripts or unsupported
+claims of validation.

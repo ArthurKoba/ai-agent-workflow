@@ -1,196 +1,133 @@
 # Bootstrap Protocol
 
-Purpose: make workflow loading observable and resistant to prompt/context drift.
+Single owner of startup routing, required-source completeness, and recovery
+boundaries for substantial technical work. `AGENTS.md` is the entry map;
+account/project instructions govern authority and task-specific constraints.
+Do not turn startup into a fixed full-library reading ritual.
 
-This protocol applies to substantial technical work.
+## 1. Select the minimal mandatory context
 
-## Hard startup gate
+Before implementation, repository mutation, side-effecting operations or
+human-operated command blocks:
 
-Before the first implementation/mutation/human-operated command block:
+1. Identify the active Project, repository, authority, branch/ref, and task.
+2. Read the repository entry map **in full**: `AGENTS.md`, otherwise
+   `CLAUDE.md`, otherwise `README.md` and relevant contribution rules.
+3. Follow that map to the **selected** role, task skill and current
+   project/domain/contract sources. The role/skill indexes are optional
+   routing aids when the entry map already selects the correct files.
+   Read each selected authority in full before its decision boundary.
+4. If the task requires this universal workflow library, use its declared
+   authoritative connector. Its root map need not be read twice when it
+   *is* the active repository map. Read its README only when selected by
+   the map or needed for the decision. Project/account prompt source
+   templates need not be fetched when already injected as runtime rules.
+5. Recover the task's current state and acceptance from its designated
+   Issue/work-item/project authority; identify the local known-good revision,
+   unfinished delta, applicable validation and immediate blocker. Preserve
+   a technical recovery checkpoint only where the tracker cannot own it.
 
-1. identify the active Project/repository/workspace;
-2. read the local repository map:
-   - `AGENTS.md` if present;
-   - otherwise `CLAUDE.md`;
-   - otherwise `README.md` + contribution/review docs;
-3. read the universal workflow library root `AGENTS.md` and `README.md` in full through its designated authority; if unavailable, apply the mandatory STOP gate below;
-4. select and read the relevant task skill(s);
-5. identify the active role;
-6. read current state/tasks/authority documents required by the repository map;
-7. establish the current Task Context.
+Select files by the decision they protect, not by an unconditional inventory.
+Ordinary work needs the map, one relevant skill/role where applicable,
+and directly affected source/contracts. Load neighboring specialist rules
+only when the task crosses their boundary. No staged reads of unrelated
+language, architecture or service skills.
 
-The repository map should keep this mandatory set intentionally small. Additional architecture/language/database/frontend/operations modules are loaded just in time when the task crosses their decision boundary; do not preload unrelated rule families merely because they exist.
+Reading and non-destructive discovery needed to **locate** authority can
+precede its full load. An unverified authority never licenses dependent
+implementation.
 
-Do not proceed past this gate by merely claiming that the files were read.
+## 2. Full, model-visible reading
 
-## Model-visible completeness check (mandatory)
+**Selection is conditional; completeness is mandatory.** A selected document
+is LOADED only if its entire current text was actually presented to the
+model through its authoritative source, or injected completely by the harness.
+Tool success, file paths, search previews, summaries, metadata, hashes and
+prior-chat recollections are not substitutes.
 
-A complete MCP/API response is not proof that its content reached the agent:
-the tool output renderer may truncate combined outputs separately. For each
-required authority verify (1) returned UTF-8 bytes against source metadata
-where available, and (2) complete, gap-free text actually exposed to the model.
-Never claim LOADED from a byte-count check performed only inside a tool script.
+Use one file per read by default. Confirm gap-free visible coverage from
+the first through the final text chunk and compare returned UTF-8 length with source
+metadata when available. A size check inside a tool script alone does not
+show that its text was visible. Do not invent observed counts or cutoffs.
 
-Default to one required file per read; at most two when their total estimated
-serialized output fits a *measured* safe output budget with headroom. Do not
-bulk-emit full files. If content is large or output limits are uncertain, emit
-labelled consecutive chunks with file/ref, offsets, total length and continuity
-checks; shrink chunk size on any truncation and re-read missing sections.
-Record requested/returned/fully-read counts, reported/observed byte sizes,
-truncation flags, and exact cutoff only when measured. A warning without an
-offset does not establish a numerical threshold. If any selected authority
-remains incompletely visible, use the existing STOP / explicit approval gate.
+If a batch response is truncated, retry the missing files individually.
+For long documents, request contiguous, numbered or offset-labelled chunks;
+verify their order, boundaries and final coverage, reducing chunk size when
+needed. A missing chunk leaves that selected document unloaded. Do not
+silently replace it with a local copy or another transport.
 
-## Complete-document loading gate (mandatory)
+For this workflow library the configured GitHub MCP owns live library reads.
+A local checkout is the implementation surface, **not** a fallback authority
+for missing or incomplete required GitHub context. Another Project may
+specify its own primary connector. The exact source authority matters.
 
-**Selection is conditional; completeness is not.** Select the smallest relevant
-set of required authorities using the repository map, role, active task and
-skill router. Read **each selected required file from beginning to end** before
-performing work governed by it. When a new skill/module or project contract
-becomes mandatory later, read that whole document before crossing its decision
-boundary. Do not preload unrelated skills or reread the whole library after
-every tool call.
+## 3. Missing sources and permission boundaries
 
-A document is **LOADED** only when its full current contents were actually
-retrieved and read through the authoritative tool in this task context, or
-were explicitly injected in full by the harness. Opening a file, obtaining its
-path/metadata, reading a search snippet/preview/summary, reading just a
-heading or section, trusting a prior chat recollection, or seeing an
-incomplete/truncated tool response **does not count**.
+If a **selected** mandatory file or primary connector is unavailable or
+incompletely visible, attempt only bounded, authorized read-only recovery:
+check the connection and retrieve missing chunks. Then:
 
-- Use the Project's declared primary repository/connector authority. For
-  `ArthurKoba/ai-agent-workflow`, retrieve the current GitHub repository
-  through the **configured GitHub MCP**, not a stale local clone, a remembered
-  excerpt, or an unapproved alternate HTTP/browser route.
-- If the tool limits output, retry using supported pagination/chunked reads
-  with complete start-to-end coverage and verified continuity. Inspect every
-  chunk, including the final one; check completeness against available
-  length/size/truncation metadata. A failed, missing or unverifiable chunk
-  leaves the **entire required document unloaded**.
-- For traceability keep the required file's locator/ref and whether full
-  reading succeeded in the existing Task Context. Do not paste full rules,
-  credentials or large tool outputs into a second tracked planning document.
+- 🛑 Stop **dependent** implementation, mutation, risky operations,
+  claims of completed review, and operator command blocks. Name the missing
+  document/portion and the affected decision; do not guess its contents.
+- Continue only genuinely independent, authorized read-only investigation or
+  other work that does not need the missing authority. This is not a way to
+  bypass a globally mandatory source.
+- Offer restoration and a complete reread. An explicitly scoped degraded-mode
+  exception is possible only where governing rules permit it. Request an
+  unambiguous user decision for this task; the original work request,
+  silence or an unrelated approval is not consent. Record the exception
+  and risks in existing task state. No exception overrides higher-priority
+  policy, tool permissions or safety constraints.
 
-## Unavailable mandatory context — STOP and ask
+For missing **local execution context**, use
+`../context/LOCAL_CONTEXT_CONTRACT.md`: block the environment-dependent
+actions, not unrelated repository/source analysis. If a Project explicitly
+sets a stricter gate, follow it.
 
-If any required file cannot be **fully** loaded, or the configured GitHub MCP
-needed to read this library is absent, disconnected, denied or failing:
+## 4. Recoverable task checkpoint
 
-1. Attempt only bounded **read-only access recovery**, such as inspecting
-   configured connector availability, reconnecting through an authorized
-   interface or fetching the missing chunks. Do not bypass the declared tool
-   authority or use a stale local checkout to claim success.
-2. **STOP before substantial implementation, mutations, side-effecting
-   tests/operations, reviews relying on that authority, or human-operated
-   command blocks.** Do not continue another implementation slice on the
-   unsupported assumption that the missing rules probably do not matter.
-3. Tell the user exactly which required documents/MCP access are missing and
-   why the context is incomplete. Offer to connect/restore the configured MCP
-   and retry full loading, **or explicitly ask whether this specific task
-   may start/continue in a degraded mode without those named documents**.
-4. **Wait for an unambiguous, task-scoped user approval** before proceeding
-   without them. Silence, an unrelated instruction, a generic earlier
-   permission to work, or self-assessed low risk is not approval. Record the
-   exception and its known risks in Task Context; it does not remove
-   independent safety, security, permissions or correctness requirements.
-   A new task or newly missing mandatory source needs its own decision.
+Before substantial action, know objective, acceptance, authority,
+active role/skills, repository/ref, last known-good state, unfinished
+patch/commit/artifact identity, validation level, contradictions and the
+next decision. Do not depend on conversation memory alone.
 
-If approval is refused or not given, stay stopped at this boundary. The
-agent may still help diagnose/reconnect the missing access, but must not
-describe the task as bootstrapped or approved for implementation.
+Issues/work items own the mutable goal, assignments, acceptance and task
+lifecycle where a tracker exists. The optional `../templates/TASK_CONTEXT.md`
+is only a technical checkpoint for facts not already recoverable there.
+Do not build a second Markdown backlog or repeat issue commentary.
 
-## Task Context
+Before a handoff, branch change or risky long-running operation, preserve
+repository/ref, exact affected files, applied/not-applied delta locator,
+completed validation and remaining checks in the owning state surface.
+If delta identity is lost, reconstruct it from actual evidence before
+stacking more changes. Keep secrets and unnecessary execution logs out
+of task state.
 
-Before substantial work, know at least:
+## 5. Focused re-bootstrap
 
-- objective;
-- acceptance criteria;
-- active repository/workspace;
-- active branch/ref when relevant;
-- current known-good state;
-- active role;
-- loaded task skill(s);
-- current patch/delta/artifact identity;
-- latest observed result;
-- next real decision boundary;
-- blockers/contradictions.
+Refresh only the owning subset when the task domain or repository changes,
+a source revision changes materially, agent/handoff context becomes stale,
+or repeated mistakes/user corrections indicate requirement drift.
 
-This context may live in repository state, a task file, a durable artifact, or structured tool state.
+On a correction, compare the latest user requirements and acceptance against
+actual state; find the mismatched assumption or contract, reload its owning
+map/skill/source, update the existing task checkpoint, and resume only safe
+work. Do not read the full library on each call or infer technical facts
+from emotional tone.
 
-Do not rely on chat memory alone for long or multi-turn technical work.
+An explicit context-refresh request means **actually re-open** the relevant
+entry map, active phase authority/skill and current source checkpoint.
+It is not permission to expand scope or resume implementation unless the
+user also requests it. A refresh alone does not require a full report.
 
-## Patch / delta continuity
+## 6. Specialized boundary and pre-send gate
 
-An unfinished patch, generated file set, or important diff must not exist only as prose in chat.
+Before giving human-operated shell/SSH/PowerShell/UART commands, load
+`../skills/terminal-operations.md` fully. Its real execution lane and
+command-block constraints override generic answer-completeness preferences.
+Do not emit an operator command block while its mandatory context is missing.
 
-Before a context switch, long investigation, agent handoff, or risky branch change, persist enough information to recover it:
-- repository + branch/ref;
-- affected files;
-- diff/commit/patch artifact ID or exact locator;
-- applied/not-applied state;
-- validation already performed;
-- remaining validation.
-
-If the patch identity cannot be recovered, stop and reconstruct it from repository/artifact evidence before stacking new edits.
-
-## Human-operated commands
-
-If the task will emit commands for a human to run, `skills/terminal-operations.md` is mandatory.
-
-Do not emit the first command block until the terminal skill is loaded or its rules are already injected in current context.
-
-## Re-bootstrap triggers
-
-Repeat only the relevant bootstrap subset when:
-- repository/workspace changes;
-- branch/state authority changes materially;
-- a new task domain is entered;
-- context/handoff/agent changes;
-- a long task resumes after state uncertainty;
-- the user reports that command/routing rules were violated;
-- the user explicitly rejects the current technical direction, repeats the same correction, or expresses escalating frustration after a technical mismatch.
-
-For a correction-triggered re-bootstrap, do not reread the whole library. Stop speculative mutation at the next safe boundary and recover only the context needed to explain the mismatch:
-
-1. reread the latest explicit user requirements/corrections and the current durable Task Context;
-2. compare the current implementation/architecture against the original acceptance contract;
-3. identify the assumption, contradiction or ownership decision that drifted;
-4. reload only the map/skill/source authority that owns that decision;
-5. persist the corrected contract before continuing substantial implementation.
-
-Strong negative feedback is not itself technical proof, but it is operational evidence that the current task model may be wrong. Do not dismiss repeated direct correction as tone or continue the same strategy without a bounded self-audit.
-
-Do not reread everything mechanically after every tool call.
-
-## Explicit context refresh
-
-An explicit request to refresh/re-read context is a re-bootstrap trigger, not a
-request to recite chat memory. Before the next technical decision, actually
-re-open the active repository map and phase/task authority, the selected task
-skill and any owning terminology/evidence module, the reporting protocol if a
-report is requested, and the smallest current source/status checkpoint.
-
-Re-read only the relevant authoritative subset; do not reload unrelated
-modules. A context refresh does not authorize new work, a broader acceptance
-scope or a full report by itself. Continue implementation only when the user
-also requests continuation.
-
-## User-visible startup signal
-
-For substantial work, a short startup update may state:
-- repository/workspace;
-- selected skill/role;
-- current decision boundary.
-
-Do not dump the whole checklist or pretend verification that did not happen.
-
-
-## Pre-send compliance
-
-Loading the correct map/skill is necessary but not sufficient.
-
-Before emitting an action governed by an active skill, perform a final compliance check against that skill's hard constraints.
-
-Do not let a secondary response objective such as completeness, compactness, end-to-end planning, or convenience override an explicit STOP / MUST / decision-boundary rule.
-
-If a draft response conflicts with an active hard constraint, the hard constraint wins and the draft must be rewritten before sending.
+Check proposed actions and outputs against every active STOP/MUST/permission
+rule **before** sending or executing. Loading a skill is not proof that the
+action complies. Report only what evidence establishes, not assumed success.
