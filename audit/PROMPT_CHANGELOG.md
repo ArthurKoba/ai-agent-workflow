@@ -1,5 +1,21 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Consolidate Account and Project prompt sources
+
+Changes:
+- moved the Account Prompt unchanged under `prompts/accounts/account.md`;
+- moved existing Infrastructure and Reverse Engineering Project prompts
+  unchanged into `prompts/projects/` alongside Reverse Analysis;
+- placed the generic Project prompt template under `prompts/projects/_template.md`;
+- retired the redundant root `projects/` source tree and updated affected
+  documentation links, without editing the policy text of moved prompts.
+
+Reason:
+Prompt source paths now mirror their configuration level and permit additional
+named Account/Project variants without introducing another startup layer.
+Installed ChatGPT account/Project settings are separate from repository sources.
+
+
 ## 2026-10 — Remove duplicated Project startup hops
 
 Changes:

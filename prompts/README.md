@@ -1,25 +1,29 @@
 # Prompt Sources
 
-These files are **configuration sources for humans/harnesses**, not documents ordinary agents should reread on startup.
+Account and Project prompts are configuration sources for humans/harnesses.
+They are injected into the relevant account/Project; ordinary agents must
+not reread these files as a startup prerequisite.
 
-## Account
+## Accounts
 
-`ACCOUNT_PROMPT.md`
+- [account](accounts/account.md) — current project-neutral Account Prompt.
 
-Copy/adapt into account-level instructions. It is always active and must remain project-neutral.
+Additional named account variants belong under `accounts/`, not in the root.
 
-## Project
+## Projects
 
-`PROJECT_PROMPT_TEMPLATE.md`
+- [infrastructure](projects/infrastructure.md) — personal AI/development infrastructure.
+- [reverse-engineering](projects/reverse-engineering.md) — broad firmware, embedded and program analysis.
+- [reverse-analysis](projects/reverse-analysis.md) — standalone Analyzer-focused Project Prompt.
+- [_template](projects/_template.md) — skeleton for new Project prompts; not an active Project.
 
-Use as the skeleton for a Project/workspace prompt. The resulting project prompt is injected only inside that Project.
+Add each new Project with its own name under `projects/`, not under
+a second top-level `projects/` directory. A source file does not prove
+its prompt is installed in a ChatGPT Project.
 
-## Task-specific behavior
+## Skills
 
-Task-specific instructions are not another always-on prompt.
+Task-specific instructions remain in `../skills/`; no additional prompt layer
+is introduced.
 
-They live under `../skills/` and are selected through repository `AGENTS.md`.
-
-Runtime hierarchy:
-
-`account → project → skill`
+Runtime hierarchy: `account → project → skill`.

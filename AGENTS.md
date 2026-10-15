@@ -4,7 +4,7 @@ Mandatory workspace map for agents working in this repository.
 
 ## Important
 
-Do **not** reread `prompts/ACCOUNT_PROMPT.md` or a project prompt as a runtime prerequisite.
+Do **not** reread `prompts/accounts/account.md` or a project prompt as a runtime prerequisite.
 
 Those are source templates for account/project configuration and are assumed to be injected by the harness already.
 
