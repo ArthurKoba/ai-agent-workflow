@@ -1,5 +1,24 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Correct prompt catalog names and retire unused sources
+
+Changes:
+- renamed the active Account prompt source `account.md` to `universal.md`
+  without editing its text;
+- retired the generic `_template.md`, which was a legacy scaffolding source
+  and never an installed Project prompt;
+- retired the broad legacy `reverse-engineering.md` source from the active
+  prompt catalog, retaining its unique firmware/OpenIPC coordination content
+  in Git history rather than merging it into the Analyzer-only project prompt;
+- retained `reverse-analysis.md` and `infrastructure.md` unchanged and
+  updated the routing/index paths.
+
+Reason:
+The migrated folder exposed legacy and specialist Project prompts side by side
+without distinguishing their ownership. The active catalog must list only
+actual named prompt sources, not broad historical variants or placeholders.
+
+
 ## 2026-10 — Consolidate Account and Project prompt sources
 
 Changes:

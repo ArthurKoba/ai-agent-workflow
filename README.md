@@ -11,14 +11,14 @@ There are only three instruction layers.
 ### Level 0 — Account prompt
 Injected by the account/harness for every conversation.
 
-Source template: `prompts/accounts/account.md`.
+Source template: `prompts/accounts/universal.md`.
 
 Contains only universal behavior. No project names, MCP products, IPs, paths, GPIO, branch SHAs or task-specific methods.
 
 ### Level 1 — Project prompt
 Injected by the selected Project/workspace.
 
-Template: `prompts/projects/_template.md`.
+Project prompt sources: `prompts/projects/`.
 
 Defines project authorities, primary tools/MCP, local-context policy and validation ownership.
 
@@ -50,7 +50,7 @@ TypeScript/Python code projects lives in
 ## Repository map
 
 - `prompts/accounts/` — named account-level prompt sources.
-- `prompts/projects/` — named Project prompts and a shared template.
+- `prompts/projects/` — named Project prompt sources.
 - `skills/` — task-specific modules, including software/backend, frontend, Git, context-engineering, terminal, service, reverse and review workflows.
 - `roles/` — Implementer / Reviewer / Orchestrator.
 - `context/` — local-context contract/templates.

@@ -6,16 +6,14 @@ not reread these files as a startup prerequisite.
 
 ## Accounts
 
-- [account](accounts/account.md) — current project-neutral Account Prompt.
+- [universal](accounts/universal.md) — current project-neutral Account Prompt.
 
 Additional named account variants belong under `accounts/`, not in the root.
 
 ## Projects
 
 - [infrastructure](projects/infrastructure.md) — personal AI/development infrastructure.
-- [reverse-engineering](projects/reverse-engineering.md) — broad firmware, embedded and program analysis.
-- [reverse-analysis](projects/reverse-analysis.md) — standalone Analyzer-focused Project Prompt.
-- [_template](projects/_template.md) — skeleton for new Project prompts; not an active Project.
+- [reverse-analysis](projects/reverse-analysis.md) — Analyzer-focused Project Prompt.
 
 Add each new Project with its own name under `projects/`, not under
 a second top-level `projects/` directory. A source file does not prove
