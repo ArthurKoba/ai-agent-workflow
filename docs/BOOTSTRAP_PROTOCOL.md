@@ -67,8 +67,8 @@ If a **selected** mandatory file or primary connector is unavailable or
 incompletely visible, attempt only bounded, authorized read-only recovery:
 check the connection and retrieve missing chunks. Then:
 
-- 🛑 Stop **dependent** implementation, mutation, risky operations,
-  claims of completed review, and operator command blocks. Name the missing
+- 🛑 Stop **dependent** implementation, mutation, reviews relying on the
+  missing authority, side-effecting operations and operator command blocks. Name the missing
   document/portion and the affected decision; do not guess its contents.
 - Continue only genuinely independent, authorized read-only investigation or
   other work that does not need the missing authority. This is not a way to
