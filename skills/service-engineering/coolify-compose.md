@@ -15,6 +15,14 @@ Keep these layers distinct:
 
 When parser behavior matters, inspect the deployed Coolify version's parser/source instead of assuming generic Compose behavior.
 
+## Mandatory deployment contract
+
+- **Get explicit user approval of the complete operator-variable contract** before adding, renaming, aliasing or removing keys: exact names, purpose, Required/Default semantics, owner and secret scope. Never infer approval from a general implementation request.
+- Prefer existing approved or upstream names. Do not invent prefixes, duplicate credentials, intermediary aliases or new privileged identities for convenience.
+- Keep a single canonical Compose owner and only justified orchestrator overrides. Ensure every effective deployment input is tracked by Watch Paths; verify inheritance in the actual parser.
+- Treat generated domains, Shared references and parser-managed variables as runtime state. Verify the resulting application configuration and reconcile stale entries before declaring changes complete.
+- Preserve data, privilege boundaries and existing deployments. Distinguish source validation from parser, deployment and real-consumer acceptance; never use a speculative redeploy to settle an unresolved contract.
+
 ## ENV design gate — expose only genuine operator configuration
 
 Apply this gate **before** inventing a variable, adding it to `.env.example`,
