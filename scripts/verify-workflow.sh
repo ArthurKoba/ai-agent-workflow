@@ -42,5 +42,19 @@ for map_file, base in maps:
             missing.append(f'{map_file}: {route}')
 if missing:
     raise SystemExit('Missing skill routes:\n' + '\n'.join(missing))
-print('Workflow maps and changed-commit whitespace verified')
+# Deleted bootstrap must not return as an active startup dependency.
+# Historical changelog entries are intentionally excluded.
+active = [Path('AGENTS.md'), Path('README.md')]
+for folder in ('context', 'docs', 'projects', 'prompts', 'roles', 'skills'):
+    active.extend(Path(folder).rglob('*.md'))
+dead = []
+for path in active:
+    if not path.is_file():
+        continue
+    body = path.read_text(encoding='utf-8')
+    if 'BOOTSTRAP_PROTOCOL' in body or 'workflow_bootstrap' in body:
+        dead.append(str(path))
+if dead:
+    raise SystemExit('Obsolete bootstrap references:' + chr(10) + chr(10).join(dead))
+print('Workflow maps, obsolete links, and changed-commit whitespace verified')
 PY

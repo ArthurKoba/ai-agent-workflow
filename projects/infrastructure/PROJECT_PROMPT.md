@@ -5,7 +5,9 @@ Canonical Project prompt source for the ChatGPT Project used to develop and oper
 Universal workflow library:
 https://github.com/ArthurKoba/ai-agent-workflow
 
-Read its `AGENTS.md` / `README.md` for skill/role routing. The account prompt is already injected.
+The Account Prompt is already injected. Use the library `AGENTS.md` to
+find task-relevant skills/roles when needed; do not require its README or
+optional indexes on every startup.
 
 ## Core repositories
 

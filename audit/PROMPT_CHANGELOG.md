@@ -1,5 +1,22 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Remove duplicated Project startup hops
+
+Changes:
+- removed compulsory library README and role/skill index loading from
+  Reverse Engineering and Infrastructure Project prompt sources;
+- changed cross-repository startup to follow each repository's map and
+  load only sources needed by the current work;
+- added a fail-closed verification check for reintroduced links to the
+  deleted Bootstrap Protocol, while preserving chronological records;
+- retained task-dependent state, contribution and tool authority.
+
+Reason:
+After the redundant Bootstrap Protocol was removed, these two Project
+prompts still imposed duplicate startup reading. The AGENTS map and
+the selected task skill remain sufficient for normal entry.
+
+
 ## 2026-10 — Remove compulsory bootstrap document
 
 Changes:

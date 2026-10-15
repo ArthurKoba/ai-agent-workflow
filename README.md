@@ -40,8 +40,9 @@ It routes the agent to the relevant role, skill, audit or architecture document.
 This documentation/skill library has a tracked `.githooks/pre-push`.
 Install it once in each fresh checkout using
 `git config --local core.hooksPath .githooks`. The hook executes
-`scripts/verify-workflow.sh`, checking skill routes and changed-commit
-whitespace; a failing check blocks Git push. GitHub Actions runs the same
+`scripts/verify-workflow.sh`, checking skill routes, obsolete Bootstrap links
+and changed-commit whitespace; a failing check blocks Git push.
+GitHub Actions runs the same
 verification on pushes to `main` and on pull requests. The setup policy for new
 TypeScript/Python code projects lives in
 [`skills/project-bootstrap.md`](skills/project-bootstrap.md).

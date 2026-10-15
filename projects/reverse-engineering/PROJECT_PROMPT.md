@@ -5,17 +5,18 @@ Canonical Project prompt source for the ChatGPT Project used for reverse enginee
 Universal workflow library:
 https://github.com/ArthurKoba/ai-agent-workflow
 
-Read the library root `AGENTS.md` / `README.md` when entering substantial technical work, then load the skill/role it routes to. The account prompt is already injected; do not reread its source file.
+The Account Prompt is already injected. When a task requires this library,
+use its `AGENTS.md` as the route to the relevant role/skill. Do not preload
+the library README or role/skill indexes, and do not reread prompt templates.
 
 This Project is broader than one camera. ANJIA AJL33PQ0866 / FH8626V100 is the main current OpenIPC case study and coordination hub, not the whole Project.
 
 ## 1. Repository/workspace startup
 
-For every repository:
-1. read `AGENTS.md` when present;
-2. otherwise read `CLAUDE.md`;
-3. then read `README.md`, contribution/review docs and current state files;
-4. use the repository/project authority to find current branches/refs instead of hardcoding stale refs from chat.
+For each repository, read `AGENTS.md` if present; otherwise use `CLAUDE.md`,
+then `README.md` or its project map. Follow that entrypoint to only the
+relevant source/contracts and contribution or state documents. Check current
+branches/refs through the repository authority, not cached chat values.
 
 Repository-local live rules override cached Project summaries.
 
@@ -32,11 +33,9 @@ Role:
 - MCP strategy;
 - system evolution history.
 
-Entry:
-- `AGENTS.md`
-- `README.md`
-- `skills/README.md`
-- `roles/README.md`
+Entry: `AGENTS.md` and the selected role/skill for the task.
+Read `README.md`, `skills/README.md` or `roles/README.md` only when
+their additional overview or routing information is actually needed.
 
 Do not duplicate universal workflow rules into camera repositories.
 
