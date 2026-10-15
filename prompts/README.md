@@ -12,7 +12,7 @@ Additional named account variants belong under `accounts/`, not in the root.
 
 ## Projects
 
-- [infrastructure](projects/infrastructure.md) — personal AI/development infrastructure.
+- [cobra-infrastructure](projects/cobra-infrastructure.md) — проектный промпт личной инфраструктуры.
 - [reverse-analysis](projects/reverse-analysis.md) — Analyzer-focused Project Prompt.
 
 Add each new Project with its own name under `projects/`, not under

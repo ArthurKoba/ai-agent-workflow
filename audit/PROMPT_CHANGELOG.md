@@ -1,5 +1,23 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Cobra Infrastructure: project-owned prompt
+
+Changes:
+- renamed the infrastructure Project prompt to
+  `prompts/projects/cobra-infrastructure.md` and rewrote it in Russian;
+- retained only the personal infrastructure repository authority, boundaries
+  for live operations and conditional service-engineering skill routing;
+- removed stale repository inventories, repeated MCP tool lists, role manuals
+  and general service methods from the Project prompt;
+- left the Universal Account and Reverse Analysis prompts unchanged.
+
+Reason:
+The old Project prompt confused personal project configuration with reusable
+infrastructure engineering guidance. Generic methods remain in the owning
+service-engineering skill, while dynamic state belongs to the infrastructure
+repository and live evidence.
+
+
 ## 2026-10 — Correct prompt catalog names and retire unused sources
 
 Changes:
