@@ -1,10 +1,10 @@
 # Prompt / Workflow Changelog
 
-## 2026-10 — Cobra Infrastructure: project-owned prompt
+## 2026-10 — Koba Infrastructure: project-owned prompt
 
 Changes:
 - renamed the infrastructure Project prompt to
-  `prompts/projects/cobra-infrastructure.md` and rewrote it in Russian;
+  `prompts/projects/koba-infrastructure.md` and rewrote it in Russian;
 - retained only the personal infrastructure repository authority, boundaries
   for live operations and conditional service-engineering skill routing;
 - removed stale repository inventories, repeated MCP tool lists, role manuals
