@@ -1,5 +1,24 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Restore bootstrap evidence and single-violation recovery
+
+Changes:
+- restored measured-output headroom, source/ref and byte/visible-text
+  coverage checks for truncated MCP responses, including chunk continuity
+  and no mixing of different revisions;
+- made newly triggered skill authorities and governed reviews explicit
+  startup gates;
+- restored targeted re-bootstrap after a single reported command/routing
+  violation, and explicit source reading when editing prompt templates;
+- distinguished the published GitHub MCP authority from uncommitted local
+  working drafts without reintroducing mandatory full-library reading.
+
+Reason:
+The previous bootstrap simplification correctly removed redundant entry
+hops, but inadvertently weakened observability and a targeted recovery
+trigger. These narrow corrections retain the smaller startup footprint.
+
+
 ## 2026-10 — Conditional bootstrap and single-owner task context
 
 Changes:

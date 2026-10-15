@@ -7,8 +7,8 @@ Do not turn startup into a fixed full-library reading ritual.
 
 ## 1. Select the minimal mandatory context
 
-Before implementation, repository mutation, side-effecting operations or
-human-operated command blocks:
+Before substantial implementation, repository mutation, governed review,
+side-effecting operations or human-operated command blocks:
 
 1. Identify the active Project, repository, authority, branch/ref, and task.
 2. Read the repository entry map **in full**: `AGENTS.md`, otherwise
@@ -17,11 +17,14 @@ human-operated command blocks:
    project/domain/contract sources. The role/skill indexes are optional
    routing aids when the entry map already selects the correct files.
    Read each selected authority in full before its decision boundary.
+   If a new source becomes mandatory later, load that source before proceeding
+   into its domain; prior selection does not grandfather it in.
 4. If the task requires this universal workflow library, use its declared
    authoritative connector. Its root map need not be read twice when it
    *is* the active repository map. Read its README only when selected by
    the map or needed for the decision. Project/account prompt source
-   templates need not be fetched when already injected as runtime rules.
+   templates are not runtime prerequisites; read their actual current text
+   when designing, auditing or changing those prompts.
 5. Recover the task's current state and acceptance from its designated
    Issue/work-item/project authority; identify the local known-good revision,
    unfinished delta, applicable validation and immediate blocker. Preserve
@@ -45,21 +48,31 @@ model through its authoritative source, or injected completely by the harness.
 Tool success, file paths, search previews, summaries, metadata, hashes and
 prior-chat recollections are not substitutes.
 
-Use one file per read by default. Confirm gap-free visible coverage from
-the first through the final text chunk and compare returned UTF-8 length with source
-metadata when available. A size check inside a tool script alone does not
-show that its text was visible. Do not invent observed counts or cutoffs.
+Read selected files individually by default. Batch at most two only if their
+estimated serialized output fits a **measured** safe budget with headroom;
+do not bulk-emit authorities. Confirm (1) the returned UTF-8 byte count
+against source metadata where available and (2) the complete, gap-free text
+**actually exposed to the model**, through the final section/chunk. Byte
+counts computed only inside a tool script do not prove model-visible reading.
 
-If a batch response is truncated, retry the missing files individually.
-For long documents, request contiguous, numbered or offset-labelled chunks;
-verify their order, boundaries and final coverage, reducing chunk size when
-needed. A missing chunk leaves that selected document unloaded. Do not
-silently replace it with a local copy or another transport.
+If a response is truncated or a batch omits content, retry missing files
+individually; then use labelled contiguous chunks with source/ref, offsets,
+total length (when available) and continuity checks. Shrink chunk sizes
+after truncation, read the final chunk, and never combine different source
+revisions. A missing or unverifiable chunk leaves that source **unloaded**.
+Track source identity, requested/returned/fully-read files, observed byte
+sizes and truncation/cutoff **only when measured**; a warning without an
+offset does not establish a numerical cutoff. Keep a compact loaded/unloaded
+checkpoint in existing task state, not duplicated rules or raw outputs.
+Do not silently replace an incomplete authoritative read with a local
+clone, summary or alternate transport.
 
-For this workflow library the configured GitHub MCP owns live library reads.
-A local checkout is the implementation surface, **not** a fallback authority
-for missing or incomplete required GitHub context. Another Project may
-specify its own primary connector. The exact source authority matters.
+For this workflow library the configured GitHub MCP owns the current
+published library authority. A local checkout owns the **working draft**:
+inspect and validate its changes separately, but never use it to replace
+missing or incomplete required GitHub context. Recheck the published ref
+after a material update or publication. Other Projects may select a different
+primary connector; do not override their source authority.
 
 ## 3. Missing sources and permission boundaries
 
@@ -108,7 +121,10 @@ of task state.
 
 Refresh only the owning subset when the task domain or repository changes,
 a source revision changes materially, agent/handoff context becomes stale,
-or repeated mistakes/user corrections indicate requirement drift.
+a user reports a violated command/routing rule (even once), or repeated
+mistakes/corrections indicate acceptance drift. Reload the terminal skill
+before emitting another operator command block after a command-format
+violation.
 
 On a correction, compare the latest user requirements and acceptance against
 actual state; find the mismatched assumption or contract, reload its owning
@@ -117,9 +133,10 @@ work. Do not read the full library on each call or infer technical facts
 from emotional tone.
 
 An explicit context-refresh request means **actually re-open** the relevant
-entry map, active phase authority/skill and current source checkpoint.
-It is not permission to expand scope or resume implementation unless the
-user also requests it. A refresh alone does not require a full report.
+entry map, active phase authority/skill and current source checkpoint (and
+the reporting owner when a governed report is requested). It is not permission
+to expand scope or resume implementation unless the user also requests it.
+A refresh alone does not require a full report.
 
 ## 6. Specialized boundary and pre-send gate
 
