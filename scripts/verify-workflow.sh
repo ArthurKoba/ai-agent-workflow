@@ -21,6 +21,18 @@ fi
 if [[ -n "$base" ]]; then
   git diff --check "$base" HEAD
 fi
+# The fallback HEAD^ is for whitespace only. Do not treat an already
+# published oversized skill as newly changed. CI supplies VERIFY_BASE_SHA;
+# unpushed local commits are compared with origin/main.
+size_base=""
+if [[ -v VERIFY_BASE_SHA ]]; then
+  size_base="$VERIFY_BASE_SHA"
+elif git show-ref --verify --quiet refs/remotes/origin/main; then
+  if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
+    size_base="$(git merge-base HEAD origin/main)"
+  fi
+fi
+export WORKFLOW_VERIFY_BASE="$size_base"
 git diff --check
 git diff --cached --check
 
@@ -56,5 +68,43 @@ for path in active:
         dead.append(str(path))
 if dead:
     raise SystemExit('Obsolete bootstrap references:' + chr(10) + chr(10).join(dead))
-print('Workflow maps, obsolete links, and changed-commit whitespace verified')
+
+# Enforce a per-file 32 KiB UTF-8 cap for every new or changed skill.
+# Pre-existing oversized files are reported as migration debt; editing one
+# requires bringing that file under the cap.
+import os
+import subprocess
+
+limit = 32 * 1024
+def paths_from_git(args):
+    return {
+        x.decode('utf-8') for x in subprocess.check_output(
+            ['git', *args, '--', 'skills/']).split(b'\0') if x
+    }
+
+changed = set()
+base = os.environ.get('WORKFLOW_VERIFY_BASE', '')
+if base:
+    changed.update(paths_from_git(['diff', '--name-only', '-z',
+                                   '--diff-filter=ACMRT', base, 'HEAD']))
+changed.update(paths_from_git(['diff', '--name-only', '-z',
+                               '--diff-filter=ACMRT']))
+changed.update(paths_from_git(['diff', '--cached', '--name-only', '-z',
+                               '--diff-filter=ACMRT']))
+changed.update(paths_from_git(['ls-files', '--others', '--exclude-standard',
+                               '-z']))
+violations = []
+legacy = []
+for path in sorted(Path('skills').rglob('*.md')):
+    size = path.stat().st_size
+    if size > limit:
+        (violations if path.as_posix() in changed else legacy).append(
+            f'{path}: {size} > {limit} UTF-8 bytes')
+if violations:
+    raise SystemExit('Oversized new/changed skills (split or shorten):\n' +
+                     '\n'.join(violations))
+if legacy:
+    print('Pre-existing oversized skills (unchanged; migration required):')
+    print('\n'.join(legacy))
+print('Workflow maps, skill byte limits, obsolete links and whitespace verified')
 PY

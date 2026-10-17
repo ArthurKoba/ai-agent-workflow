@@ -1,5 +1,20 @@
 # Prompt / Workflow Changelog
 
+## 2026-10 — Canonical skill-authoring skill and size gate
+
+Changes:
+- replaced the standalone authoring manual with the concise
+  `skills/skill-authoring.md` and routed skill edits/reviews to it;
+- limited its scope to five practical rules: decisions, tool discovery,
+  concise content, a 32 KiB UTF-8 file ceiling, and lossless moves/splits;
+- left the three pre-existing oversized files for separate targeted migration.
+
+Reason:
+Hardcoded tool recipes and copied process text bloat the runtime context and
+discourage inspecting current MCP schemas and permissions. A lightweight
+authoring skill keeps the method precise without constraining implementation.
+
+
 ## 2026-10 — Koba Infrastructure: project-owned prompt
 
 Changes:

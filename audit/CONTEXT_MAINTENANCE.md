@@ -21,6 +21,7 @@ Keep the operating context cumulative without turning it into a duplicate rule t
 1. Read root `AGENTS.md`, `README.md`, `docs/SYSTEM_ARCHITECTURE.md` and the owner candidates.
 2. Classify the problem before editing.
 3. Find the existing owner; create a new file only when no owner exists.
+   For skill changes, apply `../skills/skill-authoring.md`.
 4. Make the smallest change that resolves the recurring decision/failure.
 5. Add routing links only where an agent otherwise cannot discover the owner.
 6. Remove or shorten duplicated text when ownership moves.

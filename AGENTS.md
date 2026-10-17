@@ -22,9 +22,10 @@ authority. If a required source is unavailable or incomplete, do not perform
 actions that depend on it; follow the injected Account/Project rules.
 Do not reread account/project prompt templates merely to start work.
 
-For workflow-library changes, consult the owning audit, architecture or
-skill-authoring document when relevant. For governed progress reports,
-use `docs/REPORTING_PROTOCOL.md`. Avoid loading the whole library.
+For workflow-library changes, consult the owning audit or architecture
+source when relevant. For every skill creation, edit, split, merge or review,
+load `skills/skill-authoring.md` first. For governed progress reports, use
+`docs/REPORTING_PROTOCOL.md`. Avoid loading the whole library.
 
 ## Routing
 
@@ -37,6 +38,7 @@ Task skills:
 - implementation/refactoring/backend/Python/PostgreSQL → `skills/software-engineering/README.md`
 - frontend/Vue/TypeScript/FSD/UI/tables → `skills/frontend-engineering/README.md`
 - project bootstrap / toolchain / lint, types, hooks and CI setup → `skills/project-bootstrap.md`
+- writing/editing/splitting/reviewing skills → `skills/skill-authoring.md` (mandatory)
 - Git / Issues / branches / commits / PR-MR / Git-backed coordination → `skills/git-workflow.md`
 - independent review → `skills/code-review.md`
 - interface/UX design review and acceptance → `skills/interface-design-review.md`

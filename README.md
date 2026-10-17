@@ -87,4 +87,4 @@ See:
 - `audit/BEST_PRACTICES.md`
 - `audit/PROMPT_CHANGELOG.md`
 - `audit/CONTEXT_MAINTENANCE.md`
-- `docs/SKILL_AUTHORING.md`
+- `skills/skill-authoring.md`
