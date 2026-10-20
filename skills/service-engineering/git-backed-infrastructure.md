@@ -73,7 +73,7 @@ A useful default for a private infrastructure repository is:
 
 Use `deploy/<orchestrator>/<service>/` when manifests contain provider/parser-specific semantics. A generic `stacks/<service>/` layout remains reasonable only when the deployment definition is intentionally orchestrator-neutral.
 
-Keep each deployable service in its own directory so the runtime platform can watch and redeploy only the affected deployment.
+Keep each deployable service in its own directory so the runtime platform can watch and redeploy only the affected deployment. Preserve an established `deploy/<domain>/<service>/` layout and colocated Compose/README; the sample structure does not require migration or a nested `compose/` directory.
 
 ## Coolify specialization
 
@@ -118,23 +118,13 @@ Typical flow:
 
 Avoid UI-only Compose definitions when the same configuration can live in Git and be reviewed, recovered and modified by automation.
 
-## Watch-path isolation
+## Watch-path policy
 
-When several stacks live in one repository:
-- watch the actual deployment inputs, not automatically the whole service directory;
-- include the manifest plus bootstrap/config/source paths that materially change runtime;
-- exclude README/runbook/audit-only files when they are not deployment inputs;
-- avoid repository-wide redeploy triggers unless cross-stack coupling actually requires them;
-- document any shared file that intentionally triggers multiple stacks.
+In multi-service infrastructure repositories, watch **the agreed scope of each service**, not unrelated services. Determine policy from repository conventions and the user's explicit requirement.
 
-Example:
-
-```text
-deploy/coolify/example/docker-compose.yaml
-deploy/coolify/example/bootstrap/**
-```
-
-A broad `deploy/coolify/example/**` pattern is appropriate only when that directory is deployment-only. This prevents docs-only or unrelated service changes from causing unnecessary production redeployments.
+- **Whole service directory:** `deploy/coolify/example/**` is valid even when README/runbooks/audits share that folder. Documentation-only edits intentionally redeploy the one service; do not flag this as error or create `compose/` to suppress it.
+- **Runtime inputs only:** watch manifest and consumed config/bootstrap paths when that is the expressly chosen policy.
+- Do not impose either universally. Preserve established layout, document the agreed glob, verify **persisted** orchestrator state; missing/unrelated-service paths are problems.
 
 ## Secrets
 
