@@ -49,6 +49,8 @@ TypeScript/Python code projects lives in
 
 ## Repository map
 
+- `playbook/` — cross-domain lifecycle checklists that link to authoritative skills rather than duplicating their procedures.
+
 - `prompts/accounts/` — named account-level prompt sources.
 - `prompts/projects/` — named Project prompt sources.
 - `skills/` — task-specific modules, including software/backend, frontend, Git, context-engineering, terminal, service, reverse and review workflows.

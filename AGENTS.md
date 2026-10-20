@@ -29,6 +29,10 @@ load `skills/skill-authoring.md` first. For governed progress reports, use
 
 ## Routing
 
+Playbooks (decision/checklist guides, not additional runtime prompt layers):
+- new service / repository setup → `playbook/new-project.md` (load when planning a new project)
+
+
 Roles (read the selected role file in full):
 - implementation → `roles/IMPLEMENTER.md`
 - independent review → `roles/REVIEWER.md`
