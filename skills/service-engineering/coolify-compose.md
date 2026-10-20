@@ -26,119 +26,35 @@ When parser behavior matters, inspect the deployed Coolify version's parser/sour
 
 ## ENV design gate — expose only genuine operator configuration
 
-Apply this gate **before** inventing a variable, adding it to `.env.example`,
-creating a Coolify Shared Variable, or adding an `environment:` entry.
-**An ENV key is an external contract, not a place to move application constants.**
+**Before** adding an ENV key, `.env.example`, Shared Variable or Compose `environment:`, decide whether it is genuinely operated or derivable. ENV is an **external contract**, not a repository of constants.
 
-For every proposed key, answer all of these:
+For every key identify:
+1. **Operator:** who legitimately sets/changes it? If nobody, use code/Git.
+2. **Owner:** which exact subsystem/resource consumes it? Do not blend DB, authentication, invitations, idempotency and storage into one generic prefix.
+3. **Independence:** can the consumer derive it from topology or existing inputs? Avoid redundant DB URL plus components, or internal/public addresses without separate consumers.
+4. **Placement:** invariants in code, stable DNS/ports/topology in Compose, operator inputs in Coolify, secret values in protected storage. ENV delivers values, not necessarily owns them.
+5. **Default:** unpredictable external origins/secrets are blank Required and fail closed; safe canonical defaults stay in code/Compose. Do not expose internal tuning without operator use.
 
-1. **Who operates it?** Name the human/operator or external system that must
-   supply or legitimately change the value between deployments. If nobody does,
-   keep it in code or a versioned deployment definition, not ENV.
-2. **Who owns it?** Name the exact application subsystem or deployment resource
-   consuming it. Do not group unrelated database, authentication, invitation,
-   idempotency and storage concerns into one generic settings object/prefix.
-3. **Is it independent?** If the application can derive it unambiguously from
-   existing inputs or its known topology, compute it once. Do not demand both
-   database components and an independently supplied connection URL, or expose
-   duplicated public/internal addresses without a distinct consumer contract.
-4. **Where does it belong?** Choose application code for invariant behavior;
-   Git Compose for stable service DNS, internal ports and topology; Coolify
-   operator settings for actual external inputs; and a protected secret provider
-   for credentials. A runtime's ENV is a *delivery mechanism*, not necessarily
-   the owner of the value.
-5. **Is there a safe default?** Mark genuinely unpredictable required values
-   empty/required and fail fast. Keep safe, canonical defaults in the owning
-   code/Compose. Do not advertise internal tuning knobs just because a settings
-   framework supports an override.
+### Naming
+Prefer upstream keys and short purpose nouns (`POSTGRES_PASSWORD`, `ADMIN_UI_PUBLIC_URL`, `SIGNING_PRIVATE_KEY`). Omit redundant service/brand prefixes within one service; qualify competing concepts only when needed. Environment/deployment identity should not enter keys unless one process consumes multiple environments. Name purpose, not encoding (`_B64`) or vague `_TOKEN`, `_CONFIG`, `URL`; document format separately. One concept has one canonical name, never an unnecessary forwarding alias.
 
-### Naming is relative to the service boundary
+### Required, default and internal
+- **Required operator input:** blank Required Coolify variable or protected secret (for example `POSTGRES_PASSWORD=`).
+- **Safe optional override:** owning service's portable default (for example `POSTGRES_PORT=5432`, `TZ=UTC`).
+- **Derived architecture/product state:** internal service DNS, normal timeout, first-admin onboarding state belong in code/topology, not ENV.
 
-- Prefer short, recognizable **purpose nouns**: `POSTGRES_PASSWORD`,
-  `ADMIN_UI_PUBLIC_URL`, `CREDENTIAL_ENCRYPTION_KEY`, `SIGNING_PRIVATE_KEY`.
-  Use upstream image/application variable names where those are authoritative.
-- Inside a single service, its own product/service name is already implied.
-  Avoid redundant `MY_SERVICE_`, `PLATFORM_` or application-brand prefixes.
-  Add a domain prefix only when it genuinely distinguishes two concepts in
-  the **same consumer** (`ADMIN_JWT_SIGNING_KEY` vs an unrelated signing key).
-- Deployment identity is already represented by the chosen environment,
-  project and service. Do not bake `DEV_`, `STAGING_`, `PROD_`, environment
-  names or deployment IDs into keys unless the **same process** really consumes
-  independent values for multiple environments.
-- Name the **meaning**, not internal encoding or incidental implementation:
-  avoid `_B64`, generic `_TOKEN`, `_CONFIG` and vague `URL` when a clearer
-  purpose name exists. Specify PEM/base64/format separately in the consuming
-  contract when needed. Do not shorten so far that ownership becomes unclear.
-- One concept gets one canonical key. Do not add an alias/wrapper only to
-  translate a value that the image or application already consumes directly.
+A deployment-specific `.env.example` lists minimal approved operator inputs. Do not combine incompatible old/new databases, origins and secrets. Optional keys with defaults are not Required.
 
-### Required, default, internal: three different outcomes
+### Feature/security switches
+Never expose a toggle to bypass core behavior or mandatory auth/service identity. Deploy secure runtime or do not deploy. Absent trust material fails closed. Infer first-admin setup from durable state, not `ENABLE_PREVIEW` or `PRINT_BOOTSTRAP_SECRET`. Show initial codes only via approved restricted channel until setup, not recoverable general logs. Genuine independent supported features may have explicitly owned switches.
 
-| Decision | Placement | Example |
-| --- | --- | --- |
-| Operator must supply a secret or external origin | protected secret store / required Coolify variable; empty until supplied | `POSTGRES_PASSWORD=` or `ADMIN_UI_PUBLIC_URL=` |
-| Operator may override a genuinely portable value | owning service's documented default, optionally exposed | `POSTGRES_PORT=5432`, `TZ=UTC` |
-| Value follows from architecture, selected deployment or product state | code, service topology or state machine; **not** an operator ENV | internal service DNS, normal timeout, first-user onboarding state |
+### Secret visibility
+- Secret **values** live in protected Shared/secret-provider scope, not in Git/images/samples/pasted ENV. Preserve Project secret access boundaries against agents editing Application ENV; do not relocate secrets into agent-readable scope.
+- Resource ENV can carry references but resolved process ENV may be plaintext. Do not grant agents process/shell-env, raw logs, reveal controls or value APIs because they can edit ENV. Verify RBAC, not UI masks.
+- Select Team/Project/Environment/Server shared scope by consumer and visibility, without implicit inheritance or duplicate values. Rotating, renaming or removing cryptographic material is a migration preserving encrypted data, token verification and replay guarantees; do not substitute plaintext storage.
 
-An `.env.example` is a **minimal contract for its own deployment**, not a
-full list of every settings-model field. Separate historical/legacy and new
-service examples; do not mix incompatible default databases, URLs or secrets.
-Keep tuning overrides undocumented/unexposed until there is a real operator
-use case. An optional key with a safe preset does not become a required blank.
-
-### Feature and security switches are not substitutes for correct design
-
-Do not expose environment toggles that answer whether a deployed service
-really runs its own core function, whether mandatory authentication/service
-identity is enforced, or whether an unfinished preview is enabled. Deploy a
-correctly secured runtime, or **do not deploy that runtime**. Required trust
-material must fail startup closed when absent; never let a boolean silently
-turn off a required security boundary.
-
-When behavior is determined by durable product state (for example, whether
-initial administrator setup remains necessary), derive it from authoritative
-state, not `ENABLE_PREVIEW`, `PRINT_BOOTSTRAP_SECRET` or similar operator flags.
-If an initial code must be shown until setup is completed, use the approved
-restricted operator channel and stop when the state changes; do not expose
-recoverable secrets through general application logs as a configuration choice.
-A real independently supported product feature may have an operator setting,
-but its owner, purpose and supported lifecycle must be explicit.
-
-### Secret ownership and agent access are distinct from ENV transport
-
-- Keep real secret **values** in the designated protected Coolify Shared
-  Variables/secret-provider scope, never in Git, images, sample files or
-  pasted application-variable values. If a project deliberately protects
-  project-scoped Shared Variables from agents while allowing them to manage
-  Application ENV, **preserve that security boundary**, even for a secret
-  consumed by one service; don't relocate it to Application scope for neatness.
-- Application ENV may contain **references**, nonsecret topology and
-  nonsecret operator options. The resolved runtime environment may nonetheless
-  contain plaintext secrets. Do not grant agents shell/process-env access,
-  reveal-secret controls, unredacted logs, or variable-value APIs merely
-  because Application ENV configuration is editable. Verify actual tool/RBAC
-  permissions; UI masking alone is not an access boundary.
-- Share a value only where consumers and **visibility policy** require it.
-  Project/Team/Environment scopes are security/ownership decisions, not
-  synonyms for convenience. Resolve references explicitly; no implicit
-  inheritance, invented default credentials or extra copies of secret values.
-- Secret introduction, renaming, rotation or removal is a migration: preserve
-  durable encrypted data, token verification and replay guarantees. Remove
-  cryptographic ENV inputs only after the replacement design proves those
-  guarantees; never replace encryption with plaintext persistence.
-
-### Acceptance before a Coolify deployment
-
-Independently review the full proposed variable inventory, not just spelling:
-for each key record its real operator use case, consuming owner, scope,
-required/default rule, origin (operator / derived / secret reference) and
-removal/migration path if legacy. Reject unused keys, duplicate sources of
-truth, imaginary configurability, redundant service/environment prefixes,
-unnecessary secrets and bypass switches. Verify on the actual Coolify parser
-that required entries are blank, safe defaults stay defaults, Shared
-references resolve **without showing secret values**, and the agent's
-observable controls do not expose resolved runtime secrets. A passing YAML
-parse alone does not meet this gate.
+### Acceptance gate
+Review every variable's operator, consuming owner, purpose, scope, origin (operator/derived/secret), Required/default and legacy removal plan. Reject unused/duplicate/unsafe toggles, redundant aliases and unnecessary secrets. Verify the **actual Coolify parser** produces blank Required inputs, approved defaults and resolved Shared references without disclosing values or granting agent access. YAML parsing is not proof.
 
 ## Repository and build-path contract
 
@@ -155,6 +71,8 @@ deploy/coolify/<service>/
 ```
 
 This distinguishes a Coolify parser contract from a generic Compose file that might be usable by other runtimes.
+
+This is a **new-project preference**, not authorization to reorganize an established repository. If the project uses `deploy/<domain>/<service>/` with Compose and README side by side, keep that structure. Do not add an extra `compose/` directory without an independent deployment requirement.
 
 Coolify's **Docker compose location is relative to Base directory**. Do not repeat the base path in both fields.
 
@@ -175,21 +93,11 @@ Docker compose location: /deploy/coolify/example/docker-compose.yaml
 
 unless the deployed Coolify version explicitly documents a different path contract.
 
-For Git-backed Coolify resources, **Watch paths are mandatory** unless the repository explicitly documents why the resource must react to repository-wide changes. Set them repository-relative and as narrowly as possible to the actual deployment inputs.
+For Git-backed Coolify resources, **Watch Paths are mandatory** unless a repository-wide trigger is explicitly approved. Paths are repository-relative. Follow the **project's existing service layout and intended redeploy semantics**, rather than a universal docs-only prohibition.
 
-Do not automatically watch the whole service directory when it also contains README/runbook/audit files. A docs-only commit must not restart a production service unless documentation is itself a deployment input.
+**A whole-service-directory glob such as `deploy/vpn/example/**` is valid even when README/runbooks share the folder.** Documentation-only commits may deliberately redeploy the service: do **not** flag this as an error, block acceptance, or invent a nested `compose/` directory. Keep manifests beside README where that is the established layout.
 
-Prefer explicit inputs such as:
-
-```text
-deploy/coolify/example/docker-compose.yaml
-deploy/coolify/example/bootstrap/**
-deploy/coolify/example/config/**
-```
-
-Use `deploy/coolify/example/**` only when the directory is intentionally deployment-only or every file in it should trigger a redeploy.
-
-A missing or overly broad Watch paths contract is an acceptance blocker for Git-backed deployments: it can cause unrelated documentation/metadata commits to rebuild/redeploy the service, while an incomplete path set can prevent required changes from triggering deployment. Treat the persisted Coolify Watch paths value as runtime state and verify it after resource creation/recreation.
+For a project that explicitly requires deployment-input isolation, watch specific Compose/bootstrap/config paths instead. Do not silently change policy in either direction. Missing Watch Paths or paths spanning unrelated services without approval are blockers. Verify the **persisted Coolify value** on resource creation/recreation, not just the documentation.
 
 If the service consumes shared repository files outside its own directory, list those paths explicitly rather than falling back to an unrestricted repository-wide trigger.
 
@@ -263,50 +171,9 @@ ports:
 
 ## Optional defaults
 
-Use `${VAR:-default}` only when the default is genuinely safe and portable.
+Use `${VAR:-default}` only for genuinely safe portable defaults: `TZ`, non-sensitive resolver, or optionally configurable container listener port. Prefer upstream names (`TZ`, `HTTP_PROXY`) over invented service-specific aliases. A shared `TZ` should replace per-app keys unless required by the image.
 
-Typical candidates:
-
-- `TZ`;
-- non-sensitive DNS resolver choice;
-- conventional application-local listener ports when changing them is optional rather than required topology.
-
-Prefer canonical variable names already understood by images. Do not invent a stack-specific forwarding alias solely to map an unchanged value into `TZ`, `HTTP_PROXY`, or another standard variable.
-
-Timezone deserves special treatment because most images already understand the canonical `TZ` key.
-
-Prefer a shared `TZ` variable instead of inventing stack-specific names such as
-`APP_TIMEZONE`, `SERVICE_TIMEZONE`, or `VPN_CORE_TIMEZONE` unless the
-application itself requires such a key.
-
-Choose the shared scope according to ownership:
-
-- team scope for a broad organizational default;
-- project scope when the whole project shares one timezone;
-- environment scope when staging/production or regions differ;
-- resource scope only when one deployment genuinely differs.
-
-Coolify shared references are explicit, not an automatic cascading inheritance
-system. If a project needs to override a team-level default, point that
-deployment at the project-scoped value explicitly rather than assuming
-`{{project.TZ}}` will transparently fall back to `{{team.TZ}}`.
-
-If one canonical value feeds components with different names, declare one
-resource variable in Compose and map both consumer keys from it:
-
-```yaml
-environment:
-  TZ: ${TZ:?}
-  tz: ${TZ:?}
-```
-
-Then assign the Coolify resource variable to the selected shared scope, for example:
-
-```text
-TZ={{team.TZ}}
-```
-
-Use the actual selected scope for the deployment. Do not assume a reference at one scope falls back to another.
+Select Team/Project/Environment/Resource shared scope according to ownership; Coolify Shared references **do not cascade** or inherit. Project overrides must be explicit. For consumers needing both `TZ` and `tz`, map both from one variable bound to a verified reference such as `{{team.TZ}}`; do not introduce two timezones.
 
 ## Coolify variable flags
 
@@ -404,69 +271,14 @@ Before supplying Coolify Application settings, derive the public/private route i
 
 ## Generated domains
 
-Coolify can generate domains from service magic variables.
+Coolify declares managed public routes with version-supported `SERVICE_FQDN_*` / `SERVICE_URL_*` ENV magic variables (for example `SERVICE_FQDN_APP_8080: /` for service `app` exposed on port 8080). Match the **actual service name**, normalize separators to underscores, and target the intended internal port. Declare under the owner service's `environment:` in Coolify-parsed Compose; `extends` may require an explicit override for discovery. Do not invent magic variants, manually populate managed keys or use conflicting ordinary `SERVICE_*` keys. Confirm behavior against the deployed parser.
 
-Typical pattern:
+Generated domains are **service-keyed**: two independently editable domains/ports may not coexist under one service. When the parser permits only one domain per service, expose separate lightweight ingress adapters mapping each public HTTP route to the appropriate private listener; never grant them unrelated capabilities. Validate domain count, owner, internal ports and stale state on a fresh parser resource.
 
-```yaml
-services:
-  app:
-    environment:
-      SERVICE_FQDN_APP_8080: /
-    expose:
-      - '8080'
-```
+### Canonical application URL is separate from proxy route
+A magic key like `SERVICE_URL_APP_8080: /` declares a proxy route; it need not set the application URL. If the app actually needs a public origin for OAuth issuer/redirects, webhooks, cookies or links, expose a separate genuinely consumed Required key (e.g. `APP_EXTERNAL_URL: ${APP_EXTERNAL_URL:?}`), bound after the managed domain exists. Omit it otherwise.
 
-
-Match the magic variable to the **actual Compose service name** (uppercase with service separators normalized to underscores) and the port exposed by that service: for example `auth-server` on `8000` uses `SERVICE_URL_AUTH_SERVER_8000: /` if that magic form is supported by the deployed parser. Declare it under the owning service's `environment:` in the **Coolify-parsed Compose input**, including an explicit override when the source uses `extends`; a declaration hidden in an unresolved base file is not sufficient evidence of parser discovery. Choose the parser-supported `SERVICE_FQDN_*` or `SERVICE_URL_*` form from the exact deployed version, rather than inventing variants or manually populating managed `SERVICE_*` entries. Avoid ordinary application configuration keys starting with `SERVICE_*` when they could collide with Coolify's generated-variable namespace.
-
-The port suffix tells Coolify which internal service port the generated domain targets.
-
-Important parser boundary:
-
-- generated domain state is keyed by Compose service;
-- multiple independently editable public domains on different ports should not be assumed to coexist correctly merely by adding several `SERVICE_FQDN_<SAME_SERVICE>_<PORT>` variables;
-- when the current parser stores one domain per service, model independent public routes as independent Compose services.
-
-If several public HTTP routes actually terminate in one shared network namespace, use lightweight ingress adapters when appropriate:
-
-```text
-public domain A -> ingress-a -> shared-service:port-A
-public domain B -> ingress-b -> shared-service:port-B
-```
-
-The adapters should expose only the intended HTTP port and should not acquire unrelated capabilities or host ports.
-
-After parser changes, validate the number of generated domains, owning services and internal ports on a **freshly parsed resource**. Existing resources can retain stale managed state.
-
-### Consuming generated URLs inside the application
-
-Keep routing declaration and application-visible canonical URL conceptually separate.
-
-A port-qualified magic variable such as:
-
-```yaml
-SERVICE_URL_APP_8080: /
-```
-
-primarily declares a Coolify-managed public route to internal port 8080. If the application also needs to know its own public URL for webhooks, secure-cookie derivation, OAuth redirects or generated links, use a separate ordinary explicitly configured application variable, for example:
-
-```yaml
-environment:
-  SERVICE_URL_APP_8080: /
-  APP_EXTERNAL_URL: ${APP_EXTERNAL_URL:?}
-```
-
-Only declare `APP_EXTERNAL_URL` when the application actually consumes a canonical public URL. If needed, set this ordinary required Application variable **after** the managed domain has been established, through a verified operator/source binding. Do not promise that a generated route automatically becomes an application ENV value; omitting the unnecessary ordinary variable is preferable.
-
-Observed on a Git-backed Coolify 4.4.1 path: directly assigning an application variable from a port-qualified magic variable in the same Compose environment could reach the final Docker Compose interpolation before that generated value was present, producing an unset-variable warning and an empty application value even though the public proxy route later existed. **Do not put `${SERVICE_URL_*}`, including nested fallback interpolation, in Compose values unless the actual parser/runtime contract was explicitly validated.** Keep the literal magic route directive separate from application configuration. Treat this as parser/runtime ordering, not generic Compose behavior.
-
-Therefore validate both surfaces separately:
-
-1. the public route answers on the generated domain;
-2. application startup/runtime evidence shows its own external/canonical URL is non-empty and correct.
-
-An HTTP 200 through the proxy does not prove the application received its external URL.
+Observed with Git-backed Coolify 4.4.1: Compose interpolation of `${SERVICE_URL_*}` (even a nested fallback) sometimes occurs before magic values exist, leaving app ENV empty despite a working domain. Never interpolate magic URLs into ordinary ENV without parser/runtime proof. Check the **public route** and the **resolved application canonical URL** independently; HTTP 200 via proxy proves neither app URL nor issuer.
 
 ## Managed file mounts
 
