@@ -9,6 +9,7 @@ Load only the module matching the current task.
 - Git, Issues, branches, commits, PR/MR and publication → `git-workflow.md`
 - independent review → `code-review.md`
 - UI/UX design review and browser acceptance → `interface-design-review.md`
+- scientific diagrams, vector SVG, Excel-like charts and reproducible figures → `scientific-visualization.md`
 - shell/PowerShell/WSL/SSH/UART/bootloader → `terminal-operations.md`
 - deployment/services/infrastructure operations → `service-engineering/README.md`
 - remote browser sessions / Chrome tabs / DevTools / extension permissions → `remote-browser-session.md`

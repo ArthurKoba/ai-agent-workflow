@@ -46,6 +46,7 @@ Task skills:
 - Git / Issues / branches / commits / PR-MR / Git-backed coordination → `skills/git-workflow.md`
 - independent review → `skills/code-review.md`
 - interface/UX design review and acceptance → `skills/interface-design-review.md`
+- scientific flowcharts, Draw.io/SVG diagrams, measured/calculated plots and spreadsheet-backed charts → `skills/scientific-visualization.md`
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations.md`
 - any task that emits human-operated commands → `skills/terminal-operations.md` (mandatory)
 - service/deployment/infrastructure operations → `skills/service-engineering/README.md`
