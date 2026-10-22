@@ -94,7 +94,17 @@ Do not blindly repeat every check each executor already ran; validate the integr
 
 ## Publication
 
-Publication cadence follows the Project's Git policy and tool permissions. Direct push to unprotected main is preferred where permitted; otherwise use the required PR/MR path. In a local-first Project, publish a substantial integrated feature after available local checks, not after every correction. Publication authority still follows the repository/tool contract. In the standard GitHub split, the Implementer/writer owns branches, commits and PR revisions; the independent Reviewer reviews and merges. Orchestrator does not bypass protected branches, required checks, access scope or that identity separation. A development deployment is not authorization to deploy to production.
+**AI Agent Workflow repository:** after the required local checks, the
+Implementer/Orchestrator publishes directly to an unprotected `main` with
+a normal fast-forward push or atomic commit. No mandatory PR or
+independent-review merge gate applies here (owner decision 2026-10-22).
+Isolated preparation branches are acceptable but do not change the direct
+publication target.
+
+For other Projects, publication follows their policy and tool permissions:
+use PR/reviewer approval only when required there. Never bypass actual
+branch protection, required checks, permissions or access boundaries.
+A development deployment is not authorization to deploy to production.
 
 ## Completion
 
