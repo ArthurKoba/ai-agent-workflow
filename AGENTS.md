@@ -58,31 +58,15 @@ Task skills:
 - chat/workflow/prompt audit → `skills/workflow-audit.md`
 - registrar/domain procurement, long-term cost, transfers and DNS continuity → `skills/domain-acquisition.md`
 
-## Publication policy — AI Agent Workflow
+## GitHub writer/reviewer identity contract
 
-**Owner decision, 2026-10-22:** publish completed and locally verified changes
-**directly to this repository's `main` without mandatory pull requests or
-pre-merge independent review**. Direct publication is the default for every
-task in **AI Agent Workflow**, including skill and agent-rule updates.
-
-- The Implementer/writer (for GitHub Apps: `koba-ai-agent`) checks the current
-  `main` HEAD and effective permissions, validates the full change, and
-  publishes with a **normal fast-forward push or one atomic GitHub commit**.
-  Never force-update `main`, silently overwrite concurrent changes, or skip
-  hooks, locally available checks and required GitHub protections.
-- A separate worktree/branch may still be used for isolated drafting and
-  testing; it is **not** a reason to open a PR before directly incorporating
-  its verified commit into `main`.
-- `koba-ai-reviewer` may perform requested or follow-up independent review,
-  but reviewer approval and PR creation are **not publication prerequisites**
-  in this repository.
-- Open a PR only if **the owner explicitly requests one** or actual branch
-  protection/permissions require it. If direct publication is technically
-  prohibited, report the blocker and follow the permitted process; do not
-  evade protections through another transport.
-- These rules govern **this repository**, not other Projects with their own
-  Git or reviewer policies. Account aliases are stable selectors; concrete
-  App IDs, credentials and tokens are not repository documentation.
+When both GitHub App identities are available:
+- `koba-ai-agent` is the writer/Implementer identity. It may create working branches, commits, issues and pull requests, update its PR branch, and respond to review findings.
+- `koba-ai-reviewer` is the independent Reviewer identity. It reads the proposed diff and current authority, submits review state, and is the only identity that merges pull requests into reserved/default branches.
+- For PR-governed changes the writer never merges its own PR; the reviewer does not edit its implementation, and requested changes return to the writer.
+- Direct push to an unprotected default branch is permitted only when Project policy and actual tool permissions allow it. Tool-reserved branches, required reviews and protected branches use `writer branch -> PR -> reviewer review -> reviewer merge`. Do not bypass tool restrictions through another transport.
+- **AI Agent Workflow-specific permission:** when its `main` is unprotected and the active GitHub identity has write access, publish validated commits **directly to `main` without a PR**. If protection or a required review is introduced, use the existing PR route. This does not alter the general Git skill or other repositories.
+- Account aliases are stable selectors; concrete App IDs, installation IDs and credentials remain infrastructure state and do not belong in this repository.
 
 ## Rules
 
@@ -92,7 +76,7 @@ task in **AI Agent Workflow**, including skill and agent-rule updates.
 - Put task-specific rules in skills, not account prompt.
 - Put environment values in local context, not universal prompts.
 - Prefer editing an existing rule over adding a duplicate.
-- Significant changes require completed local verification and a traceable commit; independent review is optional or separately requested, never a required pre-publication step in this repository.
+- Significant changes require an independent Reviewer pass.
 - Generalize a lesson here only when it is reusable beyond one project.
 
 ## Depth
