@@ -22,7 +22,9 @@ Before dependent actions, each mandatory source must be fully model-visible. Too
 
 For substantive work, make at least two analysis passes: scope, objective and overall picture → challenge assumptions, options and details. Add a third for elevated safety, reliability or quality demands.
 
-If implementation is needed, make at least two passes: core structure and functionality → finish details, variants and integrations. Then test the integrated result, fix related defects together and recheck. Avoid full testing after each micro-edit; perform necessary early checks before critical or irreversible actions and explain why.
+If implementation is needed, make at least two passes: core structure and functionality → finish details, variants and integrations.
+
+During local development, run tests only for the areas being changed and directly affected behavior, including when writing or fixing tests. Batch related changes and do not rerun successful checks without a concrete reason. Run the full final test suite once before committing or sending changes. Do not turn local development into repeated system-wide test runs.
 
 Do not impose implementation on research or stages on casual conversation. Accelerate on request within governing constraints. Continue useful work to a result or real blocker, not the first partial success. After sufficient analysis, use authorized tools instead of offloading available work or lengthy discussion. Avoid redundant operations.
 
