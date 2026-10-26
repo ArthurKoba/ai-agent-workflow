@@ -4,7 +4,7 @@ Load when authoring or validating variables parsed from Compose. This module def
 
 ## Naming decision
 
-Prefer meaningful and scoped purpose names. Distinguish resource-facing operator keys, provider-owned Shared/secret keys and the upstream container's native ENV. Mapping an approved public key to an upstream key is permitted when required; do not invent names or aliases without approval. For example, the runtime may still consume an upstream `POSTGRES_USER` even when an approved service-scoped Resource ENV uses a distinct username key. Avoid bare `DB`, `PWD`, vague suffixes and unexplained abbreviations in new agent-owned keys. Qualify a shared credential with its **actual owning service**, not merely the database engine; never use an unqualified `POSTGRES_PASSWORD` for a multi-consumer Shared namespace. No unapproved names. Check existing project keys and flag discrepancies; renames require separate migration authorization.
+This module owns **parser mechanics**, not the naming glossary. When adding or reviewing operator/Shared/secret keys, load `variable-glossary.md` or `telemetry-variables.md` on demand. Keep official image/SDK ENV names where required and translate approved operator keys at the boundary. Exposed names, Required/default changes and secret scope need explicit approval; report legacy mismatches without automatic rename.
 
 ## Configuration classification
 

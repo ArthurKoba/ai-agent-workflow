@@ -14,7 +14,8 @@ For every key identify:
 5. **Default:** unpredictable external origins/secrets are blank Required and fail closed; safe canonical defaults stay in code/Compose. Do not expose internal tuning without operator use.
 
 ### Naming
-Prefer upstream keys for the **container interface**, but use approved service-scoped names for operator/Shared inputs; map between them only when approved. Use purpose nouns (`POSTGRES_PASSWORD`, `ADMIN_UI_PUBLIC_URL`, `SIGNING_PRIVATE_KEY`). Omit redundant service/brand prefixes within one service; qualify competing concepts only when needed. Environment/deployment identity should not enter keys unless one process consumes multiple environments. Name purpose, not encoding (`_B64`) or vague `_TOKEN`, `_CONFIG`, `URL`; document format separately. One concept has one approved name per actual scope; only explicit upstream-to-operator mappings are justified.
+
+For new or questionable operator keys load `variable-glossary.md` (OpenTelemetry → `telemetry-variables.md`). Do **not** load the glossary when deploying an already approved, unchanged configuration. Keep upstream image/SDK variables untouched; map approved short operator names to them only at a real boundary. Within one resource use concise keys; qualify the actual owner in multi-consumer and Shared/secret namespaces. Full words such as `USERNAME`, `PASSWORD`, `DATABASE` are preferred for our keys. Prefer environment Shared scopes to environment suffixes. New aliases and live renames require explicit approval.
 
 ### Required, default and internal
 - **Required operator input:** blank Required Coolify variable or protected secret (using its approved scoped key).

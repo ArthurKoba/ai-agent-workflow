@@ -17,21 +17,21 @@ Use the narrowest Coolify shared-variable scope that matches ownership:
 - `{{environment.NAME}}`
 - `{{server.NAME}}`
 
-For Git-backed Compose on Coolify 4.3.23, use a two-step contract:
+For a **VictoriaMetrics-owned backend** referenced by multiple resources on Git-backed Coolify 4.3.23, use a two-step example (scope `team` only if actually approved for those consumers):
 
 ```yaml
 environment:
-  METRICS_ENDPOINT: ${METRICS_ENDPOINT:?}
-  METRICS_AUTH_USERNAME: ${METRICS_AUTH_USERNAME:?}
-  METRICS_AUTH_PASSWORD: ${METRICS_AUTH_PASSWORD:?}
+  VICTORIA_METRICS_URL: ${VICTORIA_METRICS_URL:?}
+  VICTORIA_METRICS_AUTH_USERNAME: ${VICTORIA_METRICS_AUTH_USERNAME:?}
+  VICTORIA_METRICS_AUTH_PASSWORD: ${VICTORIA_METRICS_AUTH_PASSWORD:?}
 ```
 
 Then set the generated resource variables in Coolify to the shared references:
 
 ```text
-METRICS_ENDPOINT={{team.METRICS_ENDPOINT}}
-METRICS_AUTH_USERNAME={{team.METRICS_AUTH_USERNAME}}
-METRICS_AUTH_PASSWORD={{team.METRICS_AUTH_PASSWORD}}
+VICTORIA_METRICS_URL={{team.VICTORIA_METRICS_URL}}
+VICTORIA_METRICS_AUTH_USERNAME={{team.VICTORIA_METRICS_AUTH_USERNAME}}
+VICTORIA_METRICS_AUTH_PASSWORD={{team.VICTORIA_METRICS_AUTH_PASSWORD}}
 ```
 
 Rules:
