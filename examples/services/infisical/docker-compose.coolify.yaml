@@ -1,0 +1,37 @@
+# Coolify Git-backed Compose entrypoint. Generic base remains independently valid.
+services:
+  postgres:
+    extends:
+      file: ./docker-compose.yaml
+      service: postgres
+    # Repeat interpolation for Coolify's variable discovery on inherited services.
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: ${POSTGRES_DATABASE:-postgres}
+
+  valkey:
+    extends:
+      file: ./docker-compose.yaml
+      service: valkey
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+
+  infisical:
+    extends:
+      file: ./docker-compose.yaml
+      service: infisical
+    environment:
+      NODE_ENV: production
+      SITE_URL: ${SITE_URL:?}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?}
+      AUTH_SECRET: ${AUTH_SECRET:?}
+      DB_CONNECTION_URI: postgresql://${POSTGRES_USERNAME:-postgres}:${POSTGRES_PASSWORD:?}@database:5432/${POSTGRES_DATABASE:-postgres}
+      REDIS_URL: redis://default:${VALKEY_PASSWORD:?}@valkey:6379/0
+      # Route only the Infisical UI/API; do not expose PostgreSQL or Valkey.
+      SERVICE_FQDN_INFISICAL_8080: /
+
+# Compose 'extends' does not import top-level volume declarations.
+volumes:
+  postgres-data:
+  valkey-data:

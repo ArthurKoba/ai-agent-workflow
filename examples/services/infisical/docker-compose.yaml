@@ -1,0 +1,78 @@
+# Standalone, network-private Infisical with its own PostgreSQL and Valkey.
+# Public HTTPS ingress is provided by the deployment owner, not by this base file.
+services:
+  postgres:
+    image: postgres:16.15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: ${POSTGRES_DATABASE:-postgres}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    # The stable client alias can later move to optional PgBouncer.
+    networks:
+      default:
+        aliases:
+          - database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  valkey:
+    image: valkey/valkey:8.1.10-alpine
+    restart: unless-stopped
+    # Official Alpine image uses UID 999 / GID 1000 for its valkey account.
+    user: "999:1000"
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+    # Keep credentials out of the server's command-line arguments.
+    # The ACL file is recreated with restrictive permissions on each start.
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        umask 077
+        printf 'user default on >%s ~* &* +@all\n' "$$VALKEY_PASSWORD" > /tmp/valkey-users.acl
+        exec valkey-server --aclfile /tmp/valkey-users.acl --appendonly yes
+    volumes:
+      - valkey-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "VALKEYCLI_AUTH=\"$$VALKEY_PASSWORD\" valkey-cli ping | grep -qx PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  infisical:
+    image: infisical/infisical:v0.167.1
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      SITE_URL: ${SITE_URL:?}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?}
+      AUTH_SECRET: ${AUTH_SECRET:?}
+      # Compose forms internal URLs from the existing operator keys.
+      # Generate URL-safe POSTGRES_PASSWORD and VALKEY_PASSWORD values.
+      DB_CONNECTION_URI: postgresql://${POSTGRES_USERNAME:-postgres}:${POSTGRES_PASSWORD:?}@database:5432/${POSTGRES_DATABASE:-postgres}
+      REDIS_URL: redis://default:${VALKEY_PASSWORD:?}@valkey:6379/0
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+volumes:
+  postgres-data:
+  valkey-data:

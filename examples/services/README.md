@@ -18,6 +18,10 @@ Copy a vetted preset into the owning infrastructure or application repository's 
 
 Existing proven presets below remain supported in their established, **single-Compose** form until each is separately migrated and validated. Do not bulk-rename or force a second Compose file into a validated deployment merely to satisfy the new-preset layout.
 
+## Source-ready examples awaiting Coolify runtime validation
+
+- `infisical/` — standalone Secrets Manager with dedicated PostgreSQL and Valkey, generic Compose and Coolify `extends` entrypoint. **Source validation only**; verify on the actual Coolify instance before relying on it for secrets.
+
 ## Existing presets
 
 - `jenkins/` — Jenkins controller with dedicated inbound builder and isolated TLS-protected Docker-in-Docker daemon.
