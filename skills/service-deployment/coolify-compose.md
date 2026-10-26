@@ -11,7 +11,25 @@ Load additional modules **when their condition applies**:
 - Fresh parser/deploy/acceptance checks → `coolify-validation.md`.
 - Git folders and Watch Paths → `deployment-layout.md` and `git-backed-infrastructure.md`.
 
-The standard produces a generic `docker-compose.yaml` and a `docker-compose.coolify.yaml` entrypoint, both with four-letter `.yaml`. Do not assume Coolify merges them. `extends`, `include` and multi-file merging are separate Compose mechanisms; verify the exact deployed Coolify parser and full resolved topology before adopting one. If parser materialization cannot be demonstrated, record the blocker; do not silently duplicate or abandon the base Compose contract.
+## Git-backed inheritance
+
+Use `docker-compose.yaml` (standalone) and `docker-compose.coolify.yaml` (Coolify entrypoint); always `.yaml`. Live Coolify deployments have used `extends` and materialized a managed file, but parser versions and features vary:
+
+```yaml
+services:
+  app:
+    extends:
+      file: ./docker-compose.yaml
+      service: app
+```
+
+- Keep ordinary runtime topology in the generic base. `extends` merges a **service**, not its top-level `volumes:`, `networks:`, `configs:` or `secrets:`; redeclare consumed resources in the entrypoint.
+- Repeat Required/default variable interpolation in the entrypoint service `environment:` when inherited declarations are not parser-visible. Do not rename operator keys without approval.
+- For Coolify-managed files, repeat the `type: bind` mount with `content:` in the entrypoint if inheritance hides parser metadata. Verify equality of duplicated inline content; prefer one tracked config file where feasible. Coolify `content:` is **not portable generic Compose**. Repository file binds may require **Preserve repository** in Coolify.
+- Set Base Directory to the service folder, Compose Location to `/docker-compose.coolify.yaml` relative to it, and Watch Paths to the folder plus consumed shared paths. Verify each resource's saved Watch Paths.
+- Validate generic Compose independently; inspect Coolify-parsed ENV, managed files, top-level resources and Deployable Compose. Finished deployment/container presence do not prove consumer behavior. Do not redeploy to diagnose an unapproved parser change.
+
+`include`, command-line multi-file overrides and `extends` have different semantics; do not substitute one without a version-specific parser test.
 
 ## Authority
 
