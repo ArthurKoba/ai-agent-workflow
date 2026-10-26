@@ -44,8 +44,7 @@ When parser behavior matters, inspect the deployed Coolify version's parser/sour
 
 ## Mandatory deployment contract
 
-- **Unrequested changes require prior approval.** Do not edit, rename, add, remove, migrate, deploy or otherwise change anything beyond the user's explicit request. If an extra change seems necessary or beneficial, first state the exact proposed change and wait for explicit authorization. Neither conventions, best practices, nor a broad request to proceed imply consent.
-- **Get explicit user approval of the complete operator-variable contract** before adding, renaming, aliasing or removing keys: exact names, purpose, Required/Default semantics, owner and secret scope. Never infer approval from a general implementation request.
+- **Operator approval:** Discuss alternatives without changing Compose, ENV contracts or live resources. Apply only changes the operator explicitly requests; proposals and requests to explore options are not approval to implement them. Obtain agreement before adding, renaming or removing operator keys.
 - Prefer existing approved or upstream names. Do not invent prefixes, duplicate credentials, intermediary aliases or new privileged identities for convenience.
 - Keep a single canonical Compose owner and only justified orchestrator overrides. Ensure every effective deployment input is tracked by Watch Paths; verify inheritance in the actual parser.
 - Treat generated domains, Shared references and parser-managed variables as runtime state. Verify the resulting application configuration and reconcile stale entries before declaring changes complete.

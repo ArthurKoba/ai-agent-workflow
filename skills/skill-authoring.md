@@ -30,3 +30,7 @@ Apply when creating, editing, reviewing, merging or splitting skills.
    inbound routes and relative links, compare old and new requirements for
    omissions, and verify the result with repository checks. Do not restore
    superseded duplicates merely to preserve history.
+
+6. **Operator authorizes changes.** Discuss or compare alternatives freely, but
+   edit or publish skills and glossaries only when the operator explicitly
+   requests that change. An invitation to explore ideas is not such a request.
