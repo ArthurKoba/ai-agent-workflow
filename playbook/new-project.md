@@ -42,10 +42,10 @@ See [software engineering](../skills/software-engineering/README.md), [context e
 ## 5. Integrate and deploy
 
 - [ ] Use the Git workflow permitted by actual repository protections and tool permissions: direct push only when allowed; otherwise working branch → PR/MR → independent review → merge. A prototype may use a simplified workflow, never bypass required gates.
-- [ ] Prefer Docker Compose for straightforward service packaging and reproducible development where it fits; use the existing service manager/orchestrator for deployed infrastructure, rather than imposing a second control plane. Check deployment, readiness, persistence, rollback and runtime acceptance at the relevant boundary.
+- [ ] Prefer reproducible Compose for straightforward service packaging where it fits; CI can run quality gates while Coolify builds, or deployment can use a prebuilt immutable image when provenance/rollback requirements justify it; use the existing service manager/orchestrator for deployed infrastructure, rather than imposing a second control plane. Check deployment, readiness, persistence, rollback and runtime acceptance at the relevant boundary.
 - [ ] Keep current task state in Issues, durable changes in code/contracts, and deployment details in their owning infrastructure source.
 
-**Authorities:** [Git workflow](../skills/git-workflow.md), [service engineering](../skills/service-engineering/README.md), [MCP strategy](../docs/MCP_STRATEGY.md).
+**Authorities:** [Git workflow](../skills/git-workflow.md), [service deployment](../skills/service-deployment/README.md), [MCP strategy](../docs/MCP_STRATEGY.md).
 
 ## 6. Improve the agent system from evidence
 

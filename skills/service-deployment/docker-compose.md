@@ -1,6 +1,6 @@
-# Docker / Compose Engineering
+# Docker Compose Packaging
 
-Use this module for Dockerfiles, Docker Compose manifests, container runtime configuration and registry-based deployment packaging.
+Load when editing generic Docker Compose. The base `docker-compose.yaml` must work independently of Coolify; `docker-compose.coolify.yaml` adds orchestrator-specific handling only after verified composition. All new standard filenames use four-letter `.yaml`. For runtime/build/bootstrap decisions, also load `deployment-runtime.md`. If Coolify parses Compose, load `coolify-compose.md`.
 
 ## Ownership
 
@@ -14,7 +14,7 @@ If Coolify parses or deploys the Compose resource, also load `coolify-compose.md
 
 ## Compose files
 
-- Prefer the repository's established filename and extension. If no convention exists, modern Compose commonly uses `compose.yaml` or `docker-compose.yaml`; do not rename an existing working convention merely for style.
+- Preserve established working filenames unless their migration is approved. New standardized deployments use `docker-compose.yaml` and `docker-compose.coolify.yaml`; `.yaml` has four letters, not `.yml`.
 - Define services, networks and persistent volumes declaratively when they are part of the reproducible runtime topology.
 - Use named volumes for durable container-managed data when host-path ownership is not required.
 - Use explicit networks only when topology/isolation requires them; do not add decorative networks.
@@ -39,22 +39,6 @@ State these dimensions explicitly before refactoring topology. Do not introduce 
 - A tracked `.env.example`/template may document required variable names and safe example values when that is the project's convention.
 - Secret values should come from the declared secret/provider/runtime surface rather than being embedded in Compose, Dockerfile layers or image metadata.
 - Validate required runtime variables explicitly when missing values would produce an unsafe or misleading deployment.
-
-## Images and builds
-
-- Production/release deployment should normally consume a reproducible published image rather than rebuilding source ad hoc on the target host.
-- Pin image tags/digests according to the project's release policy; immutable digests are preferred where release provenance matters.
-- Keep development `build:` flows separate from production image-selection semantics when both are supported.
-- Multi-stage builds should keep build toolchains and unnecessary artifacts out of the runtime image.
-
-## Runtime behavior
-
-- Use health/readiness checks when another service/orchestrator needs a machine-readable availability contract.
-- Make restart behavior explicit when process recovery semantics matter.
-- Avoid privileged mode, host networking, broad device mounts or writable host paths unless the service contract requires them.
-- A privileged **one-shot** bootstrap can be valid when trusted deployment code must prepare host prerequisites and the accepted threat model allows that authority. Keep it non-persistent, narrowly scoped and unavailable to untrusted workloads; do not convert the persistent application into a privileged container for convenience.
-- Do not add a second reverse proxy/service manager/control path when the project already has one.
-- Prefer behavioral acceptance over incidental metadata. For namespaced/rootless runtimes, numeric UID/GID/group values visible from different namespaces may legitimately differ; prove that the intended process can perform the required operation instead of inventing equality invariants.
 
 ## Operations
 

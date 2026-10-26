@@ -49,9 +49,9 @@ Task skills:
 - scientific flowcharts, Draw.io/SVG diagrams, measured/calculated plots and spreadsheet-backed charts → `skills/scientific-visualization.md`
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations.md`
 - any task that emits human-operated commands → `skills/terminal-operations.md` (mandatory)
-- service/deployment/infrastructure operations → `skills/service-engineering/README.md`
+- service/deployment/infrastructure operations → `skills/service-deployment/README.md`
 - remote browser sessions / Chrome tabs / DevTools / extension permissions → `skills/remote-browser-session.md`
-- reusable service deployment examples/presets → `examples/services/README.md` after loading the relevant service-engineering skill
+- reusable service deployment examples/presets → `examples/services/README.md` after loading the relevant service-deployment skill
 - program analysis (EXE, BIOS/UEFI, firmware, libraries, drivers), behavior tracing and Ghidra/Analysis → `skills/reverse-analysis.md`
 - OpenIPC migration/porting/contribution → `skills/openipc-porting.md`
 - context-efficient documentation/bootstrap/multi-agent workflow design → `skills/context-engineering.md`
