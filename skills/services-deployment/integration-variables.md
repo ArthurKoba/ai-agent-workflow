@@ -31,6 +31,6 @@ Do not force password ENV for an approved internal relay without SMTP AUTH or fo
 
 ## Scope boundary
 
-This file does **not** standardize PgBouncer topology or proxy ports; that decision remains open. PgBouncer parameters such as `pool_mode`, `default_pool_size` and `max_client_conn` usually belong in `pgbouncer.ini` until an independently approved override is needed. Do not make the pooler mandatory or silently change an existing PostgreSQL endpoint.
+PgBouncer is addressed in `pgbouncer-deployment.md` only when the PostgreSQL stack needs an optional pooler. This S3/SMTP table does not change database routing.
 
 Upstream references: [AWS SDK settings](https://docs.aws.amazon.com/sdkref/latest/guide/settings-reference.html), [SMTP transport](https://nodemailer.com/smtp), [PgBouncer configuration](https://www.pgbouncer.org/config).

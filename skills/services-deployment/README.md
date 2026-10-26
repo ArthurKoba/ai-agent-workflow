@@ -11,7 +11,8 @@ Load for Git-backed services deployment, Docker Compose, runtime dependencies, n
 - **New service lifecycle, upgrade, recovery, host privilege or migration** → `deployment-lifecycle.md`.
 - **Deciding whether ENV is necessary** → `environment-policy.md`; **Coolify parser variables** → `coolify-variables.md`.
 - **New operator/Shared/secret key or naming mismatch** → `variable-glossary.md`; **OpenTelemetry naming** → `telemetry-variables.md` (both on demand). Names not covered there still need approval; never auto-rename live keys.
-- **S3 or SMTP operator keys** → `integration-variables.md` (only when relevant); PgBouncer topology is not yet standardized.
+- **S3 or SMTP operator keys** → `integration-variables.md`; **PgBouncer as optional PostgreSQL proxy** → `pgbouncer-deployment.md` (only when relevant).
+- **PASSWORD / TOKEN / KEY / SECRET naming** → `credential-variables.md` when designing credential contracts.
 - **Public reusable deployment presets** → `../../examples/services/README.md` after loading relevant deployment module.
 - **Shell, SSH or human-operated commands** → `../terminal-operations.md`.
 - **Implementation or code changes** → `../software-engineering/README.md`.

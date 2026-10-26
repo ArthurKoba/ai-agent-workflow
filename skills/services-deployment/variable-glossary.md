@@ -44,4 +44,4 @@ Use short names for a single Valkey resource; **only qualify the actual owner** 
 
 ## Other integrations
 
-S3 and SMTP → `integration-variables.md` on demand. PgBouncer architecture, ZITADEL bootstrap and OAuth signing need separate decisions.
+S3/SMTP → `integration-variables.md`; optional PgBouncer endpoint → `pgbouncer-deployment.md`; credential suffixes → `credential-variables.md` (each on demand). ZITADEL bootstrap is service-specific.
