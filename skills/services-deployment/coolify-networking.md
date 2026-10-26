@@ -45,7 +45,15 @@ Coolify declares managed public routes with version-supported `SERVICE_FQDN_*` /
 
 Generated domains are **service-keyed**: two independently editable domains/ports may not coexist under one service. When the parser permits only one domain per service, expose separate lightweight ingress adapters mapping each public HTTP route to the appropriate private listener; never grant them unrelated capabilities. Validate domain count, owner, internal ports and stale state on a fresh parser resource.
 
-### Canonical application URL is separate from proxy route
-A magic key like `SERVICE_URL_APP_8080: /` declares a proxy route; it need not set the application URL. If the app actually needs a public origin for OAuth issuer/redirects, webhooks, cookies or links, expose a separate genuinely consumed Required key (e.g. `APP_EXTERNAL_URL: ${APP_EXTERNAL_URL:?}`), bound after the managed domain exists. Omit it otherwise.
+### Generated application URL (preferred)
+If the app's public origin **equals a Coolify-managed route**, prefer `SERVICE_URL_<SERVICE>_<PORT>` (scheme included) over a separate Required URL:
 
-Observed with Git-backed Coolify 4.4.1: Compose interpolation of `${SERVICE_URL_*}` (even a nested fallback) sometimes occurs before magic values exist, leaving app ENV empty despite a working domain. Never interpolate magic URLs into ordinary ENV without parser/runtime proof. Check the **public route** and the **resolved application canonical URL** independently; HTTP 200 via proxy proves neither app URL nor issuer.
+```yaml
+environment:
+  SERVICE_URL_APP_8080: /
+  APP_EXTERNAL_URL: ${SERVICE_URL_APP_8080}
+```
+
+`SERVICE_FQDN_*` is hostname-only. Map to the app's actual key (e.g. `SITE_URL`) only if consumed; use a separate URL only if the origin differs or an approved fallback is required.
+
+**Parser gate:** Git-backed Coolify 4.4.1 sometimes interpolated `${SERVICE_URL_*}` before generation, leaving the app URL empty despite a working domain. Verify generated route, Deployable Compose **and resolved container URL/issuer**; HTTP 200 alone is insufficient. If wrong or empty, stop and diagnose, then seek approval for a verified fallback—do not silently add a manual Required URL.
