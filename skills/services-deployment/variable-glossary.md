@@ -44,4 +44,4 @@ Use short names for a single Valkey resource; **only qualify the actual owner** 
 
 ## Other integrations
 
-ZITADEL first-admin credentials, OAuth signing and further dependencies need separately agreed names, scope and upstream mapping.
+S3 and SMTP → `integration-variables.md` on demand. PgBouncer architecture, ZITADEL bootstrap and OAuth signing need separate decisions.
