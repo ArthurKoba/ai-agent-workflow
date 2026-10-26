@@ -8,7 +8,7 @@ Load additional modules **when their condition applies**:
 - Cross-resource networks, ingress routes or managed domains → `coolify-networking.md`.
 - Managed configuration files, storage and telemetry collector → `coolify-files.md`.
 - Existing resource migration, stale parser state or persistent-volume changes → `coolify-migrations.md`.
-- Fresh parser/deploy/acceptance checks → `coolify-validation.md`; persistent container health and functional probes → `health-checks.md`.
+- Fresh parser/deploy/acceptance checks → `coolify-validation.md`; basic container healthcheck policy → `deployment-runtime.md`.
 - Git folders and Watch Paths → `deployment-layout.md` and `git-backed-infrastructure.md`.
 
 ## Git-backed inheritance

@@ -8,7 +8,6 @@ Load for Git-backed services deployment, Docker Compose, runtime dependencies, n
 - **Generic Docker Compose packaging** → `docker-compose.md`; for build, images, CI/runtime, bootstrap or grouping dependencies → `deployment-runtime.md`.
 - **Git-owned deployments and Watch Paths** → `git-backed-infrastructure.md`.
 - **Coolify owns Compose parsing** → `coolify-compose.md` **mandatory**, then its conditional links for ENV, secrets, networking, managed files, migrations and parser acceptance.
-- **Health/readiness and functional acceptance of running services** → `health-checks.md` (mandatory for new long-lived services and for checks/recovery).
 - **New service lifecycle, upgrade, recovery, host privilege or migration** → `deployment-lifecycle.md`.
 - **Deciding whether ENV is necessary** → `environment-policy.md`; **materializing Coolify resource variables** → `coolify-variables.md`. Final variable naming glossary/contract is **not yet approved**; suggest differences without automatic rename.
 - **Public reusable deployment presets** → `../../examples/services/README.md` after loading relevant deployment module.

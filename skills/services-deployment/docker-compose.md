@@ -1,6 +1,6 @@
 # Docker Compose Packaging
 
-Load when editing generic Docker Compose. The base `docker-compose.yaml` must work independently of Coolify; `docker-compose.coolify.yaml` adds orchestrator-specific handling only after verified composition. All new standard filenames use four-letter `.yaml`. For runtime/build/bootstrap decisions load `deployment-runtime.md`; for long-lived services also load `health-checks.md`. If Coolify parses Compose, load `coolify-compose.md`.
+Load when editing generic Docker Compose. The base `docker-compose.yaml` must work independently of Coolify; `docker-compose.coolify.yaml` adds orchestrator-specific handling only after verified composition. All new standard filenames use four-letter `.yaml`. For runtime, build, bootstrap and basic healthcheck decisions load `deployment-runtime.md`. If Coolify parses Compose, load `coolify-compose.md`.
 
 ## Ownership
 

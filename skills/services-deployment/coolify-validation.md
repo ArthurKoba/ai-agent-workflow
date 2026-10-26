@@ -1,6 +1,6 @@
 # Coolify Acceptance and Source Verification
 
-Load when checking a freshly parsed or deployed Compose resource. Generic `docker compose config` and a healthy container are separate from Coolify parser validation and consumer acceptance. For new or changed long-running services also apply `health-checks.md`. Keep test-only resources distinct from production; never redeploy a running service just to resolve uncertainty about parser semantics.
+Load when checking a freshly parsed or deployed Compose resource. Generic `docker compose config` and a healthy container are separate from Coolify parser validation and consumer acceptance. Keep test-only resources distinct from production; never redeploy a running service just to resolve uncertainty about parser semantics.
 
 ## Deploy and restart acceptance
 
@@ -28,7 +28,7 @@ Before declaring the source ready, inspect a fresh Coolify resource and verify:
 - persistent volumes refer to the intended existing data;
 - Compose parser output contains no stale placeholders or unintended generated values.
 
-Then perform deployment/runtime/consumer acceptance separately. For telemetry pipelines, query the actual backend (for example through Grafana's configured datasource proxy) after deployment; container health and successful exporter scrape are not enough to prove remote-write delivery.
+Then distinguish runtime health from consumer acceptance. Detailed metric queries and product-specific functional tests belong to the owning service runbook, not this deployment skill.
 
 ## Source references
 
