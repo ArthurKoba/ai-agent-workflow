@@ -19,7 +19,7 @@ Network planning: prefer a shared private application network within one environ
 
 ## Runtime behavior
 
-- Use health/readiness checks when another service/orchestrator needs a machine-readable availability contract.
+- Design explicit image/Compose health and readiness for every supported long-running service; follow `health-checks.md`. One-shot bootstrap jobs require completion/failure gates, not a permanent healthcheck.
 - Make restart behavior explicit when process recovery semantics matter.
 - Avoid privileged mode, host networking, broad device mounts or writable host paths unless the service contract requires them.
 - A privileged **one-shot** bootstrap can be valid when trusted deployment code must prepare host prerequisites and the accepted threat model allows that authority. Keep it non-persistent, narrowly scoped and unavailable to untrusted workloads; do not convert the persistent application into a privileged container for convenience.

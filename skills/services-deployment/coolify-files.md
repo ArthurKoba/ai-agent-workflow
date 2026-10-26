@@ -2,6 +2,12 @@
 
 Load when Coolify manages a mounted file, durable state or telemetry pipeline; keep mount and external collector contracts independent of application business configuration. When a local collector is justified for protocol translation, buffering or routing, treat it as a dependency with explicit failure policy; do not require one for every service.
 
+## Ownership and editability
+
+Use **File Mount** for one editable application configuration file (not a named data volume or Host File Mount). `content:` is the Git bootstrap/recovery template and Coolify materializes the file under its managed storage. If an operator edits its Content in Coolify, the **saved runtime file** can diverge from the Git template; later parses may keep the existing file instead of overwriting it. Define the owner and reconciliation policy: export/redact/back up approved changes, review before importing into Git, and never assume Git changes overwrite live content. Prefer one tracked file when Git must remain authoritative; use a Coolify-managed file only when runtime editing is an explicit requirement.
+
+Before editing, inspect current content and mount permissions. The application may require reload/restart; verify behavior after saving. Whether dashboard editing works with read-only mounts is release-specific: verify before relying on it. Coolify's managed file editor has size/format limitations, and File Mounts are not covered by ordinary volume backups; document a separate recovery/export method. Do not confuse managed File Mount with an unmanaged host-file bind.
+
 ## Managed file mounts
 
 When a service needs an editable configuration file, prefer Coolify's inline-content bind mount rather than an unmanaged host file:
@@ -22,6 +28,10 @@ This gives three useful properties:
 - the exact container path remains declarative.
 
 Rules:
+
+- Templates may refer to **approved names** of environment variables; the application/collector must consume those references at runtime (e.g. Alloy `sys.env("...")`). A `content:` YAML block is not automatically a secure secret interpolator. Never embed resolved passwords/tokens in Git templates, inline config or readable Coolify File Storage; keep secret values with approved Shared/Secret Manager scope and pass references through runtime ENV or a verified secret-file mechanism.
+- Do not use `content:` for files containing credentials that the dashboard operator or agent should not be allowed to view. Keep resource-editor permissions and environment access limited; loading file Content can expose any literal secrets already present.
+- When `extends` hides File Storage metadata, declare the managed-file mount again in the Coolify entrypoint and validate effective source/target and content synchronization; see `coolify-compose.md`.
 
 - use `content:` for generated/managed files when a repository-relative source does not already exist as the authoritative file;
 - on Coolify 4.3.23, a repository-relative bind such as `./config.alloy:/etc/alloy/config.alloy:ro` without inline `content:` can be classified as a directory; use an explicit file mount with `content:` when the parser must materialize a file;

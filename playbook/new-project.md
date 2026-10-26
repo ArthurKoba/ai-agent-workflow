@@ -45,7 +45,7 @@ See [software engineering](../skills/software-engineering/README.md), [context e
 - [ ] Prefer reproducible Compose for straightforward service packaging where it fits; CI can run quality gates while Coolify builds, or deployment can use a prebuilt immutable image when provenance/rollback requirements justify it; use the existing service manager/orchestrator for deployed infrastructure, rather than imposing a second control plane. Check deployment, readiness, persistence, rollback and runtime acceptance at the relevant boundary.
 - [ ] Keep current task state in Issues, durable changes in code/contracts, and deployment details in their owning infrastructure source.
 
-**Authorities:** [Git workflow](../skills/git-workflow.md), [service deployment](../skills/service-deployment/README.md), [MCP strategy](../docs/MCP_STRATEGY.md).
+**Authorities:** [Git workflow](../skills/git-workflow.md), [service deployment](../skills/services-deployment/README.md), [MCP strategy](../docs/MCP_STRATEGY.md).
 
 ## 6. Improve the agent system from evidence
 

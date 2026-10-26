@@ -1,6 +1,6 @@
 # Docker Compose Packaging
 
-Load when editing generic Docker Compose. The base `docker-compose.yaml` must work independently of Coolify; `docker-compose.coolify.yaml` adds orchestrator-specific handling only after verified composition. All new standard filenames use four-letter `.yaml`. For runtime/build/bootstrap decisions, also load `deployment-runtime.md`. If Coolify parses Compose, load `coolify-compose.md`.
+Load when editing generic Docker Compose. The base `docker-compose.yaml` must work independently of Coolify; `docker-compose.coolify.yaml` adds orchestrator-specific handling only after verified composition. All new standard filenames use four-letter `.yaml`. For runtime/build/bootstrap decisions load `deployment-runtime.md`; for long-lived services also load `health-checks.md`. If Coolify parses Compose, load `coolify-compose.md`.
 
 ## Ownership
 
@@ -52,7 +52,7 @@ docker compose pull
 docker compose up -d --remove-orphans
 ```
 
-These are examples, not commands to emit blindly. Human-operated commands still require `terminal-operations.md` and the active project/local execution contract.
+These are examples, not commands to emit blindly. Human-operated commands still require `../terminal-operations.md` and the active project/local execution contract.
 
 ## Validation
 

@@ -1,6 +1,6 @@
 # Service Presets
 
-Reusable, sanitized service deployment templates owned by AI Agent Workflow. This catalog is an upstream **example source**, not a mutable production deployment repository. Use `../../skills/service-deployment/README.md` to select relevant deployment rules.
+Reusable, sanitized service deployment templates owned by AI Agent Workflow. This catalog is an upstream **example source**, not a mutable production deployment repository. Use `../../skills/services-deployment/README.md` to select relevant deployment rules.
 
 ## New preset contract
 

@@ -1,6 +1,6 @@
 # Coolify Acceptance and Source Verification
 
-Load when checking a freshly parsed or deployed Compose resource. Generic `docker compose config` and a healthy container are separate from Coolify parser validation and consumer acceptance. Keep test-only resources distinct from production; never redeploy a running service just to resolve uncertainty about parser semantics.
+Load when checking a freshly parsed or deployed Compose resource. Generic `docker compose config` and a healthy container are separate from Coolify parser validation and consumer acceptance. For new or changed long-running services also apply `health-checks.md`. Keep test-only resources distinct from production; never redeploy a running service just to resolve uncertainty about parser semantics.
 
 ## Deploy and restart acceptance
 
