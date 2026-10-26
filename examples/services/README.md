@@ -22,6 +22,10 @@ Existing proven presets below remain supported in their established, **single-Co
 
 - `infisical/` — standalone Secrets Manager with dedicated PostgreSQL and Valkey, generic Compose and Coolify `extends` entrypoint. **Source validation only**; verify on the actual Coolify instance before relying on it for secrets.
 
+## Source-ready templates awaiting runtime acceptance
+
+- `zitadel/` — two infrastructure variants (standalone PostgreSQL + Valkey, or shared PostgreSQL/PgBouncer + Valkey). Both explicitly enable ZITADEL's Redis-compatible `Instance`, `Milestones`, `Organization` caches, use a dedicated Login V2 and private h2c gateway, and require Coolify parser/runtime validation before production.
+
 ## Existing presets
 
 - `jenkins/` — Jenkins controller with dedicated inbound builder and isolated TLS-protected Docker-in-Docker daemon.

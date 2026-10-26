@@ -1,0 +1,124 @@
+# Portable standalone stack; set public URL/domain via ZITADEL_PUBLIC_URL and
+# ZITADEL_EXTERNALDOMAIN outside Coolify. Coolify overrides them with magic URL.
+services:
+  postgres:
+    image: postgres:17.10-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: ${POSTGRES_DATABASE:-zitadel}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      default:
+        aliases: [database]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  valkey:
+    image: valkey/valkey:8.1.10-alpine
+    restart: unless-stopped
+    user: "999:1000"
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        umask 077
+        printf 'user default on >%s ~* &* +@all\n' "$$VALKEY_PASSWORD" > /tmp/valkey-users.acl
+        exec valkey-server --aclfile /tmp/valkey-users.acl --databases 32 --appendonly yes
+    volumes:
+      - valkey-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "VALKEYCLI_AUTH=\"$$VALKEY_PASSWORD\" valkey-cli ping | grep -qx PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  zitadel-api:
+    image: ghcr.io/zitadel/zitadel:v4.20.0
+    restart: unless-stopped
+    command: ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "disabled"]
+    environment:
+      ZITADEL_MASTERKEY: ${ZITADEL_MASTERKEY:?}
+      ZITADEL_PORT: "8080"
+      ZITADEL_TLS_ENABLED: "false"
+      ZITADEL_EXTERNALDOMAIN: ${ZITADEL_EXTERNALDOMAIN:-localhost}
+      ZITADEL_EXTERNALPORT: ${ZITADEL_EXTERNALPORT:-8080}
+      ZITADEL_EXTERNALSECURE: ${ZITADEL_EXTERNALSECURE:-false}
+      ZITADEL_DATABASE_POSTGRES_DSN: postgresql://${POSTGRES_USERNAME:-postgres}:${POSTGRES_PASSWORD:?}@database:5432/${POSTGRES_DATABASE:-zitadel}?sslmode=disable
+      # Enable real Redis-compatible ZITADEL caches; /0 in URI is not DB selection.
+      ZITADEL_CACHES_CONNECTORS_REDIS_ENABLED: "true"
+      ZITADEL_CACHES_CONNECTORS_REDIS_URL: redis://default:${VALKEY_PASSWORD:?}@valkey:6379/0
+      ZITADEL_CACHES_CONNECTORS_REDIS_DBOFFSET: "10"
+      ZITADEL_CACHES_INSTANCE_CONNECTOR: redis
+      ZITADEL_CACHES_MILESTONES_CONNECTOR: redis
+      ZITADEL_CACHES_ORGANIZATION_CONNECTOR: redis
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_USERNAME: ${ZITADEL_ADMIN_USERNAME:-zitadel-admin}
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORD: ${ZITADEL_ADMIN_PASSWORD:?}
+      ZITADEL_FIRSTINSTANCE_LOGINCLIENTPATPATH: /zitadel/bootstrap/login-client.pat
+      ZITADEL_FIRSTINSTANCE_ORG_LOGINCLIENT_MACHINE_USERNAME: login-client
+      ZITADEL_FIRSTINSTANCE_ORG_LOGINCLIENT_MACHINE_NAME: Infisical-independent Login Client
+      ZITADEL_FIRSTINSTANCE_ORG_LOGINCLIENT_PAT_EXPIRATIONDATE: "2099-01-01T00:00:00Z"
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_REQUIRED: "true"
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_BASEURI: ${ZITADEL_PUBLIC_URL:-http://localhost:8080}/ui/v2/login/
+      ZITADEL_OIDC_DEFAULTLOGINURLV2: ${ZITADEL_PUBLIC_URL:-http://localhost:8080}/ui/v2/login/login?authRequest=
+      ZITADEL_OIDC_DEFAULTLOGOUTURLV2: ${ZITADEL_PUBLIC_URL:-http://localhost:8080}/ui/v2/login/logout?post_logout_redirect=
+      ZITADEL_SAML_DEFAULTLOGINURLV2: ${ZITADEL_PUBLIC_URL:-http://localhost:8080}/ui/v2/login/login?samlRequest=
+    volumes:
+      - zitadel-bootstrap:/zitadel/bootstrap
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/app/zitadel", "ready"]
+      interval: 10s
+      timeout: 30s
+      retries: 12
+      start_period: 20s
+
+  zitadel-login:
+    image: ghcr.io/zitadel/zitadel-login:v4.20.0
+    restart: unless-stopped
+    environment:
+      ZITADEL_API_URL: http://zitadel-api:8080
+      NEXT_PUBLIC_BASE_PATH: /ui/v2/login
+      ZITADEL_SERVICE_USER_TOKEN_FILE: /zitadel/bootstrap/login-client.pat
+      ZITADEL_SESSION_COOKIE_SECRET: ${ZITADEL_SESSION_COOKIE_SECRET:?}
+      CUSTOM_REQUEST_HEADERS: Host:${ZITADEL_EXTERNALDOMAIN:-localhost},X-Forwarded-Proto:${ZITADEL_PUBLIC_SCHEME:-http}
+    volumes:
+      - zitadel-bootstrap:/zitadel/bootstrap:ro
+    depends_on:
+      zitadel-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "node /app/healthcheck.mjs http://localhost:3000/ui/v2/login/healthy"]
+      interval: 10s
+      timeout: 30s
+      retries: 12
+      start_period: 20s
+
+  gateway:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      zitadel-api:
+        condition: service_healthy
+      zitadel-login:
+        condition: service_healthy
+    expose: ["8080"]
+
+volumes:
+  postgres-data:
+  valkey-data:
+  zitadel-bootstrap:

@@ -1,0 +1,46 @@
+# Shared variant. Only gateway gets a Coolify-managed public domain.
+# Attach to the real predefined network of database and valkey dependencies.
+services:
+  zitadel-api:
+    extends:
+      file: ./docker-compose.yaml
+      service: zitadel-api
+    command: ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "external"]
+    environment:
+      ZITADEL_MASTERKEY: ${ZITADEL_MASTERKEY:?}
+      # HTTPS is terminated by Coolify; use ZITADEL's external TLS mode.
+      ZITADEL_TLS_ENABLED: "false"
+      ZITADEL_EXTERNALDOMAIN: ${SERVICE_FQDN_GATEWAY_8080}
+      ZITADEL_EXTERNALPORT: "443"
+      ZITADEL_EXTERNALSECURE: "true"
+      ZITADEL_DATABASE_POSTGRES_DSN: postgresql://${POSTGRES_USERNAME:-zitadel}:${POSTGRES_PASSWORD:?}@database:5432/${POSTGRES_DATABASE:-zitadel}?sslmode=disable
+      # Enable real Redis-compatible ZITADEL caches; /0 in URI is not DB selection.
+      ZITADEL_CACHES_CONNECTORS_REDIS_ENABLED: "true"
+      ZITADEL_CACHES_CONNECTORS_REDIS_URL: redis://${VALKEY_USERNAME:-zitadel}:${VALKEY_PASSWORD:?}@valkey:6379/0
+      ZITADEL_CACHES_CONNECTORS_REDIS_DBOFFSET: ${VALKEY_DATABASE_OFFSET:-10}
+      ZITADEL_CACHES_INSTANCE_CONNECTOR: redis
+      ZITADEL_CACHES_MILESTONES_CONNECTOR: redis
+      ZITADEL_CACHES_ORGANIZATION_CONNECTOR: redis
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORD: ${ZITADEL_ADMIN_PASSWORD:?}
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_BASEURI: https://${SERVICE_FQDN_GATEWAY_8080}/ui/v2/login/
+      ZITADEL_OIDC_DEFAULTLOGINURLV2: https://${SERVICE_FQDN_GATEWAY_8080}/ui/v2/login/login?authRequest=
+      ZITADEL_OIDC_DEFAULTLOGOUTURLV2: https://${SERVICE_FQDN_GATEWAY_8080}/ui/v2/login/logout?post_logout_redirect=
+      ZITADEL_SAML_DEFAULTLOGINURLV2: https://${SERVICE_FQDN_GATEWAY_8080}/ui/v2/login/login?samlRequest=
+
+  zitadel-login:
+    extends:
+      file: ./docker-compose.yaml
+      service: zitadel-login
+    environment:
+      ZITADEL_SESSION_COOKIE_SECRET: ${ZITADEL_SESSION_COOKIE_SECRET:?}
+      CUSTOM_REQUEST_HEADERS: Host:${SERVICE_FQDN_GATEWAY_8080},X-Forwarded-Proto:https
+
+  gateway:
+    extends:
+      file: ./docker-compose.yaml
+      service: gateway
+    environment:
+      SERVICE_FQDN_GATEWAY_8080: /
+
+volumes:
+  zitadel-bootstrap:

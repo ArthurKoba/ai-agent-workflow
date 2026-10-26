@@ -1,0 +1,17 @@
+# Coolify terminates external HTTPS; Caddy is a private path/h2c router.
+:8080 {
+    @login path /ui/v2/login /ui/v2/login/*
+    handle @login {
+        reverse_proxy zitadel-login:3000
+    }
+    handle /api/* {
+        uri strip_prefix /api
+        reverse_proxy h2c://zitadel-api:8080
+    }
+    handle / {
+        redir /ui/v2/login/ 302
+    }
+    handle {
+        reverse_proxy h2c://zitadel-api:8080
+    }
+}

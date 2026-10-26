@@ -1,0 +1,77 @@
+# Shared variant: the dependency owner provides database:5432 and valkey:6379.
+# PostgreSQL role/database and Valkey ACL/DB offset must be provisioned first.
+services:
+  zitadel-api:
+    image: ghcr.io/zitadel/zitadel:v4.20.0
+    restart: unless-stopped
+    command: ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "disabled"]
+    environment:
+      ZITADEL_MASTERKEY: ${ZITADEL_MASTERKEY:?}
+      ZITADEL_PORT: "8080"
+      ZITADEL_TLS_ENABLED: "false"
+      ZITADEL_EXTERNALDOMAIN: ${ZITADEL_EXTERNALDOMAIN:-localhost}
+      ZITADEL_EXTERNALPORT: ${ZITADEL_EXTERNALPORT:-8080}
+      ZITADEL_EXTERNALSECURE: ${ZITADEL_EXTERNALSECURE:-false}
+      ZITADEL_DATABASE_POSTGRES_DSN: postgresql://${POSTGRES_USERNAME:-zitadel}:${POSTGRES_PASSWORD:?}@database:5432/${POSTGRES_DATABASE:-zitadel}?sslmode=disable
+      # Enable real Redis-compatible ZITADEL caches; /0 in URI is not DB selection.
+      ZITADEL_CACHES_CONNECTORS_REDIS_ENABLED: "true"
+      ZITADEL_CACHES_CONNECTORS_REDIS_URL: redis://${VALKEY_USERNAME:-zitadel}:${VALKEY_PASSWORD:?}@valkey:6379/0
+      ZITADEL_CACHES_CONNECTORS_REDIS_DBOFFSET: ${VALKEY_DATABASE_OFFSET:-10}
+      ZITADEL_CACHES_INSTANCE_CONNECTOR: redis
+      ZITADEL_CACHES_MILESTONES_CONNECTOR: redis
+      ZITADEL_CACHES_ORGANIZATION_CONNECTOR: redis
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_USERNAME: ${ZITADEL_ADMIN_USERNAME:-zitadel-admin}
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORD: ${ZITADEL_ADMIN_PASSWORD:?}
+      ZITADEL_FIRSTINSTANCE_LOGINCLIENTPATPATH: /zitadel/bootstrap/login-client.pat
+      ZITADEL_FIRSTINSTANCE_ORG_LOGINCLIENT_MACHINE_USERNAME: login-client
+      ZITADEL_FIRSTINSTANCE_ORG_LOGINCLIENT_MACHINE_NAME: Infrastructure Login Client
+      ZITADEL_FIRSTINSTANCE_ORG_LOGINCLIENT_PAT_EXPIRATIONDATE: "2099-01-01T00:00:00Z"
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_REQUIRED: "true"
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_BASEURI: ${ZITADEL_PUBLIC_URL:-http://localhost:8080}/ui/v2/login/
+      ZITADEL_OIDC_DEFAULTLOGINURLV2: ${ZITADEL_PUBLIC_URL:-http://localhost:8080}/ui/v2/login/login?authRequest=
+      ZITADEL_OIDC_DEFAULTLOGOUTURLV2: ${ZITADEL_PUBLIC_URL:-http://localhost:8080}/ui/v2/login/logout?post_logout_redirect=
+      ZITADEL_SAML_DEFAULTLOGINURLV2: ${ZITADEL_PUBLIC_URL:-http://localhost:8080}/ui/v2/login/login?samlRequest=
+    volumes:
+      - zitadel-bootstrap:/zitadel/bootstrap
+    healthcheck:
+      test: ["CMD", "/app/zitadel", "ready"]
+      interval: 10s
+      timeout: 30s
+      retries: 12
+      start_period: 20s
+
+  zitadel-login:
+    image: ghcr.io/zitadel/zitadel-login:v4.20.0
+    restart: unless-stopped
+    environment:
+      ZITADEL_API_URL: http://zitadel-api:8080
+      NEXT_PUBLIC_BASE_PATH: /ui/v2/login
+      ZITADEL_SERVICE_USER_TOKEN_FILE: /zitadel/bootstrap/login-client.pat
+      ZITADEL_SESSION_COOKIE_SECRET: ${ZITADEL_SESSION_COOKIE_SECRET:?}
+      CUSTOM_REQUEST_HEADERS: Host:${ZITADEL_EXTERNALDOMAIN:-localhost},X-Forwarded-Proto:${ZITADEL_PUBLIC_SCHEME:-http}
+    volumes:
+      - zitadel-bootstrap:/zitadel/bootstrap:ro
+    depends_on:
+      zitadel-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "node /app/healthcheck.mjs http://localhost:3000/ui/v2/login/healthy"]
+      interval: 10s
+      timeout: 30s
+      retries: 12
+      start_period: 20s
+
+  gateway:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      zitadel-api:
+        condition: service_healthy
+      zitadel-login:
+        condition: service_healthy
+    expose: ["8080"]
+
+volumes:
+  zitadel-bootstrap:
