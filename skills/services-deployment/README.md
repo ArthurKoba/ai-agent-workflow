@@ -19,6 +19,17 @@ Load for Git-backed services deployment, Docker Compose, runtime dependencies, n
 - **Independent review** → `../code-review.md`.
 - **Infrastructure MCP/tooling strategy** → `../../docs/MCP_STRATEGY.md`.
 
+## Worked deployment scenarios (load only matching case)
+
+- **Shared infrastructure and reused presets** → `scenario-infrastructure.md`.
+- **Application monorepo, independent frontend/backend and shared code** → `scenario-application.md`.
+- **Grouped stable dependencies, PostgreSQL/PgBouncer/Valkey** → `scenario-dependencies.md`.
+- **One-shot bootstrap / schema or provisioning prerequisites** → `scenario-bootstrap.md`.
+- **Shared vs dedicated identity provider and public routes** → `scenario-identity.md`.
+- **Infrastructure/App telemetry and Coolify-managed configuration** → `scenario-telemetry.md`.
+- **External S3/SMTP/OAuth integrations and protected credentials** → `scenario-integrations.md`.
+- **Adopt/split an existing resource or restore from a failed change** → `scenario-cutover.md`.
+
 ## Core invariants
 
 Discover the actual topology and ownership before change; use the existing orchestrator, not a parallel control plane. Keep project-specific addresses, paths, secret values and runtime IDs out of this public skill. Separate Git desired state, Coolify/parser state, Docker/container state and real-consumer acceptance. Preserve durable data and least privilege. Before risky redesign freeze one-entrypoint semantics, steady state, persistence/backup, rollback, bootstrap behavior and required acceptance. Cover clean installation, repeat deploy, partial state, restart, migration and rollback when applicable. Discussion and proposals do not authorize edits to deployments or live infrastructure; change only what the operator explicitly requests. Reuse and return generalized, sanitized improvements to AI Agent Workflow rather than copying private live configuration.

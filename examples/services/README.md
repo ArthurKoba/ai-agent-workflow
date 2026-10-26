@@ -2,6 +2,10 @@
 
 Reusable, sanitized service deployment templates owned by AI Agent Workflow. This catalog is an upstream **example source**, not a mutable production deployment repository. Use `../../skills/services-deployment/README.md` to select relevant deployment rules.
 
+## Reusable scenario guidance
+
+Choose a [deployment scenario](../../skills/services-deployment/README.md) for repository layout, resource boundaries, bootstrap, dependencies, identity, telemetry or cutover before authoring a new preset. Scenario examples are design patterns, **not** validated ready-to-run production packages. A new `examples/services/<name>/` preset is published as deployable only after generic Compose validation and version-specific orchestrator/runtime acceptance; otherwise label it an unvalidated illustration. Do not copy a vendor-specific bootstrap implementation into the universal skill.
+
 ## New preset contract
 
 Each new Compose-based preset should provide both platform-neutral `docker-compose.yaml` and Coolify-aware `docker-compose.coolify.yaml` (`.yaml`, four letters). The owning README (which may cover several nested service directories) explains product/setup, prerequisites, required inputs, network/storage ownership, bootstrap and recovery; add `COOLIFY.md` or `VALIDATION.md` only when complexity justifies them. Compose inheritance / `include` / `extends` must be tested with the targeted parser; a filename alone does not prove effective merge or generated Coolify state. No real credentials, private domains, IPs, host paths, tokens or resource IDs.
