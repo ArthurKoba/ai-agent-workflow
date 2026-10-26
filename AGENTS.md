@@ -13,9 +13,9 @@ Read them only when the task is to design, audit or update prompts.
 ## Start
 
 Use this map and the injected Account/Project prompts. Select only the
-relevant role and task skill(s) below; load further contracts when the task
-requires them. `roles/README.md` and `skills/README.md` are optional
-discovery maps, not additional mandatory startup steps.
+relevant task skill(s) below; load further contracts when the task
+requires them. `skills/README.md` is an optional discovery map,
+not an additional mandatory startup step.
 
 Read selected mandatory sources completely through the Project's designated
 authority. If a required source is unavailable or incomplete, do not perform
@@ -33,12 +33,8 @@ Playbooks (decision/checklist guides, not additional runtime prompt layers):
 - new service / repository setup → `playbook/new-project.md` (load when planning a new project)
 
 
-Roles (read the selected role file in full):
-- implementation → `roles/IMPLEMENTER.md`
-- independent review → `roles/REVIEWER.md`
-- multi-agent coordination → `roles/ORCHESTRATOR.md`
-
 Task skills:
+- multi-agent coordination / PDCA / peer communication → `skills/orchestration/README.md`
 - implementation/refactoring/backend/Python/PostgreSQL → `skills/software-engineering/README.md`
 - frontend/Vue/TypeScript/FSD/UI/tables → `skills/frontend-engineering/README.md`
 - project bootstrap / toolchain / lint, types, hooks and CI setup → `skills/project-bootstrap.md`

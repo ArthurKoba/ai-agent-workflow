@@ -1,6 +1,6 @@
 # Context Maintenance
 
-Use this protocol when changing the reusable agent workflow library itself: prompts, skills, roles, routing maps, audit registries or system documentation.
+Use this protocol when changing the reusable agent workflow library itself: prompts, skills, routing maps, audit registries or system documentation.
 
 ## Goal
 
@@ -13,7 +13,7 @@ Keep the operating context cumulative without turning it into a duplicate rule t
 - `duplicate-rule` — the same meaning has multiple owners;
 - `conflict-rule` — active rules require incompatible actions;
 - `noisy-rule` — text does not change a decision or prevent a failure;
-- `wrong-owner` — the rule belongs at another account/project/skill/role/tool layer;
+- `wrong-owner` — the rule belongs at another account/project/skill/tool layer;
 - `missing-link` — the rule exists but routing cannot discover it.
 
 ## Procedure

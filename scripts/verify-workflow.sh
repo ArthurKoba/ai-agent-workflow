@@ -57,7 +57,7 @@ if missing:
 # Deleted bootstrap must not return as an active startup dependency.
 # Historical changelog entries are intentionally excluded.
 active = [Path('AGENTS.md'), Path('README.md')]
-for folder in ('context', 'docs', 'projects', 'prompts', 'roles', 'skills'):
+for folder in ('context', 'docs', 'playbook', 'projects', 'prompts', 'roles', 'skills'):
     active.extend(Path(folder).rglob('*.md'))
 dead = []
 for path in active:
@@ -69,13 +69,13 @@ for path in active:
 if dead:
     raise SystemExit('Obsolete bootstrap references:' + chr(10) + chr(10).join(dead))
 
-# Enforce a per-file 32 KiB UTF-8 cap for every new or changed skill.
+# Enforce a per-file 5,000 Unicode character cap for new/changed skills.
 # Pre-existing oversized files are reported as migration debt; editing one
 # requires bringing that file under the cap.
 import os
 import subprocess
 
-limit = 32 * 1024
+limit = 5000
 def paths_from_git(args):
     return {
         x.decode('utf-8') for x in subprocess.check_output(
@@ -96,15 +96,46 @@ changed.update(paths_from_git(['ls-files', '--others', '--exclude-standard',
 violations = []
 legacy = []
 for path in sorted(Path('skills').rglob('*.md')):
-    size = path.stat().st_size
+    size = len(path.read_text(encoding='utf-8'))
     if size > limit:
         (violations if path.as_posix() in changed else legacy).append(
-            f'{path}: {size} > {limit} UTF-8 bytes')
+            f'{path}: {size} > {limit} Unicode characters')
 if violations:
     raise SystemExit('Oversized new/changed skills (split or shorten):\n' +
                      '\n'.join(violations))
 if legacy:
     print('Pre-existing oversized skills (unchanged; migration required):')
     print('\n'.join(legacy))
-print('Workflow maps, skill byte limits, obsolete links and whitespace verified')
+# Every relative Markdown link in a changed skill must resolve, including
+# links from newly split conditional modules. External URLs are not fetched.
+from urllib.parse import unquote, urlsplit
+
+broken = []
+for name in sorted(changed):
+    path = Path(name)
+    if path.suffix != '.md' or not path.is_file():
+        continue
+    for href in re.findall(r'\[[^\]\n]*\]\(([^)\s]+)\)',
+                           path.read_text(encoding='utf-8')):
+        parsed = urlsplit(href)
+        if parsed.scheme or parsed.netloc or not parsed.path:
+            continue
+        target = path.parent / unquote(parsed.path)
+        if not target.exists():
+            broken.append(f'{path}: {href}')
+if broken:
+    raise SystemExit('Broken changed-skill links:\n' + '\n'.join(broken))
+
+# Functions now belong to skills, not a parallel role-file layer. Historical
+# audit/changelog records remain history; active maps and prompts must migrate.
+stale = []
+for path in active:
+    if path.is_file() and re.search(r'roles/[A-Za-z_-]+\.md',
+                                   path.read_text(encoding='utf-8')):
+        stale.append(str(path))
+if list(Path('roles').rglob('*.md')):
+    stale.append('roles/: obsolete role files')
+if stale:
+    raise SystemExit('Obsolete role routes:\n' + '\n'.join(stale))
+print('Workflow maps, character limits, skill links, obsolete routes and whitespace verified')
 PY

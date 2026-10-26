@@ -2,7 +2,7 @@
 
 Universal operating system for AI engineering agents.
 
-This repository stores reusable agent hierarchy, skills, roles, audit rules and system-evolution knowledge. It is not a project repository and not an infrastructure inventory.
+This repository stores reusable agent hierarchy, skills, audit rules and system-evolution knowledge. It is not a project repository and not an infrastructure inventory.
 
 ## Runtime hierarchy
 
@@ -33,7 +33,7 @@ Do not create deeper instruction chains unless there is a real need. Three meani
 
 `AGENTS.md` is always read when entering this repository.
 
-It routes the agent to the relevant role, skill, audit or architecture document. It must not require rereading account/project prompts; those are assumed already injected by the harness.
+It routes the agent to the relevant skill, audit or architecture document. It must not require rereading account/project prompts; those are assumed already injected by the harness.
 
 ## Local quality gates for this workflow repository
 
@@ -54,7 +54,7 @@ TypeScript/Python code projects lives in
 - `prompts/accounts/` — named account-level prompt sources.
 - `prompts/projects/` — named Project prompt sources.
 - `skills/` — task-specific modules, including software/backend, frontend, Git, context-engineering, terminal, service, reverse and review workflows.
-- `roles/` — Implementer / Reviewer / Orchestrator.
+- `skills/orchestration/` — PDCA, participant functions, direct communication and integration; functions are not a separate instruction layer.
 - `context/` — local-context contract/templates.
 - `docs/` — system architecture and MCP strategy.
 - `audit/` — recurring error/best-practice aggregation and context-maintenance protocol.
@@ -70,7 +70,8 @@ Examples:
 - use a specific MCP in one project → project;
 - shell/UART formatting → terminal skill;
 - Ghidra/Analysis investigation, tracing and GhidraScript lifecycle → reverse-analysis skill;
-- independent review behavior → role model.
+- independent review behavior → review skill;
+- coordination and participant functions → orchestration skill.
 
 ## Infrastructure
 

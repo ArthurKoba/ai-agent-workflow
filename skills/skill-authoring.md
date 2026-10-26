@@ -17,13 +17,14 @@ Apply when creating, editing, reviewing, merging or splitting skills.
    rules, tutorials, lengthy examples and implementation-specific details.
    Keep every condition that materially changes an action, decision or check.
 
-4. **Use the smallest file structure.** A self-contained skill is one
-   `skills/<name>.md` file, **at most 32,768 UTF-8 bytes (32 KiB)**. This is a
-   hard ceiling, not a size target. If too large, first eliminate unnecessary
-   text and duplication without losing unique requirements. Only if it still
-   exceeds the limit, use `skills/<name>/README.md` as a short router to
-   independent, task-specific modules. Each Markdown file stays within the
-   limit; do not require unrelated modules to be loaded.
+4. **Use the smallest file structure.** Every new or changed skill Markdown
+   file is limited to **5,000 Unicode characters**, including spaces,
+   frontmatter and line breaks normalized to LF; this is not a byte limit
+   or a size target. First remove duplication without losing requirements.
+   If still too large, use `skills/<name>/README.md` as a short router to
+   focused modules, each within the same limit. Preserve established entry
+   paths as short routers when needed. Do not load unrelated modules.
+   Unchanged legacy files are migration debt, not a reason for a bulk rewrite.
 
 5. **Preserve correctness when changing files.** On a move or split, update
    inbound routes and relative links, compare old and new requirements for

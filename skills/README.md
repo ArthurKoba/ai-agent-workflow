@@ -7,6 +7,7 @@ Load only the module matching the current task.
 - project/environment bootstrap, Bun/uv, strict quality gates, hooks → `project-bootstrap.md`
 - skill creation, editing, splitting, merging and review → `skill-authoring.md` (mandatory)
 - Git, Issues, branches, commits, PR/MR and publication → `git-workflow.md`
+- multi-agent coordination, PDCA and direct agent communication → `orchestration/README.md`
 - independent review → `code-review.md`
 - UI/UX design review and browser acceptance → `interface-design-review.md`
 - scientific diagrams, vector SVG, Excel-like charts and reproducible figures → `scientific-visualization.md`

@@ -56,7 +56,7 @@ Mitigation: evidence contract scoped to next boundary.
 
 ## E-014 — Self-review presented as independent review
 Implementer claims independent assurance without a separate pass.
-Mitigation: Reviewer role/identity.
+Mitigation: independent verification under `skills/code-review.md` and actual reviewer-account permissions.
 
 ## E-015 — Tool bypass
 Agent installs/reimplements workflows instead of using the project’s specialized MCP/tool.

@@ -15,16 +15,15 @@ Loaded only when required. Terminal, software, service, reverse, review, audit, 
 AGENTS is a workspace navigation map. It answers:
 - where am I;
 - what is authoritative;
-- what role/skill applies;
+- what skill applies;
 - where state/tasks live;
 - where findings must be written.
 
 It does not duplicate account/project prompts.
 
-## Roles are orthogonal
-Role = responsibility. Skill = task domain.
+## Participant functions belong to skills
 
-Implementer and Reviewer can use the same project + skill while having different permissions and obligations.
+There is no separate role-file layer. The [orchestration skill](../skills/orchestration/README.md) owns coordination, compatible functions and the PDCA cycle. The [review skill](../skills/code-review.md) owns technical verification. Participants load only the relevant task skills. Function changes do not grant tool permissions or make self-review independent.
 
 ## State is not prompt
 Dynamic facts such as active SHA, PID, IP, boot mode and current artifact belong in state/local context.

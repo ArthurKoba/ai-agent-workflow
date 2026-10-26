@@ -35,9 +35,9 @@ See [software engineering](../skills/software-engineering/README.md), [context e
 - [ ] Design responsibilities, boundaries, typed contracts, data models and integration points before broad implementation. Apply extra design/review passes when complexity demands them.
 - [ ] Implement in coherent batches, followed by scoped checks, grouped defect correction and recheck. Avoid full lint/test cycles for each micro-edit; perform early targeted checks when correctness or irreversible risk demands them.
 - [ ] For Python API-oriented services, prefer async **FastAPI**, **SQLAlchemy** and **Pydantic** typed validation at boundaries where appropriate; consider lighter internal `dataclass`/`NamedTuple` representations only when evidence justifies it. For frontend, prefer **Vue** and maintained UI component/design-system libraries over unnecessary custom HTML/UI components. Preserve existing project conventions unless migration is explicitly in scope.
-- [ ] Separate implementation, architectural, contract, performance and style review passes when they need different context. Use independent Implementer/Reviewer roles where required.
+- [ ] Separate implementation, architectural, contract, performance and style review passes when they need different context. Separate implementation and independent acceptance where required by the orchestration/review skills.
 
-**Authorities:** [account behavior source](../prompts/accounts/universal.md) (reference for prompt design, **not** mandatory rereading at runtime), [software engineering](../skills/software-engineering/README.md), [frontend engineering](../skills/frontend-engineering/README.md), [context engineering](../skills/context-engineering.md), [roles](../roles/README.md).
+**Authorities:** [account behavior source](../prompts/accounts/universal.md) (reference for prompt design, **not** mandatory rereading at runtime), [software engineering](../skills/software-engineering/README.md), [frontend engineering](../skills/frontend-engineering/README.md), [context engineering](../skills/context-engineering.md), [orchestration](../skills/orchestration/README.md).
 
 ## 5. Integrate and deploy
 
@@ -50,7 +50,7 @@ See [software engineering](../skills/software-engineering/README.md), [context e
 ## 6. Improve the agent system from evidence
 
 - [ ] Examine recurring agent errors, costly context reloads, redundant tool calls and effective solutions after meaningful phases.
-- [ ] Classify the underlying cause and assign the correction to the **smallest correct owner**: project configuration, skill, role, quality gate or specialized MCP. Promote to universal Account rules only if genuinely cross-project.
+- [ ] Classify the underlying cause and assign the correction to the **smallest correct owner**: project configuration, skill, quality gate or specialized MCP. Promote to universal Account rules only if genuinely cross-project.
 - [ ] Prefer structured, validated MCP tools for repetitive, error-prone or privilege-sensitive operations. Do not add new prompt rules or skills when an existing owner already covers the decision.
 - [ ] Preserve reusable findings through the audit process, without copying execution logs or transient project state into this library.
 
