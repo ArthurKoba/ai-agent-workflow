@@ -39,21 +39,24 @@ Rules:
 
 Before supplying Coolify Application settings, derive the public/private route inventory from the **accepted product/API contract**, not from whichever containers happen to exist or which endpoints are currently mounted. For each intended route identify its owner Compose service, externally used hostname/protocol, internal listener port, consumer, and activation/security prerequisite. If OAuth and MCP use separate ingress, identify public issuer/discovery/login/token routes separately from the MCP gateway. A health-only stub does **not** satisfy the required OAuth route, and a not-yet-active public service must not be mistakenly classified as permanently internal. Do not expose the private identity/data owner merely because it participates in authentication.
 
-## Generated domains
+## Public domains: URL by default
 
-Coolify declares managed public routes with version-supported `SERVICE_FQDN_*` / `SERVICE_URL_*` ENV magic variables (for example `SERVICE_FQDN_APP_8080: /` for service `app` exposed on port 8080). Match the **actual service name**, normalize separators to underscores, and target the intended internal port. Declare under the owner service's `environment:` in Coolify-parsed Compose; `extends` may require an explicit override for discovery. Do not invent magic variants, manually populate managed keys or use conflicting ordinary `SERVICE_*` keys. Confirm behavior against the deployed parser.
+For each public HTTP(S) route, declare **one** magic variable under the receiving Compose service. Prefer `SERVICE_URL_<SERVICE>_<PORT>: /`, which declares the managed route and returns a scheme-bearing URL. Use `SERVICE_FQDN_*` **instead** when the app requires only a bare hostname (e.g. an identity provider's external-domain field). FQDN is **not** a TLS/certificate trigger; do not add both for HTTPS. Both are justified only when genuinely consumed and supported by the deployed parser; private-only services need neither.
 
-Generated domains are **service-keyed**: two independently editable domains/ports may not coexist under one service. When the parser permits only one domain per service, expose separate lightweight ingress adapters mapping each public HTTP route to the appropriate private listener; never grant them unrelated capabilities. Validate domain count, owner, internal ports and stale state on a fresh parser resource.
-
-### Generated application URL (preferred)
-If the app's public origin **equals a Coolify-managed route**, prefer `SERVICE_URL_<SERVICE>_<PORT>` (scheme included) over a separate Required URL:
+Match actual service name (normalize separators), internal port and path. Repeat under Coolify `extends` when necessary for parser discovery. Generated routes are service-keyed; use separate minimal ingress adapters for independently editable domains if needed. Never hand-populate magic values.
 
 ```yaml
-environment:
-  SERVICE_URL_APP_8080: /
-  APP_EXTERNAL_URL: ${SERVICE_URL_APP_8080}
+services:
+  app:
+    environment:
+      SERVICE_URL_APP_8080: /
+      APP_EXTERNAL_URL: ${SERVICE_URL_APP_8080}
 ```
 
-`SERVICE_FQDN_*` is hostname-only. Map to the app's actual key (e.g. `SITE_URL`) only if consumed; use a separate URL only if the origin differs or an approved fallback is required.
+`SERVICE_URL_*` includes scheme; `SERVICE_FQDN_*` is hostname-only. Map the generated value into the app's real upstream input **only if consumed**. An additional Required URL is warranted only when the public origin differs from the managed route or the current parser cannot resolve it.
 
-**Parser gate:** Git-backed Coolify 4.4.1 sometimes interpolated `${SERVICE_URL_*}` before generation, leaving the app URL empty despite a working domain. Verify generated route, Deployable Compose **and resolved container URL/issuer**; HTTP 200 alone is insufficient. If wrong or empty, stop and diagnose, then seek approval for a verified fallback—do not silently add a manual Required URL.
+### Domains, Shared and TLS
+
+Coolify Domains/wildcard controls proxy routing and certificates; DNS/HTTPS require verification. Shared values (e.g. `{{environment.PUBLIC_URL}}`) supply ordinary app ENV, **not** managed Domains or magic directives. Updating Shared does not update proxy routing or certificates.
+
+**Parser gate:** Coolify 4.4.1 sometimes interpolated `${SERVICE_URL_*}` before generation. Verify route, Deployable Compose and **resolved app URL/issuer** (plus OAuth discovery/redirects). On failure approve an explicit-origin fallback; do not force duplicate URL/FQDN or additional Required URLs globally.

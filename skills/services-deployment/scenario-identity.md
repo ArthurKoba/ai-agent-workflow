@@ -15,7 +15,7 @@ Both are legitimate. For a small app, a dedicated provider may share a single Co
 
 The identity provider's issuer URI and OAuth endpoints are **external identity contracts**. Before generating domains, map actual consumers and all required routes: issuer/discovery/JWKS, login, authorization, token, logout, redirect callbacks, and API-specific public endpoints. Route each to the correct Compose service and internal port; do not conflate an OAuth provider with a separate API/MCP gateway.
 
-Keep databases, administrative/batch interfaces and private identity-backend connections on the environment's internal network. If the app consumes its own public origin for issuing tokens or redirect URIs, configure an approved application URL **separately** from Coolify's `SERVICE_FQDN_*`/`SERVICE_URL_*` proxy declarations. Do not assume interpolation of generated proxy variables already produced the correct public issuer.
+Keep databases, administrative/batch interfaces and private identity-backend connections on the environment's internal network. Declare **one** managed public route using the `SERVICE_URL_*` preference in `coolify-networking.md`, or `SERVICE_FQDN_*` instead when the provider needs a hostname-only setting. If the provider's required issuer/public origin matches that route, derive it from the generated value **only after verifying** interpolation and the actual issuer/discovery/redirects. Set a separate approved public-origin input only when the provider requires a distinct value or the deployed Coolify parser demonstrably cannot supply a correct one; this is an explicit exception, not an automatic second Required URL. TLS/certificate issuance does not require both magic variables.
 
 ## ENV/credential authority
 

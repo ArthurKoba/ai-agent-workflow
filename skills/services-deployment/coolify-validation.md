@@ -21,7 +21,7 @@ Before declaring the source ready, inspect a fresh Coolify resource and verify:
 - each shared-variable reference points to an existing key at the exact intended scope;
 - shared secret references are present without exposing secret values;
 - runtime logs/behavior show that shared references resolved to usable values rather than remaining literal `{{scope.KEY}}` strings;
-- generated domains exist in the expected count, under the expected services, with the expected target ports;
+- generated public routes exist in the expected count, under the receiving services and target ports; prefer one `SERVICE_URL_*` per route, permitting `SERVICE_FQDN_*` only for a verified hostname consumer (no mandatory URL+FQDN pair for TLS);
 - if the application consumes its own public URL, startup/runtime evidence shows the resolved canonical URL rather than only proving proxy reachability;
 - managed file mounts appear at the intended paths;
 - internal-only ports are not host-published;

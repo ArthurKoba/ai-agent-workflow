@@ -17,10 +17,12 @@ Classify every configurable value before writing the manifest.
 | safe portable default such as timezone or non-sensitive DNS | optional: `${VAR:-default}` | generated resource variable may keep default |
 | internal service-to-service host/port | literal service DNS + container port | do not externalize unless a real consumer needs it |
 | deployment identity label/metric label | literal if invariant for that stack; variable only when operationally mutable | keep out of shared secret scope |
-| generated domain | `SERVICE_FQDN_*` / `SERVICE_URL_*` directive | Coolify-managed domain variable |
+| managed public HTTP(S) route | Prefer one `SERVICE_URL_*` directive; use `SERVICE_FQDN_*` instead for hostname-only consumers | Coolify-managed route/domain, not a separate Required ENV |
 | editable config file | bind mount with inline `content:` | Coolify-managed file mount |
 
 Do not turn every literal into an environment variable. Parameterization is useful only where the value has a real independent lifecycle.
+
+Do not mark a generated `SERVICE_URL_*` as an ordinary Required operator input, or add `SERVICE_FQDN_*` solely for TLS. Public routes need one managed directive under their real receiver; internal-only services do not. Domain and certificate authority remain in Coolify, not in Shared-variable substitution.
 
 ## Required variables
 
