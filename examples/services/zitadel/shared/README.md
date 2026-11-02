@@ -19,7 +19,7 @@ Keep wide Shared secret names qualified by their actual service owner (`ZITADEL_
 
 ## Coolify routing
 
-Copy into the owning infrastructure repository. Base Directory is the service folder, Compose Location `/docker-compose.coolify.yaml`; watch only its runtime inputs. The **only** Coolify-generated public hostname belongs to `zitadel-api:8080` via `SERVICE_URL_ZITADEL_API_8080: /`. Two direct Traefik custom routers share `${SERVICE_FQDN_ZITADEL_API_8080}`: Login V2 path `/ui/v2/login` goes to port 3000 at priority 200, other API paths go to 8080 over h2c at priority 100. No public domain is generated for Login.
+Copy into the owning infrastructure repository. Base Directory is the service folder, Compose Location `/docker-compose.coolify.yaml`; use a service-directory Watch Paths glob such as `deploy/coolify/zitadel/**` for the matching deployment location. The **only** Coolify-generated public hostname belongs to `zitadel-api:8080` via `SERVICE_URL_ZITADEL_API_8080: /`. Two direct Traefik custom routers share `${SERVICE_FQDN_ZITADEL_API_8080}`: Login V2 path `/ui/v2/login` goes to port 3000 at priority 200, other API paths go to 8080 over h2c at priority 100. No public domain is generated for Login.
 
 Verify the actual Coolify Traefik parser, labels, proxy network membership, canonical issuer redirects and certificate resolver. Coolify can generate overlapping default routes, so inspect effective priority and route selection. Multiple instances on one proxy need unique custom Traefik router/service names; these static sample names cannot be reused unchanged. No root redirect or public diagnostic filtering is included; evaluate public endpoint exposure before production.
 
