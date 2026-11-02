@@ -1,6 +1,6 @@
 # Standalone ZITADEL — direct Coolify Traefik
 
-One Compose resource owns **four containers**: PostgreSQL, Valkey, ZITADEL API and Login V2. There is no gateway container and no Caddyfile. PostgreSQL/Valkey have persistent `postgres-data` and `valkey-data` volumes; Login client PAT is in `zitadel-bootstrap` shared between API and Login. Neither PostgreSQL nor Valkey nor the API/Login publishes host ports.
+One Compose resource owns **four containers**: PostgreSQL, Valkey, ZITADEL API and Login V2. There is no gateway container and no Caddyfile. PostgreSQL/Valkey have persistent `postgres-data` and `valkey-data` volumes; Login client PAT is in `zitadel-bootstrap` shared between API and Login. Neither PostgreSQL nor Valkey nor the API/Login publishes host ports. The ZITADEL API must use the **`postgres:5432` Compose service hostname**, not a custom `database` alias attached to only one network; this was confirmed in Coolify v4.5.3 when API and PostgreSQL were on a generated resource network that did not carry the custom alias.
 
 ## Secrets and defaults
 
