@@ -5,9 +5,9 @@ services:
       file: ./docker-compose.yaml
       service: postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USERNAME:-postgres}
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
-      POSTGRES_DB: ${POSTGRES_DATABASE:-zitadel}
+      POSTGRES_DB: zitadel
 
   valkey:
     extends:
@@ -39,7 +39,7 @@ services:
       ZITADEL_EXTERNALDOMAIN: ${SERVICE_FQDN_ZITADEL_API_8080}
       ZITADEL_EXTERNALPORT: "443"
       ZITADEL_EXTERNALSECURE: "true"
-      ZITADEL_DATABASE_POSTGRES_DSN: postgresql://${POSTGRES_USERNAME:-postgres}:${POSTGRES_PASSWORD:?}@database:5432/${POSTGRES_DATABASE:-zitadel}?sslmode=disable
+      ZITADEL_DATABASE_POSTGRES_DSN: postgresql://postgres:${POSTGRES_PASSWORD:?}@database:5432/zitadel?sslmode=disable
       # Enable real Redis-compatible ZITADEL caches; /0 in URI is not DB selection.
       ZITADEL_CACHES_CONNECTORS_REDIS_ENABLED: "true"
       ZITADEL_CACHES_CONNECTORS_REDIS_URL: redis://default:${VALKEY_PASSWORD:?}@valkey:6379/0

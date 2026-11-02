@@ -12,7 +12,7 @@ One Compose resource owns **four containers**: PostgreSQL, Valkey, ZITADEL API a
 | `ZITADEL_ADMIN_PASSWORD` | First administrator password |
 | `ZITADEL_SESSION_COOKIE_SECRET` | Login V2 cookie-signing secret (at least 32 characters) |
 
-Compose defaults: `POSTGRES_USERNAME=postgres`, `POSTGRES_DATABASE=zitadel`, `ZITADEL_ADMIN_USERNAME=zitadel-admin`. PostgreSQL initialization environment values only work on an empty data volume; changing them later does not rotate credentials or migrate roles.
+Standalone fixes PostgreSQL role `postgres` and database `zitadel` as Compose literals; `POSTGRES_USERNAME` and `POSTGRES_DATABASE` are **not** operator variables. The ZITADEL admin username defaults to `zitadel-admin`. PostgreSQL initial `POSTGRES_PASSWORD` applies only to an empty data volume; changing it later does not rotate credentials or migrate roles. Shared-dependency ZITADEL retains independent PostgreSQL user/database configuration.
 
 Generate secrets on a trusted operator host and store them in appropriately protected Shared Variables or an independently backed up secret manager. Do not commit real `.env` values. Avoid bootstrap cyclic dependency on ZITADEL or Infisical.
 
