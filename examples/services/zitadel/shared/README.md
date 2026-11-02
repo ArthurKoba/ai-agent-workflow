@@ -1,5 +1,7 @@
 # Shared-dependency ZITADEL — direct Coolify Traefik
 
+The API and Login V2 run as UID `0` for the root-owned `zitadel-bootstrap` volume so the API can write and Login can read the Login client PAT. This is a pragmatic bootstrap compatibility trade-off for Coolify local volumes, not a production least-privilege claim. For stronger isolation implement and test a volume ownership init step; no host mounts are required.
+
 One Compose resource owns **two containers**: ZITADEL API and Login V2. **No separate gateway, Caddy, PostgreSQL or Valkey containers.** This variant requires existing PostgreSQL/PgBouncer at `database:5432` and Valkey at `valkey:6379` on the correct private Docker network. Explicitly provision the `zitadel` database and restricted user and a dedicated `zitadel` Valkey ACL credential plus non-overlapping cache DB indexes before starting.
 
 ## Operator inputs

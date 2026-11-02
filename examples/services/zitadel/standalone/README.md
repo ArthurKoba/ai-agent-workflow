@@ -1,5 +1,7 @@
 # Standalone ZITADEL — direct Coolify Traefik
 
+Both API and Login V2 run as UID `0` for the root-owned Docker local named `zitadel-bootstrap` volume: the API must write a bootstrap PAT, and Login must read it. Live Coolify v4.5.3 testing showed `permission denied` with the default `zitadel` image user and partially persisted bootstrap rows after retry. This is a privilege trade-off; improve to a tested least-privilege volume-ownership init pattern before production. An already-partial initial setup may require a backed-up, scoped logical DB recovery; do not blindly delete unique constraints. No host filesystem mounts or host ports are added.
+
 One Compose resource owns **four containers**: PostgreSQL, Valkey, ZITADEL API and Login V2. There is no gateway container and no Caddyfile. PostgreSQL/Valkey have persistent `postgres-data` and `valkey-data` volumes; Login client PAT is in `zitadel-bootstrap` shared between API and Login. Neither PostgreSQL nor Valkey nor the API/Login publishes host ports. The ZITADEL API must use the **`postgres:5432` Compose service hostname**, not a custom `database` alias attached to only one network; this was confirmed in Coolify v4.5.3 when API and PostgreSQL were on a generated resource network that did not carry the custom alias.
 
 ## Secrets and defaults

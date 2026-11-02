@@ -3,6 +3,7 @@
 services:
   zitadel-api:
     image: ghcr.io/zitadel/zitadel:v4.20.0
+    user: "0" # Root-owned shared bootstrap volume: PAT writer/reader (no host mounts).
     restart: unless-stopped
     command: ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "disabled"]
     environment:
@@ -42,6 +43,7 @@ services:
 
   zitadel-login:
     image: ghcr.io/zitadel/zitadel-login:v4.20.0
+    user: "0" # Root-owned shared bootstrap volume: PAT writer/reader (no host mounts).
     restart: unless-stopped
     environment:
       ZITADEL_API_URL: http://zitadel-api:8080
