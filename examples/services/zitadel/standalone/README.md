@@ -20,6 +20,9 @@ Generate secrets on a trusted operator host and store them in appropriately prot
 
 ## Coolify setup
 
+Set **one required Resource ENV** `ZITADEL_PUBLIC_DOMAIN` to your canonical hostname (without scheme/port), and assign that exact HTTPS hostname to `zitadel-api` port 8080 under Coolify Domains. Do not create a separate Login domain. Do not use `SERVICE_FQDN_ZITADEL_API_8080` in Compose: Coolify v4.5.3 did not supply it to the build-time Compose interpolation environment. This single input is necessary for a portable template because the target domain cannot be hardcoded like a private deployment.
+
+
 Copy the directory into the actual infrastructure repository. Use Base Directory equal to that directory, Compose Location `/docker-compose.coolify.yaml`, and Watch Paths `deploy/coolify/zitadel/**` in a deployment located at that path (including future service inputs). Connect to the actual Coolify proxy / per-resource network. Choose a single public HTTPS domain for **`zitadel-api:8080`**, via `SERVICE_URL_ZITADEL_API_8080: /`; set no Login domain. Login's custom router shares the API hostname and routes `/ui/v2/login` to port 3000. The API custom router speaks h2c to 8080. Both routers use the target proxy's `https` entrypoint and its configured `letsencrypt` resolver; validate the actual proxy naming and TLS configuration before use.
 
 Coolify may generate an additional HTTPS/HTTP route for the domain; the custom routers' priorities must win. Verify that Login is reachable on the proxy's Docker network despite having no separately generated public domain. Validate `ZITADEL_EXTERNALDOMAIN`, Login `CUSTOM_REQUEST_HEADERS`, the discovery issuer and all OIDC/SAML login redirects against the **same** canonical generated hostname.
