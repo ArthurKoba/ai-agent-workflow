@@ -1,4 +1,4 @@
-# Coolify public route is attached exclusively to gateway (one domain).
+# Coolify Traefik routes API over h2c and Login V2 over HTTP on the one API domain.
 services:
   postgres:
     extends:

@@ -1,4 +1,4 @@
-# Shared variant. Only gateway gets a Coolify-managed public domain.
+# Coolify Traefik routes API over h2c and Login V2 over HTTP on the one API domain.
 # Attach to the real predefined network of database and valkey dependencies.
 services:
   zitadel-api:
