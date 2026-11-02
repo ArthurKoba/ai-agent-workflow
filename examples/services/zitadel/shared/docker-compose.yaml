@@ -61,17 +61,6 @@ services:
       retries: 12
       start_period: 20s
 
-  gateway:
-    image: caddy:2.10.2-alpine
-    restart: unless-stopped
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-    depends_on:
-      zitadel-api:
-        condition: service_healthy
-      zitadel-login:
-        condition: service_healthy
-    expose: ["8080"]
 
 volumes:
   zitadel-bootstrap:

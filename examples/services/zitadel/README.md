@@ -1,24 +1,18 @@
 # ZITADEL infrastructure presets
 
-Two **alternative** Git-backed Compose patterns with **Valkey caching enabled**. Both use a dedicated ZITADEL API, Login UI, private Caddy h2c/path router, and one Coolify-managed public domain. These are source-level presets, **not yet runtime-validated** on the target Coolify release.
+Two alternative Git-backed patterns. In Coolify they use **Coolify's integrated Traefik proxy** directly: **no Caddy, no gateway sidecar**. The ZITADEL API requires h2c for HTTP/2/gRPC traffic, while Login V2 is normal HTTP; the Coolify entrypoint supplies two explicit Traefik routers on one generated API domain.
 
-| Variant | Services in the deployment | Dependencies |
+| Variant | Services | Dependencies |
 | --- | --- | --- |
-| [`standalone/`](standalone/README.md) | ZITADEL API + Login + Caddy, **own PostgreSQL and Valkey** | Isolated volumes and private network |
-| [`shared/`](shared/README.md) | ZITADEL API + Login + Caddy | Existing private PostgreSQL/PgBouncer **and Valkey**, with distinct ZITADEL credentials and cache DB indexes |
+| `standalone/` | `postgres`, `valkey`, `zitadel-api`, `zitadel-login` | Own private volumes / network |
+| `shared/` | `zitadel-api`, `zitadel-login` | Existing private PostgreSQL or PgBouncer and Valkey, separate identities / cache indexes |
 
-Valkey is not decorative: `ZITADEL_CACHES_CONNECTORS_REDIS_ENABLED=true` and the `Instance`, `Milestones`, `Organization` cache connectors all point to the configured Redis-compatible Valkey. The setting `DBOffset` isolates cache database indices. ZITADEL ignores the database number in the `/0` URL path; it may issue `FLUSHDB`, so never share those indexes with Infisical, VPN Core or other consumers. Dedicated ACL credentials alone do **not** isolate indexes. The Redis/Valkey cache connector is currently **beta** and must be tested under load, restart and cache failure. <https://zitadel.com/docs/self-hosting/manage/cache>
+**Source-level templates only.** No Coolify parser/runtime acceptance of this direct-label routing has been performed. `SERVICE_URL_ZITADEL_API_8080` is the single generated public route; `${SERVICE_FQDN_ZITADEL_API_8080}` is the issuer/login hostname. The explicit API router has priority 100 and uses Traefik `h2c` to port 8080; the Login route matches `/ui/v2/login` with priority 200 to port 3000. Coolify generates additional routers; verify the priority, routing labels, proxy networks, TLS certificate handling, and effective hostname on the **actual** version. Two deployments sharing a Docker provider must not reuse the same custom Traefik router/service names; isolate or uniquely namespace the labels before co-deploying instances on one proxy.
 
-## Domain and routing
+Unlike the former embedded gateway, there is no rewrite of `/api/*`, no root redirect, and no implicit public diagnostic-path filter. Verify public API route compatibility, ensure internal diagnostics are not accessible, and implement a reviewed narrow deny mechanism if necessary before using this for real identities. Do not assume the external Traefik proxy sanitizes application routes. A bare Docker Compose deployment now requires an independently configured public ingress satisfying the same h2c and path routing; Coolify-specific labels stay in the Coolify entrypoint.
 
-Coolify owns the public HTTPS route to the **gateway**, not the private API/Login services. The gateway uses Caddy with HTTP/2 cleartext (`h2c`) upstream to the API, and normal HTTP to Login V2. The Coolify entrypoint uses a generated `SERVICE_FQDN_GATEWAY_8080` as the external hostname and derives its HTTPS login/issuer URLs from that hostname. No manually configured public domain key should be introduced just to duplicate Coolify.
+ZITADEL's Redis-compatible cache (beta) is enabled for `Instance`, `Milestones` and `Organization`. `DBOffset` selects logical DB indexes (a Redis URL ending in `/0` does not); never share those indexes with other consumers. ZITADEL may execute `FLUSHDB`. Shared Valkey requires non-overlapping reserved indexes, correct ACL and actual network evidence.
 
-**Parser gate:** some Coolify releases may expand `${SERVICE_FQDN_*}` before its managed value exists. Verify the effective `ZITADEL_EXTERNALDOMAIN`, Login `CUSTOM_REQUEST_HEADERS`, and issuer/login URLs **inside the actual resource**. Stop if blank or mismatched; don't silently fall back to a hardcoded Git hostname. The generic Compose requires explicitly supplied URLs for any real public deployment, with localhost-only defaults for local tests.
+Keep ZITADEL master key, bootstrap administrator credential, login session secret and PostgreSQL/Valkey credentials in restricted, independent bootstrap/recovery storage, not in Git. A single identity root must not depend on its own login for recovery. Copy an approved variant into the owning infrastructure repository and watch only its owned files; do not attach production to the public catalog's moving HEAD.
 
-## Trust and upgrades
-
-Infisical and ZITADEL are separate root-of-trust services. Keep ZITADEL master key, initial admin password, login session cookie secret and database/Valkey credentials in an **independent bootstrap/recovery authority**, never in Infisical if that creates a startup dependency cycle. Copy the chosen variant's contents into the *owning infrastructure repository*, pin its revision, then configure Coolify to watch that copy—not this public repository's moving HEAD.
-
-Shared PostgreSQL is **one server**, not one logical application database: ZITADEL needs its own role/database. Shared Valkey is one server with separately assigned indexes and ACLs. Production and dev ZITADEL instances must not share signing keys, identity databases or live user identities merely because they use the same Compose preset.
-
-For implementation, read the variant README and [`VALIDATION.md`](VALIDATION.md). This repository does not contain a running ZITADEL resource or private server topology.
+See `standalone/README.md`, `shared/README.md` and `VALIDATION.md` for operator inputs, parser gates and acceptance.

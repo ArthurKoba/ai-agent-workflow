@@ -1,25 +1,29 @@
-# Standalone ZITADEL + PostgreSQL + Valkey
+# Standalone ZITADEL — direct Coolify Traefik
 
-One Compose/Coolify resource owns **five services**: `postgres`, `valkey`, `zitadel-api`, `zitadel-login`, `gateway`. The database and cache have separate persistent Docker volumes; the Login API token is shared only between API and Login through `zitadel-bootstrap`. No database, cache or private API port is exposed on the host. Caddy routes `/ui/v2/login/*` to Login and the remaining OIDC/API requests to the h2c API backend.
+One Compose resource owns **four containers**: PostgreSQL, Valkey, ZITADEL API and Login V2. There is no gateway container and no Caddyfile. PostgreSQL/Valkey have persistent `postgres-data` and `valkey-data` volumes; Login client PAT is in `zitadel-bootstrap` shared between API and Login. Neither PostgreSQL nor Valkey nor the API/Login publishes host ports.
 
-## Required operator secrets
+## Secrets and defaults
 
-| Key | Purpose |
+| Required secret | Role |
 | --- | --- |
-| `POSTGRES_PASSWORD` | PostgreSQL initial database credential, URL-safe; keep stored away from Git |
-| `VALKEY_PASSWORD` | Valkey ACL password for local `default` account, URL-safe |
-| `ZITADEL_MASTERKEY` | 32-character ZITADEL encryption master key, stable across upgrades |
-| `ZITADEL_ADMIN_PASSWORD` | Initial ZITADEL administrator password, used during first setup |
-| `ZITADEL_SESSION_COOKIE_SECRET` | Login UI session signature secret (at least 32 characters) |
+| `POSTGRES_PASSWORD` | Own PostgreSQL initial user (URL-safe) |
+| `VALKEY_PASSWORD` | Own default Valkey ACL user (URL-safe) |
+| `ZITADEL_MASTERKEY` | Exactly 32 ASCII characters, stable across upgrades and DB restores |
+| `ZITADEL_ADMIN_PASSWORD` | First administrator password |
+| `ZITADEL_SESSION_COOKIE_SECRET` | Login V2 cookie-signing secret (at least 32 characters) |
 
-`POSTGRES_USERNAME=postgres`, `POSTGRES_DATABASE=zitadel` and `ZITADEL_ADMIN_USERNAME=zitadel-admin` have Compose defaults. PostgreSQL initializes only on an empty volume; changing its ENV does not update existing roles/databases. Valkey uses its ACL file to require authentication and reserves its own cache indexes from `DBOffset=10`. The server is configured for 32 logical databases; the API is configured with all three Redis connectors enabled.
+Compose defaults: `POSTGRES_USERNAME=postgres`, `POSTGRES_DATABASE=zitadel`, `ZITADEL_ADMIN_USERNAME=zitadel-admin`. PostgreSQL initialization environment values only work on an empty data volume; changing them later does not rotate credentials or migrate roles.
 
-Keep master/admin/session secrets in a protected independent bootstrap authority. Generate cryptographic values on a trusted operator host; never commit them. The service itself must not depend on ZITADEL or Infisical for retrieval of secrets necessary for its own first start.
+Generate secrets on a trusted operator host and store them in appropriately protected Shared Variables or an independently backed up secret manager. Do not commit real `.env` values. Avoid bootstrap cyclic dependency on ZITADEL or Infisical.
 
-## Coolify configuration
+## Coolify setup
 
-Copy this folder to `deploy/zitadel/` of an owned infrastructure repository; set Base Directory `/deploy/zitadel`, Compose Location `/docker-compose.coolify.yaml`, Watch Paths `deploy/zitadel/**`. The public route is generated via `SERVICE_FQDN_GATEWAY_8080`, **one** gateway domain on port `8080`. The API has `ExternalSecure=true`, `ExternalPort=443` and `--tlsMode external` when Coolify terminates HTTPS. Do not invent manually populated `SITE_URL` or `ZITADEL_DOMAIN` operator keys.
+Copy the directory into the actual infrastructure repository. Use Base Directory equal to that directory, Compose Location `/docker-compose.coolify.yaml`, and Watch Paths covering both Compose files (not documentation unless deliberately desired). Connect to the actual Coolify proxy / per-resource network. Choose a single public HTTPS domain for **`zitadel-api:8080`**, via `SERVICE_URL_ZITADEL_API_8080: /`; set no Login domain. Login's custom router shares the API hostname and routes `/ui/v2/login` to port 3000. The API custom router speaks h2c to 8080. Both routers use the target proxy's `https` entrypoint and its configured `letsencrypt` resolver; validate the actual proxy naming and TLS configuration before use.
 
-The generic `docker-compose.yaml` can run under Compose with an externally supplied ingress URL and no Coolify extensions. The Coolify entrypoint uses `extends`: verify inheritance of healthchecks, mounts, service dependencies and the top-level `postgres-data`, `valkey-data`, `zitadel-bootstrap` volumes. The tracked `Caddyfile` requires support for repository files (`Preserve repository` on releases that need it); a parser treating it as a directory must be fixed before deployment.
+Coolify may generate an additional HTTPS/HTTP route for the domain; the custom routers' priorities must win. Verify that Login is reachable on the proxy's Docker network despite having no separately generated public domain. Validate `ZITADEL_EXTERNALDOMAIN`, Login `CUSTOM_REQUEST_HEADERS`, the discovery issuer and all OIDC/SAML login redirects against the **same** canonical generated hostname.
 
-See [`../VALIDATION.md`](../VALIDATION.md) before production use. ZITADEL cache acceleration remains beta; confirm that Valkey is actually used, not merely running alongside the API. Do not deploy over an existing identity database without a separately approved migration.
+Custom router names are static in this source example: multiple deployments sharing a Traefik Docker provider require unique names or an isolated proxy to avoid collisions. A generic Compose invocation without Coolify needs an external ingress that does the same path and h2c routing. The public API has no root redirect and no diagnostics filtering by default; evaluate the exposed endpoints before production.
+
+## Acceptance / recovery
+
+Check generic Compose structure, Coolify actual parser-generated ENV, labels, services and volumes; no stale `SERVICE_FQDN_GATEWAY_8080` or inherited Caddy mounts; TLS, OIDC discovery/JWKS, Login V2, gRPC API, real login/logout, repeat deploy, backup/restore of PostgreSQL/bootstrap PAT/master key. Verify `DBOffset=10` caching behavior, cold restart and Valkey cache failure. Full test matrix in `../VALIDATION.md`. **Not runtime validated.**

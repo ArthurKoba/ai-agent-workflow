@@ -1,31 +1,28 @@
-# ZITADEL with shared PostgreSQL/PgBouncer and Valkey
+# Shared-dependency ZITADEL — direct Coolify Traefik
 
-One Coolify Compose resource holds `zitadel-api`, `zitadel-login`, `gateway` only. PostgreSQL/PgBouncer and **Valkey must already exist** in the same environment's private network; this variant **does not disable cache** or start duplicate database/cache containers. Prefer `database:5432` for the chosen PostgreSQL/pooler endpoint and `valkey:6379` for the cache. The dependency owner must explicitly provision resources before starting ZITADEL.
-
-## Dependency contract
-
-| Target | Required pre-existing state |
-| --- | --- |
-| PostgreSQL or PgBouncer | Dedicated logical `zitadel` database and restricted application role, not the credentials/database of Infisical or VPN Core |
-| `database:5432` | Direct PostgreSQL or PgBouncer with a stable alias; do not assign alias to both |
-| `valkey:6379` | Working Valkey standalone endpoint, authenticated `zitadel` ACL principal, allocated **non-overlapping cache DB indexes** |
-| Cache DBOffset | Default `10`, configurable by `VALKEY_DATABASE_OFFSET`; reserve the indexes actually used by ZITADEL and verify they are supported by the server's `databases` setting |
-
-ZITADEL's `Instance`, `Milestones` and `Organization` caches all use `redis`. Its Redis URL may end in `/0`, but ZITADEL selects logical DB indexes from **DBOffset + cache purpose** and may invoke `FLUSHDB`. Protect other applications by reserving a distinct index set and, where supported, limiting its ACL user to those indexes. Sharing only different key prefixes in one Redis database is unsafe. <https://zitadel.com/docs/self-hosting/deploy/kubernetes/caching>
+One Compose resource owns **two containers**: ZITADEL API and Login V2. **No separate gateway, Caddy, PostgreSQL or Valkey containers.** This variant requires existing PostgreSQL/PgBouncer at `database:5432` and Valkey at `valkey:6379` on the correct private Docker network. Explicitly provision the `zitadel` database and restricted user and a dedicated `zitadel` Valkey ACL credential plus non-overlapping cache DB indexes before starting.
 
 ## Operator inputs
 
-| Key | Default / requirement |
+| Key | Contract |
 | --- | --- |
-| `POSTGRES_USERNAME`, `POSTGRES_DATABASE` | Defaults `zitadel`, mapping to an already provisioned user and database |
-| `POSTGRES_PASSWORD` | Required protected application credential; not PostgreSQL superuser |
-| `VALKEY_USERNAME` | Default `zitadel`, matching a provisioned ACL principal |
-| `VALKEY_PASSWORD` | Required protected ACL secret |
-| `VALKEY_DATABASE_OFFSET` | Optional default `10`, must be unique for that shared Valkey |
-| `ZITADEL_MASTERKEY`, `ZITADEL_ADMIN_PASSWORD`, `ZITADEL_SESSION_COOKIE_SECRET` | Required independent root-of-trust/bootstrap secrets |
+| `POSTGRES_USERNAME`, `POSTGRES_DATABASE` | Defaults `zitadel`, provisioned by database owner |
+| `POSTGRES_PASSWORD` | Required ZITADEL app credential, not superuser |
+| `VALKEY_USERNAME` | Default `zitadel`, provisioned ACL principal |
+| `VALKEY_PASSWORD` | Required protected Valkey credential |
+| `VALKEY_DATABASE_OFFSET` | Defaults `10`; reserve all actual cache purpose indexes |
+| `ZITADEL_MASTERKEY` | Exactly 32 ASCII characters; back up independently |
+| `ZITADEL_ADMIN_PASSWORD` | Initial administrator secret |
+| `ZITADEL_SESSION_COOKIE_SECRET` | Stable Login V2 cookie secret |
 
-In a wider Shared/Infisical namespace, secret keys must identify ZITADEL as owner (e.g. `ZITADEL_POSTGRES_PASSWORD`, `ZITADEL_VALKEY_PASSWORD`). Resource-local Compose can use short `POSTGRES_*`/`VALKEY_*` names. Use URL-safe credentials when embedding them into connection URIs; do not duplicate editable DSN/password operator inputs.
+Keep wide Shared secret names qualified by their actual service owner (`ZITADEL_POSTGRES_PASSWORD`, `ZITADEL_VALKEY_PASSWORD`). Never reuse another product's live identity/database or Valkey index. ZITADEL may call `FLUSHDB` on selected cache indexes, and the Redis URL `/0` is not DB selection. Cache connector remains beta.
 
-Attach this Coolify resource to the **actual predefined environment network**, with `Connect To Predefined Network` when required; verify container membership and DNS, not merely the displayed Destination. The gateway alone receives Coolify's generated HTTPS domain. Ensure its `ZITADEL_EXTERNALDOMAIN`, issuer/login routes and Login request headers resolve to the generated public origin before starting real user registration. Keep database, Valkey and bootstrap volumes under their respective owners.
+## Coolify routing
 
-Copy the variant's contents into the private infrastructure repository (`deploy/zitadel/` is an example); use `/docker-compose.coolify.yaml` and `deploy/zitadel/**` Watch Paths. See [`../VALIDATION.md`](../VALIDATION.md). A shared Valkey cache is beta in ZITADEL and demands real isolation/compatibility acceptance before production use.
+Copy into the owning infrastructure repository. Base Directory is the service folder, Compose Location `/docker-compose.coolify.yaml`; watch only its runtime inputs. The **only** Coolify-generated public hostname belongs to `zitadel-api:8080` via `SERVICE_URL_ZITADEL_API_8080: /`. Two direct Traefik custom routers share `${SERVICE_FQDN_ZITADEL_API_8080}`: Login V2 path `/ui/v2/login` goes to port 3000 at priority 200, other API paths go to 8080 over h2c at priority 100. No public domain is generated for Login.
+
+Verify the actual Coolify Traefik parser, labels, proxy network membership, canonical issuer redirects and certificate resolver. Coolify can generate overlapping default routes, so inspect effective priority and route selection. Multiple instances on one proxy need unique custom Traefik router/service names; these static sample names cannot be reused unchanged. No root redirect or public diagnostic filtering is included; evaluate public endpoint exposure before production.
+
+Use **Connect To Predefined Network** only when needed to reach the actual dependency network; verify membership and DNS from running containers. Do not infer reachability from a Coolify Destination name. The shared volume `zitadel-bootstrap` stores the first Login PAT and must be backed up with DB and master key.
+
+This is a source-only, unvalidated integration pattern. Before production, pass all gates in `../VALIDATION.md`, including real issuer/JWKS, OIDC login/logout, gRPC API routes, caching, persistence/restore and rollback. The upstream preset does not provision shared DB/ACL roles.
