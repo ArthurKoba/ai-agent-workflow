@@ -35,7 +35,7 @@ services:
     volumes:
       - valkey-data:/data
     healthcheck:
-      test: ["CMD-SHELL", "VALKEYCLI_AUTH=\"$$VALKEY_PASSWORD\" valkey-cli ping | grep -qx PONG"]
+      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$$VALKEY_PASSWORD\" valkey-cli ping | grep -qx PONG"]
       interval: 10s
       timeout: 5s
       retries: 10
