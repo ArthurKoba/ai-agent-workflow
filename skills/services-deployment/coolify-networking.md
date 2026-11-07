@@ -41,7 +41,7 @@ Before supplying Coolify Application settings, derive the public/private route i
 
 ## Public domains: URL by default
 
-For each public HTTP(S) route, declare **one** magic variable under the receiving Compose service. Prefer `SERVICE_URL_<SERVICE>_<PORT>: /`, which declares the managed route and returns a scheme-bearing URL. Use `SERVICE_FQDN_*` **instead** when the app requires only a bare hostname (e.g. an identity provider's external-domain field). FQDN is **not** a TLS/certificate trigger; do not add both for HTTPS. Both are justified only when genuinely consumed and supported by the deployed parser; private-only services need neither.
+For public HTTP(S) routes declare `SERVICE_URL_<SERVICE>_<PORT>: /` on the receiver. `_PORT` gives Coolify its **Internal Port**; the generated value is a URL, not a hostname. If the app needs an issuer hostname, consume `${SERVICE_FQDN_<SERVICE>}` without a suffix. Do not replace the URL route with `SERVICE_FQDN_<SERVICE>_<PORT>: /`. This does not create two public routes. Verify the parser supplies the unsuffixed FQDN; internal-only services need neither.
 
 Match actual service name (normalize separators), internal port and path. Repeat under Coolify `extends` when necessary for parser discovery. Generated routes are service-keyed; use separate minimal ingress adapters for independently editable domains if needed. Never hand-populate magic values.
 

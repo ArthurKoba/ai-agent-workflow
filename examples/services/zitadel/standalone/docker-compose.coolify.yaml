@@ -32,7 +32,7 @@ services:
       - 'traefik.http.services.zitadel-api-h2c.loadbalancer.server.scheme=h2c'
     command: ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "external"]
     environment:
-      SERVICE_FQDN_ZITADEL_API_8080: /
+      SERVICE_URL_ZITADEL_API_8080: /
       ZITADEL_MASTERKEY: ${ZITADEL_MASTERKEY:?}
       # HTTPS is terminated by Coolify; use ZITADEL's external TLS mode.
       ZITADEL_TLS_ENABLED: "false"
