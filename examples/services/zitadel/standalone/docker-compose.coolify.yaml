@@ -1,4 +1,4 @@
-# Set ZITADEL_PUBLIC_DOMAIN to the real one-HTTPS-domain issuer host (no protocol/port).
+# Use Coolify's portless FQDN as the issuer hostname (no protocol/port).
 services:
   postgres:
     extends:
@@ -22,7 +22,7 @@ services:
       service: zitadel-api
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.zitadel-api-h2c.rule=Host(`${ZITADEL_PUBLIC_DOMAIN:?}`)'
+      - 'traefik.http.routers.zitadel-api-h2c.rule=Host(`${SERVICE_FQDN_ZITADEL_API:?}`)'
       - 'traefik.http.routers.zitadel-api-h2c.entrypoints=https'
       - 'traefik.http.routers.zitadel-api-h2c.tls=true'
       - 'traefik.http.routers.zitadel-api-h2c.tls.certresolver=letsencrypt'
@@ -32,11 +32,11 @@ services:
       - 'traefik.http.services.zitadel-api-h2c.loadbalancer.server.scheme=h2c'
     command: ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "external"]
     environment:
-      SERVICE_URL_ZITADEL_API_8080: /
+      SERVICE_FQDN_ZITADEL_API_8080: /
       ZITADEL_MASTERKEY: ${ZITADEL_MASTERKEY:?}
       # HTTPS is terminated by Coolify; use ZITADEL's external TLS mode.
       ZITADEL_TLS_ENABLED: "false"
-      ZITADEL_EXTERNALDOMAIN: ${ZITADEL_PUBLIC_DOMAIN:?}
+      ZITADEL_EXTERNALDOMAIN: ${SERVICE_FQDN_ZITADEL_API:?}
       ZITADEL_EXTERNALPORT: "443"
       ZITADEL_EXTERNALSECURE: "true"
       ZITADEL_DATABASE_POSTGRES_DSN: postgresql://postgres:${POSTGRES_PASSWORD:?}@postgres:5432/zitadel?sslmode=disable
@@ -48,10 +48,10 @@ services:
       ZITADEL_CACHES_MILESTONES_CONNECTOR: redis
       ZITADEL_CACHES_ORGANIZATION_CONNECTOR: redis
       ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORD: ${ZITADEL_ADMIN_PASSWORD:?}
-      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_BASEURI: https://${ZITADEL_PUBLIC_DOMAIN:?}/ui/v2/login/
-      ZITADEL_OIDC_DEFAULTLOGINURLV2: https://${ZITADEL_PUBLIC_DOMAIN:?}/ui/v2/login/login?authRequest=
-      ZITADEL_OIDC_DEFAULTLOGOUTURLV2: https://${ZITADEL_PUBLIC_DOMAIN:?}/ui/v2/login/logout?post_logout_redirect=
-      ZITADEL_SAML_DEFAULTLOGINURLV2: https://${ZITADEL_PUBLIC_DOMAIN:?}/ui/v2/login/login?samlRequest=
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_BASEURI: https://${SERVICE_FQDN_ZITADEL_API:?}/ui/v2/login/
+      ZITADEL_OIDC_DEFAULTLOGINURLV2: https://${SERVICE_FQDN_ZITADEL_API:?}/ui/v2/login/login?authRequest=
+      ZITADEL_OIDC_DEFAULTLOGOUTURLV2: https://${SERVICE_FQDN_ZITADEL_API:?}/ui/v2/login/logout?post_logout_redirect=
+      ZITADEL_SAML_DEFAULTLOGINURLV2: https://${SERVICE_FQDN_ZITADEL_API:?}/ui/v2/login/login?samlRequest=
 
   zitadel-login:
     extends:
@@ -59,7 +59,7 @@ services:
       service: zitadel-login
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.zitadel-login-v2.rule=Host(`${ZITADEL_PUBLIC_DOMAIN:?}`) && PathPrefix(`/ui/v2/login`)'
+      - 'traefik.http.routers.zitadel-login-v2.rule=Host(`${SERVICE_FQDN_ZITADEL_API:?}`) && PathPrefix(`/ui/v2/login`)'
       - 'traefik.http.routers.zitadel-login-v2.entrypoints=https'
       - 'traefik.http.routers.zitadel-login-v2.tls=true'
       - 'traefik.http.routers.zitadel-login-v2.tls.certresolver=letsencrypt'
@@ -68,7 +68,7 @@ services:
       - 'traefik.http.services.zitadel-login-http.loadbalancer.server.port=3000'
     environment:
       ZITADEL_SESSION_COOKIE_SECRET: ${ZITADEL_SESSION_COOKIE_SECRET:?}
-      CUSTOM_REQUEST_HEADERS: Host:${ZITADEL_PUBLIC_DOMAIN:?},X-Forwarded-Proto:https
+      CUSTOM_REQUEST_HEADERS: Host:${SERVICE_FQDN_ZITADEL_API:?},X-Forwarded-Proto:https
 
 
 volumes:
