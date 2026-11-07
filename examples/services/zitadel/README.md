@@ -1,20 +1,29 @@
 # ZITADEL infrastructure presets
 
-Two alternative Git-backed patterns. In Coolify they use **Coolify's integrated Traefik proxy** directly: **no Caddy, no gateway sidecar**. The ZITADEL API requires h2c for HTTP/2/gRPC traffic, while Login V2 is normal HTTP; the Coolify entrypoint supplies two explicit Traefik routers for one operator-configured domain.
+Two variants expose **one Coolify-managed HTTPS domain** through an embedded Caddy gateway. No custom Traefik labels, label-escaping switch, second Login V2 domain, or hardcoded hostname is required.
 
-| Variant | Services | Dependencies |
+| Variant | Compose services | Dependency ownership |
 | --- | --- | --- |
-| `standalone/` | `postgres`, `valkey`, `zitadel-api`, `zitadel-login` | Own private volumes / network |
-| `shared/` | `zitadel-api`, `zitadel-login` | Existing private PostgreSQL or PgBouncer and Valkey, separate identities / cache indexes |
+| `standalone/` | `postgres`, `valkey`, `zitadel-core`, `zitadel-login`, `zitadel-api` (Caddy) | Private PostgreSQL and Valkey in the same stack |
+| `shared/` | `zitadel-core`, `zitadel-login`, `zitadel-api` (Caddy) | Existing private PostgreSQL/PgBouncer and Valkey |
 
-**Historical deployment evidence:** On 2026-11-02, Koba Coolify v4.5.3 reached `running:healthy` with public OIDC discovery, JWKS and Login V2. That deployment used an explicit pinned hostname because its parser did not supply a working FQDN during Compose interpolation. The updated reusable manifests use Coolify's **portless** `SERVICE_FQDN_ZITADEL_API` for the issuer. This newer template has **not** been runtime-accepted on v4.5.3, and the shared-dependency variant has never been runtime deployed.
+## One public hostname, internal path routing
 
-Both generic examples use `SERVICE_URL_ZITADEL_API_8080: /` only to declare the HTTPS route for `zitadel-api:8080`. The URL declares internal port 8080 and is never passed to `ZITADEL_EXTERNALDOMAIN`, Login V2 URLs, forwarded `Host` or Traefik `Host()` labels. Those fields consume `${SERVICE_FQDN_ZITADEL_API:?}`, matching the **same** domain assigned in Coolify Domains. Do not set another `ZITADEL_PUBLIC_DOMAIN` input. Fail closed if the portless FQDN is missing or stale: don't hardcode a hostname or invent another secret. The API router uses h2c on port 8080 (priority 100), and Login uses port 3000 for `/ui/v2/login` (priority 200); check proxy networks and TLS routing on the target Coolify version.
+In Coolify configure one HTTPS domain for **`zitadel-api:8080`** with path `/`. The only public declaration in either Coolify Compose overlay is `SERVICE_URL_ZITADEL_API_8080: /` on that service. The service name `zitadel-api` refers to the public Caddy gateway; ZITADEL itself runs privately as `zitadel-core`.
 
-Unlike the former embedded gateway, there is no rewrite of `/api/*`, no root redirect, and no implicit public diagnostic-path filter. Verify public API route compatibility, ensure internal diagnostics are not accessible, and implement a reviewed narrow deny mechanism if necessary before using this for real identities. Do not assume the external Traefik proxy sanitizes application routes. A bare Docker Compose deployment now requires an independently configured public ingress satisfying the same h2c and path routing; Coolify-specific labels stay in the Coolify entrypoint.
+- `/ui/v2/login` and `/ui/v2/login/*` are forwarded unchanged to `zitadel-login:3000`.
+- Everything else, including `/ui/console`, OIDC discovery, API and gRPC, is forwarded to `zitadel-core:8080` via h2c.
 
-ZITADEL's Redis-compatible cache (beta) is enabled for `Instance`, `Milestones` and `Organization`. `DBOffset` selects logical DB indexes (a Redis URL ending in `/0` does not); never share those indexes with other consumers. ZITADEL may execute `FLUSHDB`. Shared Valkey requires non-overlapping reserved indexes, correct ACL and actual network evidence.
+Caddy runs on cleartext HTTP port 8080 behind Coolify's TLS termination. Its Caddyfile is created by the Compose command, not a separate mounted file or Coolify Files record. Only the gateway receives a public Coolify route; no extra Domain is needed for Core or Login. No Compose service publishes a host port.
 
-Keep ZITADEL master key, bootstrap administrator credential, login session secret and PostgreSQL/Valkey credentials in restricted, independent bootstrap/recovery storage, not in Git. A single identity root must not depend on its own login for recovery. Copy an approved variant into the owning infrastructure repository and watch only its owned files; do not attach production to the public catalog's moving HEAD.
+ZITADEL Core receives the **portless** generated `${SERVICE_FQDN_ZITADEL_API:?}` as its external hostname, redirect origin and Login's forwarded Host. It must match the canonical domain assigned to the Caddy service; do not invent or manually set a second public domain. Preserve the same issuer once the database has been initialized.
 
-See `standalone/README.md`, `shared/README.md` and `VALIDATION.md` for operator inputs, parser gates and acceptance.
+The Caddy upstream uses h2c, but end-to-end native gRPC also requires HTTP/2 across the Coolify-to-Caddy hop. Verify native gRPC separately rather than treating HTTP 200 as full acceptance.
+
+## Evidence and boundaries
+
+The previous Koba installation on 2026-11-02 verified an **older direct-Traefik** configuration, not this universal Caddy preset. An Intens-specific Caddy installation has returned HTTP 200 for issuer discovery, Login V2 health and console, but real login/logout, authenticated gRPC and restore still require verification. The reusable variants remain **source-ready, not independently runtime-accepted**.
+
+PostgreSQL/Valkey ownership, Redis cache connectors and DB offset, named PAT bootstrap volume, native ZITADEL master key and Login session secret retain their established contracts. Never copy real credentials or project-specific domains into these templates. Do not reset volumes or rotate the master key to troubleshoot routes.
+
+See `standalone/README.md`, `shared/README.md` and `VALIDATION.md`.

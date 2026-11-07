@@ -1,8 +1,8 @@
-# Shared-dependency ZITADEL — direct Coolify Traefik
+# Shared-dependency ZITADEL — Caddy single-domain ingress
 
 The API and Login V2 run as UID `0` for the root-owned `zitadel-bootstrap` volume so the API can write and Login can read the Login client PAT. This is a pragmatic bootstrap compatibility trade-off for Coolify local volumes, not a production least-privilege claim. For stronger isolation implement and test a volume ownership init step; no host mounts are required.
 
-One Compose resource owns **two containers**: ZITADEL API and Login V2. **No separate gateway, Caddy, PostgreSQL or Valkey containers.** This variant requires existing PostgreSQL/PgBouncer at `database:5432` and Valkey at `valkey:6379` on the correct private Docker network. Explicitly provision the `zitadel` database and restricted user and a dedicated `zitadel` Valkey ACL credential plus non-overlapping cache DB indexes before starting.
+One Compose resource owns **three containers**: ZITADEL Core, Login V2 and the Caddy public gateway (`zitadel-api`). There is no embedded PostgreSQL or Valkey; existing private dependencies must be reachable at `database:5432` and `valkey:6379`. Provision the restricted `zitadel` PostgreSQL database/user and dedicated Valkey ACL, with non-overlapping cache DBOffset indexes, before first launch. The named `zitadel-bootstrap` PAT volume belongs to Core and Login; Caddy needs no protected secret or persistent storage.
 
 ## Operator inputs
 
@@ -21,11 +21,11 @@ Keep wide Shared secret names qualified by their actual service owner (`ZITADEL_
 
 ## Coolify routing
 
-Assign **one** canonical HTTPS domain to `zitadel-api:8080` in Coolify Domains; do not assign a separate Login domain. The Coolify entrypoint declares `SERVICE_URL_ZITADEL_API_8080: /` as the route, but derives the ZITADEL issuer, public login URLs, forwarded Host and both Traefik Host rules from the **portless** `${SERVICE_FQDN_ZITADEL_API:?}`. No separate `ZITADEL_PUBLIC_DOMAIN` Resource ENV or hardcoded hostname is needed when the portless value resolves. Check the actual Deployable Compose before first boot: `SERVICE_URL_ZITADEL_API_8080` declares the route and internal port, not a ZITADEL external domain. A previous Coolify 4.5.3 deployment needed an explicit domain because its parser did not supply the generated host; do not treat this updated generic example as validated on that version.
+Configure **one** HTTPS domain on `zitadel-api:8080` with path `/`. The gateway is Caddy, with exactly one magic route `SERVICE_URL_ZITADEL_API_8080: /`. Core and Login are internal services, with no separate Domains or hand-written Traefik labels and no label-escaping or path-preservation toggle.
 
-Copy into the owning infrastructure repository. Base Directory is the service folder, Compose Location `/docker-compose.coolify.yaml`; use a service-directory Watch Paths glob such as `deploy/coolify/zitadel/**` for the matching deployment location. The **only** Coolify-generated public hostname belongs to `zitadel-api:8080` via `SERVICE_URL_ZITADEL_API_8080: /`. Two direct Traefik custom routers share `${SERVICE_FQDN_ZITADEL_API:?}`: Login V2 path `/ui/v2/login` goes to port 3000 at priority 200, other API paths go to 8080 over h2c at priority 100. No public domain is generated for Login.
+The embedded Caddyfile forwards `/ui/v2/login` and descendants unchanged to Login V2 on 3000 and all remaining requests over h2c to Core on 8080. `SERVICE_FQDN_ZITADEL_API` without scheme/port must resolve to the domain configured on the gateway; Core uses this as its issuer hostname and Login uses it as forwarded Host. There are no hardcoded public domains in the example.
 
-Verify the actual Coolify Traefik parser, labels, proxy network membership, canonical issuer redirects and certificate resolver. Coolify can generate overlapping default routes, so inspect effective priority and route selection. Multiple instances on one proxy need unique custom Traefik router/service names; these static sample names cannot be reused unchanged. No root redirect or public diagnostic filtering is included; evaluate public endpoint exposure before production.
+Set Base Directory to the service folder, Compose Location to `/docker-compose.coolify.yaml`, and Watch Paths to both source Compose files. Verify Coolify's parsed URL, generated FQDN, services and volumes. Although Caddy uses h2c to Core, authenticated native gRPC must also be checked through Coolify's external HTTP/2 ingress. This variant has **not** been runtime deployed.
 
 Use **Connect To Predefined Network** only when needed to reach the actual dependency network; verify membership and DNS from running containers. Do not infer reachability from a Coolify Destination name. The shared volume `zitadel-bootstrap` stores the first Login PAT and must be backed up with DB and master key.
 

@@ -39,6 +39,50 @@ services:
       start_period: 10s
 
   zitadel-api:
+    image: caddy:2.11.9-alpine
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        cat > /tmp/Caddyfile <<'CADDY'
+        {
+            auto_https off
+            admin off
+            servers :8080 {
+                protocols h1 h2c
+            }
+        }
+        :8080 {
+            @login path /ui/v2/login /ui/v2/login/*
+            handle @login {
+                reverse_proxy zitadel-login:3000 {
+                    header_up X-Forwarded-Proto https
+                }
+            }
+            handle {
+                reverse_proxy h2c://zitadel-core:8080 {
+                    header_up -TE
+                    header_up X-Forwarded-Proto https
+                }
+            }
+        }
+        CADDY
+        exec caddy run --config /tmp/Caddyfile --adapter caddyfile
+    depends_on:
+      zitadel-core:
+        condition: service_healthy
+      zitadel-login:
+        condition: service_healthy
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/ui/v2/login/healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+  zitadel-core:
     image: ghcr.io/zitadel/zitadel:v4.20.0
     user: "0" # Root-owned shared bootstrap volume: PAT writer/reader (no host mounts).
     restart: unless-stopped
@@ -88,7 +132,7 @@ services:
     user: "0" # Root-owned shared bootstrap volume: PAT writer/reader (no host mounts).
     restart: unless-stopped
     environment:
-      ZITADEL_API_URL: http://zitadel-api:8080
+      ZITADEL_API_URL: http://zitadel-core:8080
       NEXT_PUBLIC_BASE_PATH: /ui/v2/login
       ZITADEL_SERVICE_USER_TOKEN_FILE: /zitadel/bootstrap/login-client.pat
       ZITADEL_SESSION_COOKIE_SECRET: ${ZITADEL_SESSION_COOKIE_SECRET:?}
@@ -96,7 +140,7 @@ services:
     volumes:
       - zitadel-bootstrap:/zitadel/bootstrap:ro
     depends_on:
-      zitadel-api:
+      zitadel-core:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "/bin/sh", "-c", "node /app/healthcheck.mjs http://localhost:3000/ui/v2/login/healthy"]

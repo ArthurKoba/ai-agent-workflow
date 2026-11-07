@@ -1,23 +1,19 @@
-# Use Coolify's portless FQDN as the issuer hostname (no protocol/port).
+# One Coolify URL on the Caddy ingress; Core and Login V2 stay private.
 # Attach to the real predefined network of database and valkey dependencies.
 services:
   zitadel-api:
     extends:
       file: ./docker-compose.yaml
       service: zitadel-api
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.zitadel-api-h2c.rule=Host(`${SERVICE_FQDN_ZITADEL_API:?}`)'
-      - 'traefik.http.routers.zitadel-api-h2c.entrypoints=https'
-      - 'traefik.http.routers.zitadel-api-h2c.tls=true'
-      - 'traefik.http.routers.zitadel-api-h2c.tls.certresolver=letsencrypt'
-      - 'traefik.http.routers.zitadel-api-h2c.priority=100'
-      - 'traefik.http.routers.zitadel-api-h2c.service=zitadel-api-h2c'
-      - 'traefik.http.services.zitadel-api-h2c.loadbalancer.server.port=8080'
-      - 'traefik.http.services.zitadel-api-h2c.loadbalancer.server.scheme=h2c'
-    command: ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "external"]
     environment:
       SERVICE_URL_ZITADEL_API_8080: /
+
+  zitadel-core:
+    extends:
+      file: ./docker-compose.yaml
+      service: zitadel-core
+    command: ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "external"]
+    environment:
       ZITADEL_MASTERKEY: ${ZITADEL_MASTERKEY:?}
       # HTTPS is terminated by Coolify; use ZITADEL's external TLS mode.
       ZITADEL_TLS_ENABLED: "false"
@@ -42,19 +38,9 @@ services:
     extends:
       file: ./docker-compose.yaml
       service: zitadel-login
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.zitadel-login-v2.rule=Host(`${SERVICE_FQDN_ZITADEL_API:?}`) && PathPrefix(`/ui/v2/login`)'
-      - 'traefik.http.routers.zitadel-login-v2.entrypoints=https'
-      - 'traefik.http.routers.zitadel-login-v2.tls=true'
-      - 'traefik.http.routers.zitadel-login-v2.tls.certresolver=letsencrypt'
-      - 'traefik.http.routers.zitadel-login-v2.priority=200'
-      - 'traefik.http.routers.zitadel-login-v2.service=zitadel-login-http'
-      - 'traefik.http.services.zitadel-login-http.loadbalancer.server.port=3000'
     environment:
       ZITADEL_SESSION_COOKIE_SECRET: ${ZITADEL_SESSION_COOKIE_SECRET:?}
       CUSTOM_REQUEST_HEADERS: Host:${SERVICE_FQDN_ZITADEL_API:?},X-Forwarded-Proto:https
-
 
 volumes:
   zitadel-bootstrap:
