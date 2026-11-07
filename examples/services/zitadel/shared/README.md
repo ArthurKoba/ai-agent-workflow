@@ -27,6 +27,10 @@ The embedded Caddyfile forwards `/ui/v2/login` and descendants unchanged to Logi
 
 Set Base Directory to the service folder, Compose Location to `/docker-compose.coolify.yaml`, and Watch Paths to both source Compose files. Verify Coolify's parsed URL, generated FQDN, services and volumes. Although Caddy uses h2c to Core, authenticated native gRPC must also be checked through Coolify's external HTTP/2 ingress. This variant has **not** been runtime deployed.
 
+## Telemetry inputs
+
+The base Compose exposes the same native ZITADEL Core OTLP trace, metric and log exporters as `standalone`. Set optional `OTEL_ENDPOINT` to a receiver **host:port**, then set the desired `ZITADEL_INSTRUMENTATION_{TRACE,METRIC,LOG}_EXPORTER_TYPE` values to `http` (OTLP/HTTP) or `grpc`; default `none` disables remote export. Use matching native `*_INSECURE=true` only for an approved internal cleartext endpoint. Bearer or other auth belongs in protected `OTEL_EXPORTER_OTLP_HEADERS` configuration. Optional `OTEL_RESOURCE_ATTRIBUTES` can distinguish shared-dependency deployments; do not hardcode receiver addresses or tokens here. Login V2 stdout requires a separate platform log collector.
+
 Use **Connect To Predefined Network** only when needed to reach the actual dependency network; verify membership and DNS from running containers. Do not infer reachability from a Coolify Destination name. The shared volume `zitadel-bootstrap` stores the first Login PAT and must be backed up with DB and master key.
 
 This is a source-only, unvalidated integration pattern. Before production, pass all gates in `../VALIDATION.md`, including real issuer/JWKS, OIDC login/logout, gRPC API routes, caching, persistence/restore and rollback. The upstream preset does not provision shared DB/ACL roles.

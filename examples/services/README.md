@@ -24,7 +24,7 @@ Existing proven presets below remain supported in their established, **single-Co
 
 ## Source-ready templates awaiting runtime acceptance
 
-- `zitadel/` — standalone and shared-dependency variants with one Coolify domain on an inline Caddy gateway. Caddy preserves Login V2 paths and proxies API requests to private ZITADEL Core over h2c. Redis cache connectors and the Login PAT are retained; real user login and native gRPC acceptance remain required.
+- `zitadel/` — standalone and shared-dependency variants with one Coolify domain on an inline Caddy gateway. Caddy preserves Login V2 paths and proxies API requests to private ZITADEL Core over h2c. Native Core OTLP traces/metrics/logs are optionally configurable; Redis caching and Login PAT are retained. User login, gRPC and telemetry ingestion require runtime acceptance.
 
 ## Existing presets
 

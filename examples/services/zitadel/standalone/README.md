@@ -28,6 +28,10 @@ The inline Caddyfile routes `/ui/v2/login` and all child paths unchanged to Logi
 
 The standalone base Compose retains its non-Coolify public-origin defaults; if deploying without Coolify, supply a suitable external TLS ingress and explicit canonical hostname. On an existing instance, preserve the current issuer, master key, database and PAT volume. Caddy uses h2c upstream but authenticated native gRPC still requires the outer proxy to preserve HTTP/2.
 
+## Telemetry inputs
+
+The **base Compose** supports native ZITADEL Core traces, metrics and logs. Optional `OTEL_ENDPOINT` is a receiver **host:port**; set `ZITADEL_INSTRUMENTATION_TRACE_EXPORTER_TYPE`, `ZITADEL_INSTRUMENTATION_METRIC_EXPORTER_TYPE` and/or `ZITADEL_INSTRUMENTATION_LOG_EXPORTER_TYPE` to `http` (OTLP/HTTP) or `grpc`. Their default `none` leaves remote export off until a collector is configured. Transport defaults to TLS; the matching native `*_INSECURE` inputs permit approved private cleartext transport. A protected `OTEL_EXPORTER_OTLP_HEADERS` input supports receivers requiring auth. `OTEL_RESOURCE_ATTRIBUTES` can identify the environment; do not copy real endpoint or token values into the generic source. JSON stderr logs remain available without remote export. Login V2 logs require collection from its own container.
+
 ## Acceptance / recovery
 
 Verify all five services, the one generated public domain, both Caddy upstreams and the named volumes. Confirm OIDC discovery, JWKS, `/ui/v2/login/healthy` and `/ui/console/` on the single public hostname, then exercise actual OIDC login/logout and authenticated native gRPC. Verify Redis DBOffset behavior, restart and recovery with PostgreSQL/bootstrap PAT/master key backups. Full checklist in `../VALIDATION.md`. **Generic preset runtime acceptance remains open.**
