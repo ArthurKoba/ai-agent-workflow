@@ -53,7 +53,7 @@ services:
       APP_EXTERNAL_URL: ${SERVICE_URL_APP_8080}
 ```
 
-`SERVICE_URL_*` includes scheme; `SERVICE_FQDN_*` is hostname-only. Map the generated value into the app's real upstream input **only if consumed**. An additional Required URL is warranted only when the public origin differs from the managed route or the current parser cannot resolve it.
+`SERVICE_URL_*` includes scheme. `SERVICE_FQDN_<SERVICE>` is portless; `SERVICE_FQDN_<SERVICE>_<PORT>` may include `:port`, so never pass it as an issuer, forwarded Host or Traefik `Host()`. Verify the generic value after domain edits; require a separate origin only if needed.
 
 ### Domains, Shared and TLS
 
