@@ -1,3 +1,0 @@
-{"@type":"upsert","object":"Directory","matchOn":["description"],"value":{"oidc-main":{"@type":"Oidc","description":"External OpenID Connect","issuerUrl":"${OIDC_ISSUER_URL}","claimUsername":"email","requireAudience":"${OIDC_AUDIENCE}","requireScopes":{"openid":true,"email":true}}}}
-{"@type":"update","object":"Application","id":"${WEBUI_APPLICATION_ID}","value":{"oauthClientId":"${OIDC_CLIENT_ID}"}}
-{"@type":"update","object":"Authentication","value":{"directoryId":"#oidc-main"}}

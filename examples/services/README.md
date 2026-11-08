@@ -28,7 +28,7 @@ Existing proven presets below remain supported in their established, **single-Co
 
 ## Source-ready mail server examples (runtime validation pending)
 
-- `stalwart/` — Stalwart Community v1 classic standalone, generic node and shared-dependency variants; optional editable Coolify DataStore File Mount and OpenID Connect / OpenTelemetry HTTPS Bearer plans. **Source only:** runtime, parser, admin recovery and mail/SSO/OTLP acceptance are still required.
+- `stalwart/` — Stalwart Community v1 classic standalone, generic node and shared-dependency variants; optional profile-gated one-shot CLI bootstrap for OpenID Connect and OpenTelemetry HTTPS Bearer configuration. **Source only:** inline builds, Coolify profile, admin bootstrap and mail/SSO/OTLP acceptance are still required.
 
 ## Existing presets
 

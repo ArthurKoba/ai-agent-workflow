@@ -1,4 +1,4 @@
-# Reusable Stalwart Community classic source; select protected ENV values at deployment.
+# Coolify entrypoint; run configure profile explicitly after first setup.
 services:
   stalwart:
     extends:
@@ -28,6 +28,25 @@ services:
       service: stalwart-valkey
     environment:
       VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+  bootstrap:
+    extends:
+      file: ./docker-compose.yaml
+      service: bootstrap
+    profiles:
+    - configure
+    environment:
+      STALWART_URL: ${STALWART_URL:-}
+      STALWART_TOKEN: ${STALWART_TOKEN:-}
+      OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-}
+      OIDC_AUDIENCE: ${OIDC_AUDIENCE:-}
+      OIDC_USERNAME_CLAIM: ${OIDC_USERNAME_CLAIM:-email}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
+      OIDC_ACTIVATE: ${OIDC_ACTIVATE:-false}
+      WEBUI_APPLICATION_ID: ${WEBUI_APPLICATION_ID:-}
+      MAIL_PUBLIC_URL: ${MAIL_PUBLIC_URL:-}
+      OTEL_ENDPOINT: ${OTEL_ENDPOINT:-}
+      OTEL_NAMESPACE: ${OTEL_NAMESPACE:-}
+      DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-}
 volumes:
   stalwart-etc:
     driver: local
