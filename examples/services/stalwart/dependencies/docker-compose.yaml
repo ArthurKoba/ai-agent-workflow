@@ -1,0 +1,46 @@
+# Shared mail dependencies. Coolify predefined network is host-local.
+services:
+  stalwart-postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: stalwart
+      POSTGRES_DB: stalwart
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+    volumes:
+    - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pg_isready -h 127.0.0.1 -U stalwart -d stalwart
+      interval: 10s
+      timeout: 5s
+      retries: 12
+  stalwart-valkey:
+    image: valkey/valkey:9.1.0-alpine
+    restart: unless-stopped
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+    command:
+    - /bin/sh
+    - -ec
+    - 'umask 077
+
+      printf ''user default on >%s ~* &* +@all\n'' "$$VALKEY_PASSWORD" > /tmp/valkey-users.acl
+
+      exec valkey-server --aclfile /tmp/valkey-users.acl --appendonly yes --maxmemory-policy
+      noeviction
+
+      '
+    volumes:
+    - valkey-data:/data
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - VALKEYCLI_AUTH="$$VALKEY_PASSWORD" valkey-cli ping | grep -qx PONG
+      interval: 10s
+      timeout: 5s
+      retries: 12
+volumes:
+  postgres-data: null
+  valkey-data: null

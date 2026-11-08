@@ -26,6 +26,10 @@ Existing proven presets below remain supported in their established, **single-Co
 
 - `zitadel/` — standalone and shared-dependency variants with one Coolify domain on an inline Caddy gateway. Caddy preserves Login V2 paths and proxies API requests to private ZITADEL Core over h2c. Native Core OTLP traces/metrics/logs are optionally configurable; Redis caching and Login PAT are retained. User login, gRPC and telemetry ingestion require runtime acceptance.
 
+## Source-ready mail server examples (runtime validation pending)
+
+- `stalwart/` — Stalwart Community v1 classic standalone, generic node and shared-dependency variants; optional editable Coolify DataStore File Mount and OpenID Connect / OpenTelemetry HTTPS Bearer plans. **Source only:** runtime, parser, admin recovery and mail/SSO/OTLP acceptance are still required.
+
 ## Existing presets
 
 - `jenkins/` — Jenkins controller with dedicated inbound builder and isolated TLS-protected Docker-in-Docker daemon.

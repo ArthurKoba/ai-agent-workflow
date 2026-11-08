@@ -1,0 +1,74 @@
+# Reusable Stalwart Community classic source; select protected ENV values at deployment.
+services:
+  stalwart:
+    image: stalwartlabs/stalwart:v1.0.3
+    init: true
+    restart: unless-stopped
+    environment:
+      STALWART_HOSTNAME: ${STALWART_HOSTNAME:?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:?}
+    volumes:
+    - stalwart-etc:/etc/stalwart
+    - stalwart-data:/var/lib/stalwart
+    ports:
+    - ${STALWART_SMTP_HOST_PORT:-25}:25
+    - ${STALWART_SUBMISSIONS_HOST_PORT:-465}:465
+    - ${STALWART_SUBMISSION_HOST_PORT:-587}:587
+    - ${STALWART_IMAPS_HOST_PORT:-993}:993
+    - 127.0.0.1:${STALWART_HTTP_HOST_PORT:-18080}:8080
+    expose:
+    - '8080'
+    hostname: ${STALWART_HOSTNAME:?}
+    depends_on:
+      stalwart-postgres:
+        condition: service_healthy
+      stalwart-valkey:
+        condition: service_healthy
+  stalwart-postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: stalwart
+      POSTGRES_DB: stalwart
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+    volumes:
+    - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pg_isready -h 127.0.0.1 -U stalwart -d stalwart
+      interval: 10s
+      timeout: 5s
+      retries: 12
+  stalwart-valkey:
+    image: valkey/valkey:9.1.0-alpine
+    restart: unless-stopped
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+    command:
+    - /bin/sh
+    - -ec
+    - 'umask 077
+
+      printf ''user default on >%s ~* &* +@all\n'' "$$VALKEY_PASSWORD" > /tmp/valkey-users.acl
+
+      exec valkey-server --aclfile /tmp/valkey-users.acl --appendonly yes --maxmemory-policy
+      noeviction
+
+      '
+    volumes:
+    - valkey-data:/data
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - VALKEYCLI_AUTH="$$VALKEY_PASSWORD" valkey-cli ping | grep -qx PONG
+      interval: 10s
+      timeout: 5s
+      retries: 12
+volumes:
+  stalwart-etc: null
+  stalwart-data: null
+  postgres-data: null
+  valkey-data: null

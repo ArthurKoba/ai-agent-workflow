@@ -1,0 +1,21 @@
+# Shared mail dependencies. Coolify predefined network is host-local.
+services:
+  stalwart-postgres:
+    extends:
+      file: ./docker-compose.yaml
+      service: stalwart-postgres
+    environment:
+      POSTGRES_USER: stalwart
+      POSTGRES_DB: stalwart
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+  stalwart-valkey:
+    extends:
+      file: ./docker-compose.yaml
+      service: stalwart-valkey
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+volumes:
+  postgres-data:
+    driver: local
+  valkey-data:
+    driver: local

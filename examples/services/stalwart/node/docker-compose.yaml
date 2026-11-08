@@ -1,0 +1,26 @@
+# Reusable Stalwart Community node source; select protected ENV values at deployment.
+services:
+  stalwart:
+    image: stalwartlabs/stalwart:v1.0.3
+    init: true
+    restart: unless-stopped
+    environment:
+      STALWART_HOSTNAME: ${STALWART_HOSTNAME:?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:?}
+    volumes:
+    - stalwart-etc:/etc/stalwart
+    - stalwart-data:/var/lib/stalwart
+    ports:
+    - ${STALWART_SMTP_HOST_PORT:-25}:25
+    - ${STALWART_SUBMISSIONS_HOST_PORT:-465}:465
+    - ${STALWART_SUBMISSION_HOST_PORT:-587}:587
+    - ${STALWART_IMAPS_HOST_PORT:-993}:993
+    - 127.0.0.1:${STALWART_HTTP_HOST_PORT:-18080}:8080
+    expose:
+    - '8080'
+    hostname: ${STALWART_HOSTNAME:?}
+volumes:
+  stalwart-etc: null
+  stalwart-data: null

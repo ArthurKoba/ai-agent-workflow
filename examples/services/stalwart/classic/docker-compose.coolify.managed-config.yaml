@@ -1,0 +1,57 @@
+# OPTIONAL Coolify-only bootstrap entrypoint: editable File Mount of PostgreSQL config.json.
+# No recovery credentials or plaintext DB password are stored here.
+services:
+  stalwart:
+    extends:
+      file: ./docker-compose.yaml
+      service: stalwart
+    environment:
+      STALWART_HOSTNAME: ${STALWART_HOSTNAME:?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:?}
+      STALWART_SMTP_HOST_PORT: ${STALWART_SMTP_HOST_PORT:-25}
+      STALWART_SUBMISSIONS_HOST_PORT: ${STALWART_SUBMISSIONS_HOST_PORT:-465}
+      STALWART_SUBMISSION_HOST_PORT: ${STALWART_SUBMISSION_HOST_PORT:-587}
+      STALWART_IMAPS_HOST_PORT: ${STALWART_IMAPS_HOST_PORT:-993}
+      STALWART_HTTP_HOST_PORT: ${STALWART_HTTP_HOST_PORT:-18080}
+      CONFIG_PATH: /etc/stalwart-bootstrap/config.json
+    volumes:
+    - type: bind
+      source: ./managed/config.json
+      target: /etc/stalwart-bootstrap/config.json
+      content: |
+        {
+          "@type": "PostgreSql",
+          "host": "stalwart-postgres",
+          "port": 5432,
+          "database": "stalwart",
+          "authUsername": "stalwart",
+          "authSecret": {
+            "@type": "EnvironmentVariable",
+            "variableName": "POSTGRES_PASSWORD"
+          }
+        }
+  stalwart-postgres:
+    extends:
+      file: ./docker-compose.yaml
+      service: stalwart-postgres
+    environment:
+      POSTGRES_USER: stalwart
+      POSTGRES_DB: stalwart
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+  stalwart-valkey:
+    extends:
+      file: ./docker-compose.yaml
+      service: stalwart-valkey
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+volumes:
+  stalwart-etc:
+    driver: local
+  stalwart-data:
+    driver: local
+  postgres-data:
+    driver: local
+  valkey-data:
+    driver: local

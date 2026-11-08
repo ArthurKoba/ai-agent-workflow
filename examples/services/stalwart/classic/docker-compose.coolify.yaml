@@ -1,0 +1,39 @@
+# Reusable Stalwart Community classic source; select protected ENV values at deployment.
+services:
+  stalwart:
+    extends:
+      file: ./docker-compose.yaml
+      service: stalwart
+    environment:
+      STALWART_HOSTNAME: ${STALWART_HOSTNAME:?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:?}
+      STALWART_SMTP_HOST_PORT: ${STALWART_SMTP_HOST_PORT:-25}
+      STALWART_SUBMISSIONS_HOST_PORT: ${STALWART_SUBMISSIONS_HOST_PORT:-465}
+      STALWART_SUBMISSION_HOST_PORT: ${STALWART_SUBMISSION_HOST_PORT:-587}
+      STALWART_IMAPS_HOST_PORT: ${STALWART_IMAPS_HOST_PORT:-993}
+      STALWART_HTTP_HOST_PORT: ${STALWART_HTTP_HOST_PORT:-18080}
+  stalwart-postgres:
+    extends:
+      file: ./docker-compose.yaml
+      service: stalwart-postgres
+    environment:
+      POSTGRES_USER: stalwart
+      POSTGRES_DB: stalwart
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+  stalwart-valkey:
+    extends:
+      file: ./docker-compose.yaml
+      service: stalwart-valkey
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+volumes:
+  stalwart-etc:
+    driver: local
+  stalwart-data:
+    driver: local
+  postgres-data:
+    driver: local
+  valkey-data:
+    driver: local
