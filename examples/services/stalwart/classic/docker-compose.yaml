@@ -1,4 +1,4 @@
-# Classic Stalwart with optional, profile-gated one-shot CLI configurator.
+# Classic: one-shot bootstrap applies OIDC/OTLP when their ENV inputs are present.
 services:
   stalwart:
     image: stalwartlabs/stalwart:v1.0.3
@@ -8,7 +8,7 @@ services:
       STALWART_HOSTNAME: ${STALWART_HOSTNAME:?}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
       VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
-      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:?}
+      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:-}
     volumes:
     - stalwart-etc:/etc/stalwart
     - stalwart-data:/var/lib/stalwart
@@ -68,8 +68,6 @@ services:
       timeout: 5s
       retries: 12
   bootstrap:
-    profiles:
-    - configure
     build:
       context: .
       dockerfile_inline: |
@@ -97,12 +95,12 @@ services:
       OIDC_AUDIENCE: ${OIDC_AUDIENCE:-}
       OIDC_USERNAME_CLAIM: ${OIDC_USERNAME_CLAIM:-email}
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
-      OIDC_ACTIVATE: ${OIDC_ACTIVATE:-false}
       WEBUI_APPLICATION_ID: ${WEBUI_APPLICATION_ID:-}
       MAIL_PUBLIC_URL: ${MAIL_PUBLIC_URL:-}
       OTEL_ENDPOINT: ${OTEL_ENDPOINT:-}
       OTEL_NAMESPACE: ${OTEL_NAMESPACE:-}
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-}
+      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:-}
     entrypoint:
     - python3
     - -c
@@ -111,71 +109,106 @@ services:
       import json, os, subprocess
       from urllib.parse import urlsplit
 
-      def required(key):
-          value=os.environ.get(key,"").strip()
-          if not value:
-              raise SystemExit("bootstrap: missing "+key)
-          return value
+      def val(name):
+          return os.environ.get(name, "").strip()
 
-      def https(key,origin=False):
-          value=required(key).rstrip("/")
-          p=urlsplit(value)
-          if p.scheme!="https" or not p.hostname or p.username or p.password or p.query or p.fragment or (origin and p.path not in ("","/")):
-              raise SystemExit("bootstrap: "+key+" must be a valid HTTPS URL")
-          return value
+      def require(name):
+          x = val(name)
+          if not x:
+              raise SystemExit("bootstrap: missing required " + name)
+          return x
 
-      https("STALWART_URL")
-      issuer=https("OIDC_ISSUER_URL")
-      endpoint=https("OTEL_ENDPOINT")
-      audience=required("OIDC_AUDIENCE")
-      required("STALWART_TOKEN")
-      secret={"@type":"EnvironmentVariable","variableName":"OTEL_BEARER_TOKEN"}
-      auth={"@type":"Bearer","bearerToken":secret}
-      directory={"@type":"Oidc","description":"External OpenID Connect","issuerUrl":issuer,
-       "claimUsername":os.environ.get("OIDC_USERNAME_CLAIM","email"),
-       "requireAudience":audience,"requireScopes":["openid","email"]}
-      def tracer(suffix,log,span):
-          return {"@type":"OtelHttp","url":endpoint+suffix,
-            "enableLogExporter":log,"enableSpanExporter":span,
-            "httpAuth":auth,"allowInvalidCerts":False,"level":"info"}
-      metrics={"serviceName":"stalwart","openTelemetry":{
-          "@type":"Http","url":endpoint,"interval":60000,
-          "httpAuth":auth,"allowInvalidCerts":False}}
-      if os.environ.get("OTEL_NAMESPACE"):
-          metrics["serviceNamespace"]=os.environ["OTEL_NAMESPACE"]
-      if os.environ.get("DEPLOYMENT_ENVIRONMENT"):
-          metrics["resourceAttributes"]={"deployment.environment.name":os.environ["DEPLOYMENT_ENVIRONMENT"]}
-      plan=[
-       {"@type":"upsert","object":"Directory","matchOn":["description"],
-        "value":{"external-oidc":directory}},
-       {"@type":"upsert","object":"Tracer","matchOn":["url"],
-        "value":{"otel-logs":tracer("/v1/logs",True,False),
-                 "otel-traces":tracer("/v1/traces",False,True)}},
-       {"@type":"update","object":"Metrics","value":metrics}]
-      if os.environ.get("OIDC_ACTIVATE","false").lower()=="true":
-          cid=required("OIDC_CLIENT_ID")
-          aid=required("WEBUI_APPLICATION_ID")
-          public=https("MAIL_PUBLIC_URL",origin=True)
-          # Preserve login via Stalwart's own OAuth server when using a static external client ID.
+      def secure(name, origin=False):
+          x = require(name).rstrip("/")
+          u = urlsplit(x)
+          try:
+              port = u.port
+          except ValueError:
+              raise SystemExit("bootstrap: invalid HTTPS URL for " + name)
+          if (u.scheme != "https" or not u.hostname or u.username or u.password
+                  or u.query or u.fragment or port == 0
+                  or (origin and u.path not in ("", "/"))):
+              raise SystemExit("bootstrap: " + name + " must be a valid HTTPS URL")
+          return x
+
+      issuer = val("OIDC_ISSUER_URL")
+      audience = val("OIDC_AUDIENCE")
+      client = val("OIDC_CLIENT_ID")
+      webui = val("WEBUI_APPLICATION_ID")
+      public = val("MAIL_PUBLIC_URL")
+      endpoint = val("OTEL_ENDPOINT")
+      oidc_on = bool(issuer)
+      otel_on = bool(endpoint)
+      if not oidc_on and any((audience, client, webui, public)):
+          raise SystemExit("bootstrap: OIDC_ISSUER_URL is required with OIDC parameters")
+      if oidc_on and not audience:
+          raise SystemExit("bootstrap: OIDC_AUDIENCE is required with OIDC_ISSUER_URL")
+      if client and (not webui or not public):
+          raise SystemExit("bootstrap: OIDC_CLIENT_ID needs WEBUI_APPLICATION_ID and MAIL_PUBLIC_URL")
+      if oidc_on and not client and any((webui, public)):
+          raise SystemExit("bootstrap: WEBUI_APPLICATION_ID/MAIL_PUBLIC_URL require OIDC_CLIENT_ID")
+      if not oidc_on and not otel_on:
+          print("bootstrap: no OIDC or OpenTelemetry config; nothing to apply")
+          raise SystemExit(0)
+
+      secure("STALWART_URL")
+      require("STALWART_TOKEN")
+      plan = []
+      if oidc_on:
+          directory={"@type":"Oidc","description":"External OpenID Connect",
+                     "issuerUrl":secure("OIDC_ISSUER_URL"),
+                     "claimUsername":val("OIDC_USERNAME_CLAIM") or "email",
+                     "requireAudience":audience,
+                     "requireScopes":{"openid":True,"email":True}}
+          plan.append({"@type":"upsert","object":"Directory","matchOn":["description"],
+                       "value":{"external-oidc":directory}})
+          if client:
+              origin=secure("MAIL_PUBLIC_URL",origin=True)
+              recovery={"clientId":client,"description":"WebUI recovery client",
+                        "redirectUris":{origin+"/admin/oauth/callback":True,
+                                        origin+"/account/oauth/callback":True},
+                        "scopes":{"full":True}}
+              plan.extend([
+                  {"@type":"upsert","object":"OAuthClient","matchOn":["clientId"],
+                   "value":{"webui-recovery":recovery}},
+                  {"@type":"update","object":"Application","id":webui,
+                   "value":{"oauthClientId":client,
+                            "oauthScopes":{"urn:stalwart:oauth:scope:full":True}}}
+              ])
+          plan.append({"@type":"update","object":"Authentication",
+                       "value":{"directoryId":"#external-oidc"}})
+
+      if otel_on:
+          otlp=secure("OTEL_ENDPOINT")
+          auth={}
+          if val("OTEL_BEARER_TOKEN"):
+              auth={"httpAuth":{"@type":"Bearer","bearerToken":{
+                     "@type":"EnvironmentVariable","variableName":"OTEL_BEARER_TOKEN"}}}
+          def tracer(suffix, logs, spans):
+              return {"@type":"OtelHttp","url":otlp+suffix,
+                      "enableLogExporter":logs,"enableSpanExporter":spans,
+                      "allowInvalidCerts":False,"level":"info",**auth}
+          metrics={"serviceName":"stalwart","openTelemetry":{
+                    "@type":"Http","url":otlp,"interval":60000,
+                    "allowInvalidCerts":False,**auth}}
+          if val("OTEL_NAMESPACE"):
+              metrics["serviceNamespace"]=val("OTEL_NAMESPACE")
+          if val("DEPLOYMENT_ENVIRONMENT"):
+              metrics["resourceAttributes"]={"deployment.environment.name":val("DEPLOYMENT_ENVIRONMENT")}
           plan.extend([
-            {"@type":"upsert","object":"OAuthClient","matchOn":["clientId"],
-             "value":{"webui-recovery":{"clientId":cid,"description":"WebUI recovery client",
-               "redirectUris":{public+"/admin/oauth/callback":True,
-                               public+"/account/oauth/callback":True},
-               "scopes":{"full":True}}}},
-            {"@type":"update","object":"Application","id":aid,
-             "value":{"oauthClientId":cid,
-                      "oauthScopes":{"urn:stalwart:oauth:scope:full":True}}},
-            {"@type":"update","object":"Authentication",
-             "value":{"directoryId":"#external-oidc"}}])
-      payload="\n".join(json.dumps(op,separators=(",",":")) for op in plan)+"\n"
+              {"@type":"upsert","object":"Tracer","matchOn":["url"],
+               "value":{"otel-logs":tracer("/v1/logs",True,False),
+                        "otel-traces":tracer("/v1/traces",False,True)}},
+              {"@type":"update","object":"Metrics","value":metrics}
+          ])
+
+      payload="\n".join(json.dumps(obj,separators=(",",":")) for obj in plan)+"\n"
       cli="/usr/local/bin/stalwart-cli"
-      for command in (["apply","--stdin","--dry-run"],
-                      ["apply","--stdin"],["create","Action/ReloadSettings"]):
-          subprocess.run([cli]+command,
-                         input=payload if "--stdin" in command else None,
+      for argv in (["apply","--stdin","--dry-run"],
+                   ["apply","--stdin"],["create","Action/ReloadSettings"]):
+          subprocess.run([cli]+argv,input=payload if "--stdin" in argv else None,
                          text=True,check=True)
-      print("bootstrap: applied OIDC/OpenTelemetry plan")
+      print("bootstrap: applied configured integrations")
 volumes:
   stalwart-etc: null
   stalwart-data: null

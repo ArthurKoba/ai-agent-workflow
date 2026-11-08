@@ -8,7 +8,7 @@ services:
       STALWART_HOSTNAME: ${STALWART_HOSTNAME:?}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
       VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
-      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:?}
+      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:-}
     volumes:
     - stalwart-etc:/etc/stalwart
     - stalwart-data:/var/lib/stalwart

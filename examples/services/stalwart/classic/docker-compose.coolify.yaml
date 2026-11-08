@@ -1,4 +1,4 @@
-# Coolify entrypoint; run configure profile explicitly after first setup.
+# Coolify entrypoint; bootstrap runs once on deployment, no feature-enable flag.
 services:
   stalwart:
     extends:
@@ -8,7 +8,7 @@ services:
       STALWART_HOSTNAME: ${STALWART_HOSTNAME:?}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
       VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
-      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:?}
+      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:-}
       STALWART_SMTP_HOST_PORT: ${STALWART_SMTP_HOST_PORT:-25}
       STALWART_SUBMISSIONS_HOST_PORT: ${STALWART_SUBMISSIONS_HOST_PORT:-465}
       STALWART_SUBMISSION_HOST_PORT: ${STALWART_SUBMISSION_HOST_PORT:-587}
@@ -32,8 +32,6 @@ services:
     extends:
       file: ./docker-compose.yaml
       service: bootstrap
-    profiles:
-    - configure
     environment:
       STALWART_URL: ${STALWART_URL:-}
       STALWART_TOKEN: ${STALWART_TOKEN:-}
@@ -41,12 +39,12 @@ services:
       OIDC_AUDIENCE: ${OIDC_AUDIENCE:-}
       OIDC_USERNAME_CLAIM: ${OIDC_USERNAME_CLAIM:-email}
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
-      OIDC_ACTIVATE: ${OIDC_ACTIVATE:-false}
       WEBUI_APPLICATION_ID: ${WEBUI_APPLICATION_ID:-}
       MAIL_PUBLIC_URL: ${MAIL_PUBLIC_URL:-}
       OTEL_ENDPOINT: ${OTEL_ENDPOINT:-}
       OTEL_NAMESPACE: ${OTEL_NAMESPACE:-}
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-}
+      OTEL_BEARER_TOKEN: ${OTEL_BEARER_TOKEN:-}
 volumes:
   stalwart-etc:
     driver: local

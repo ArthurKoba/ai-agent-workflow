@@ -4,7 +4,7 @@
 
 | Variant | Contents |
 | --- | --- |
-| `classic/` | Stalwart, PostgreSQL, Valkey plus optional one-shot `bootstrap` in one Compose |
+| `classic/` | Stalwart, PostgreSQL, Valkey plus an automatic one-shot `bootstrap` in one Compose |
 | `node/` | One universal Stalwart node; each Coolify resource supplies its own ENV |
 | `dependencies/` | Shared PostgreSQL/Valkey for a future distributed arrangement |
 
@@ -14,7 +14,7 @@ The classic mail listener exposes TCP 25, 465, 587 and 993, but bootstrap HTTP s
 
 ## Inline one-shot bootstrap
 
-The `classic` Compose declares `bootstrap` with `profiles: [configure]`, `restart: "no"` and `depends_on: stalwart: service_healthy`. It is **not** a permanent application service.
+The `classic` Compose declares `bootstrap` with `restart: "no"` and `depends_on: stalwart: service_healthy`. **It starts automatically during ordinary Compose deployment**, without a profile flag, then exits. It is not a permanent application service.
 
 A `dockerfile_inline` build copies the verified upstream `stalwart-cli` executable into a minimal non-root Python image. The entire runner is inline in the Compose `command`: it creates JSON objects from environment values, serializes them as **NDJSON in memory**, and invokes the official CLI in sequence:
 
@@ -22,11 +22,11 @@ A `dockerfile_inline` build copies the verified upstream `stalwart-cli` executab
 2. `stalwart-cli apply --stdin` — apply the idempotent configuration.
 3. `stalwart-cli create Action/ReloadSettings` — activate settings.
 
-There are **no extra shell scripts, Python files, NDJSON templates, Dockerfiles, or editable File Mounts**. OIDC and OpenTelemetry configuration is persisted by Stalwart in its database, not in an operator-edited `config.json`. The server resolves its OpenTelemetry Bearer token from its **own protected environment**; the CLI plan contains only the native `EnvironmentVariable` secret reference. Collector endpoints must use HTTPS with valid TLS certificates. OpenTelemetry traces/logs and metrics use OTLP/HTTP; no particular observability vendor is required.
+There are **no extra shell scripts, Python files, NDJSON templates, Dockerfiles, or editable File Mounts**. OIDC and OpenTelemetry configuration is persisted by Stalwart in its database, not in an operator-edited `config.json`. When supplied, the server resolves its OpenTelemetry Bearer token from **protected environment variables**; the generated CLI plan contains a reference rather than the token value. Without a token, the plan omits HTTP authentication. Collector endpoints must use HTTPS with valid TLS certificates. OpenTelemetry traces/logs and metrics use OTLP/HTTP; no particular observability vendor is required.
 
 ### Configuration inputs
 
-The one-shot service uses these Compose variables. Required values are checked **when the profile runs**, so missing bootstrap secrets never prevent the main mail stack from parsing:
+The one-shot service checks **which integration parameters are present**, without enable/disable flags. If no OIDC issuer and no OpenTelemetry endpoint are supplied, it exits successfully without requiring a management API token. If an integration is configured, management credentials are required. Incomplete OIDC settings fail before applying anything:
 
 | Key | Meaning |
 | --- | --- |
@@ -35,18 +35,21 @@ The one-shot service uses these Compose variables. Required values are checked *
 | `OIDC_USERNAME_CLAIM` | Optional, defaults to `email` |
 | `OTEL_ENDPOINT` | **HTTPS OTLP/HTTP base** endpoint |
 | `OTEL_NAMESPACE`, `DEPLOYMENT_ENVIRONMENT` | Optional OpenTelemetry resource attributes |
-| `OIDC_ACTIVATE` | Optional, defaults to `false` |
-| `OIDC_CLIENT_ID`, `WEBUI_APPLICATION_ID`, `MAIL_PUBLIC_URL` | Required **only** when activating SSO |
+| `OIDC_CLIENT_ID` | Optional static external OAuth client ID (when provider does not support client metadata documents) |
+| `WEBUI_APPLICATION_ID`, `MAIL_PUBLIC_URL` | Required **only** when a static client ID is supplied |
+| `OTEL_BEARER_TOKEN` | Optional: enables HTTPS Bearer authentication when present |
 
-The bootstrap does not get `OTEL_BEARER_TOKEN`, a database password, or an identity-provider client secret. Its own API token is supplied only to that one-shot container, not to the mail server or Git. The Python runner JSON-encodes every operation to avoid unsafe template substitution.
+The bootstrap receives the optional `OTEL_BEARER_TOKEN` only to decide whether exporters need a Bearer reference. **Its literal value never enters the generated plan**: the mail server resolves it from protected ENV. When absent, the `httpAuth` field is omitted completely. The runner receives no database password or IdP client secret. Its separate API token is supplied only to the one-shot container, not Git. All configuration objects are JSON-encoded.
 
-**The bootstrap is run after minimal first-time setup.** Stalwart needs its DataStore connection and a permanent administrator before a management API token can exist. The initial wizard can supply these, or a separately managed temporary recovery procedure can initialise them. This example does **not** enable unattended `STALWART_RECOVERY_ADMIN`: leaving it set would grant unrestricted access in normal mode. Once initial access and HTTPS are working, invoke the profile deliberately (e.g. `docker compose --profile configure run --rm bootstrap` on a Docker Compose host). **Coolify profile execution and inline builds require parser/runtime validation**; do not assume its UI exposes an identical command.
+**First-install prerequisite:** Stalwart needs its DataStore connection, permanent administrator and management API token before configuration can succeed. A completely fresh installation with OIDC/OTLP already set may leave the one-shot bootstrap failed while the mail service remains available for setup. After initial credentials/HTTPS are established, recreate or rerun bootstrap; `restart: "no"` avoids unlimited retry loops. Later ordinary deployments attempt configured integrations automatically. This example does **not** enable persistent recovery credentials. Coolify one-shot and inline-build acceptance are still necessary.
 
-### Safe SSO activation
+### Automatic independent activation
 
-By default the plan configures an external `Oidc` Directory but **does not** change the global authentication directory. `OIDC_ACTIVATE=true` is a separate operator decision after external client registration, redirect verification, admin recovery, and SMTP application-password validation. When enabled it also registers Stalwart's own OAuth recovery client with `full` scope, adjusts the WebUI Application and sets `Authentication.directoryId`. That privileged operation requires an appropriately authorized admin token. A static external client ID can otherwise break login through Stalwart's own OAuth server.
+**OpenID Connect:** presence of `OIDC_ISSUER_URL` triggers configuration and **activation of the global Authentication directory**. `OIDC_AUDIENCE` is required with it. A static `OIDC_CLIENT_ID` is optional and, when supplied, requires `WEBUI_APPLICATION_ID` and `MAIL_PUBLIC_URL` so that the recovery OAuthClient and WebUI Application are configured *before* switching Authentication. Without a static client ID, the external provider must support Client ID Metadata Documents. Partial OIDC inputs fail explicitly.
 
-The Community edition provides a single server-wide default directory. External mail accounts may need provisioning before first login to receive mail. Never infer that successful CLI `apply --dry-run` proves actual SSO or telemetry delivery.
+**OpenTelemetry:** presence of `OTEL_ENDPOINT` triggers the log/span tracers and metrics exporter; absence leaves OpenTelemetry untouched. `OTEL_BEARER_TOKEN` is optional: when present, exporters use a native Bearer secret reference, otherwise **no Authorization header** is configured. HTTPS certificate validation remains enabled. The two integrations are independent: either may be configured without the other. There is no `OIDC_ACTIVATE` flag.
+
+Activating OIDC globally can deny an existing administrator access. Register/verify the external client, its redirect URIs and the recovery administrator before entering OIDC values in Coolify. The Community edition has one server-wide default directory. External mail users may need provisioning before first sign-in; a successful CLI dry-run alone does not prove working browser authentication.
 
 ## Validation boundary
 
