@@ -37,6 +37,7 @@ Task skills:
 - multi-agent coordination / PDCA / peer communication → `skills/orchestration/README.md`
 - implementation/refactoring/backend/Python/PostgreSQL → `skills/software-engineering/README.md`
 - frontend/Vue/TypeScript/FSD/UI/tables → `skills/frontend-engineering/README.md`
+- software test design, run profiles and suite audits → `skills/software-testing/README.md`
 - project bootstrap / toolchain / lint, types, hooks and CI setup → `skills/project-bootstrap.md`
 - writing/editing/splitting/reviewing skills → `skills/skill-authoring.md` (mandatory)
 - Git / Issues / branches / commits / PR-MR / Git-backed coordination → `skills/git-workflow.md`

@@ -4,6 +4,7 @@ Load only the module matching the current task.
 
 - software implementation/refactoring/backend/Python/PostgreSQL → `software-engineering/README.md`
 - frontend/Vue/TypeScript/FSD/UI/tables → `frontend-engineering/README.md`
+- software test design, run profiles and suite audits → `software-testing/README.md`
 - project/environment bootstrap, Bun/uv, strict quality gates, hooks → `project-bootstrap.md`
 - skill creation, editing, splitting, merging and review → `skill-authoring.md` (mandatory)
 - Git, Issues, branches, commits, PR/MR and publication → `git-workflow.md`
