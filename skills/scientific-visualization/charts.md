@@ -1,0 +1,14 @@
+## Scientific charts: restrained Excel-like presentation
+
+- Obtain real measurements or execute a declared, deterministic mathematical/model calculation. Keep provenance and distinguish MODEL EXAMPLE from MEASURED RESULT. Never invent data merely to draw attractive curves.
+- Prefer a readable **Microsoft Excel-like flat line/bar/scatter chart**: thin unobtrusive gridlines, sensible tick marks, restrained line widths and colors, no 3D decoration, shadows or ornamental backgrounds. Matplotlib/Python can produce an equivalent scientific SVG, especially when spreadsheet SVG export is unavailable.
+- Both axes must carry the **quantity and unit** (e.g. Time, s; Frequency, Hz; Rate, min⁻¹), numeric ticks and an intelligible scale. Dimensionless measures must be clearly identified when needed. Check interval direction, unit conversions, decimal placement, legend values, normalization and uncertainty; never create a misleading truncation.
+- **No long prose or explanation inside the plot.** Normally omit plot titles: the figure caption below it supplies subject, dataset and method. For multiple panels, use the panel identifiers prescribed by the target venue and explain each panel in the caption.
+- A compact legend is allowed when multiple curves differ. Explain curve color, dash style or marker with concise labels in the document language; do not rely solely on red/green. Keep math symbols and short panel identifiers; move interpretations to prose.
+- Match visible figure labels, decimal separators and panel identifiers to the publication language and venue style; Russian localization is covered by Scientific Formatting — RU when applicable.
+
+### Reproducible spreadsheet-first workflow
+
+Store a real .xlsx workbook (or project-approved spreadsheet format) with the scientific artifacts. Organize actual sheets for original measurements/imports, parameters, formulas/calculations, summaries and charts when useful. **Every derived number must arise from recorded spreadsheet formulas or documented executable computation**, not manually typed facsimiles. Link series to actual calculated ranges and retain precision, filters, source file identifiers, denominators, units and any recalculation assumptions.
+
+Export to SVG only if the available Excel-compatible stack **actually provides valid vector export**. Verify all SVG curves and labels against the workbook's real chart/source values. Do not assert that Excel produced an SVG merely because a workbook exists. If the workbook cannot export reliable SVG, retain it as the calculation source and render the exact same dataset with a saved Python/Matplotlib script to vector SVG. Preserve the workbook, code, source data and relative figure links together under the project's governed artifact location, not only in a temporary workspace.

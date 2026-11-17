@@ -44,6 +44,15 @@ Task skills:
 - Git / Issues / branches / commits / PR-MR / Git-backed coordination → `skills/git-workflow.md`
 - independent review → `skills/code-review.md`
 - interface/UX design review and acceptance → `skills/interface-design-review.md`
+- scientific research design, problem formulation and assessment → `skills/scientific-research-design.md`
+- research novelty, comparison to prior art and author contribution → `skills/scientific-novelty.md`
+- scientific literature search, citation verification and synthesis → `skills/scientific-literature.md`
+- experiment design, reproducibility, metrics and comparable results → `skills/scientific-experiments.md`
+- research implementations, integration evidence and practical adoption → `skills/scientific-implementation.md`
+- scientific prose, article structure, venue formatting and manuscript consistency → `skills/scientific-writing.md`
+- Russian venue-specific scientific document formatting (RU only) → `skills/scientific-formatting-ru.md`
+- scientific mathematical notation, formula semantics and export → `skills/scientific-mathematics.md`
+- scientific content review, remarks, revisions and acceptance → `skills/scientific-review.md`
 - scientific flowcharts, Draw.io/SVG diagrams, measured/calculated plots and spreadsheet-backed charts → `skills/scientific-visualization.md`
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations.md`
 - any task that emits human-operated commands → `skills/terminal-operations.md` (mandatory)

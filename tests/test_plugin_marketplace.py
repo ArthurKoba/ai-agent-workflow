@@ -74,7 +74,7 @@ class MarketplaceContracts(unittest.TestCase):
                 self.assertIn("name: " + slug, body)
                 self.assertIn("references/skills/", body)
         self.assertEqual(len(counts), len(MARKET.SOURCES))
-        self.assertEqual(sum(counts.values()), 19)
+        self.assertEqual(sum(counts.values()), 28)
         self.assertTrue(all(count == 1 for count in counts.values()))
         self.assertEqual(set(counts), {slug for _, slug, _, _ in MARKET.SOURCES})
 
@@ -113,7 +113,18 @@ class MarketplaceContracts(unittest.TestCase):
                 "reverse-analysis",
                 "openipc-porting",
             },
-            "arthur-koba-science": {"scientific-visualization"},
+            "arthur-koba-science": {
+                "scientific-research-design",
+                "scientific-novelty",
+                "scientific-literature",
+                "scientific-experiments",
+                "scientific-implementation",
+                "scientific-formatting-ru",
+                "scientific-writing",
+                "scientific-mathematics",
+                "scientific-review",
+                "scientific-visualization",
+            },
             "arthur-koba-other": {"domain-acquisition", "workflow-marketplace"},
         }
         self.assertEqual(sections, expected)
@@ -246,23 +257,94 @@ class MarketplaceContracts(unittest.TestCase):
             (ROOT / "skills/README.md").read_text(encoding="utf-8"),
         )
 
-    def test_science_owns_editable_diagrams_charts_and_drawio(self) -> None:
-        source = ROOT / "skills/scientific-visualization.md"
-        science = (
-            ROOT / "plugins/arthur-koba-science/skills/"
-            "scientific-visualization"
+    def test_science_owns_ten_independent_evidence_scoped_skills(self) -> None:
+        slugs = {
+            "scientific-research-design",
+            "scientific-novelty",
+            "scientific-literature",
+            "scientific-experiments",
+            "scientific-implementation",
+            "scientific-formatting-ru",
+            "scientific-writing",
+            "scientific-mathematics",
+            "scientific-review",
+            "scientific-visualization",
+        }
+        package = ROOT / "plugins/arthur-koba-science/skills"
+        self.assertEqual(
+            {path.parent.name for path in package.glob("*/SKILL.md")}, slugs
         )
-        self.assertTrue((science / "SKILL.md").is_file())
+        for slug in slugs:
+            with self.subTest(slug=slug):
+                source = ROOT / "skills" / (slug + ".md")
+                packaged = package / slug / "references/skills" / source.name
+                self.assertEqual(packaged.read_bytes(), source.read_bytes())
+                self.assertLessEqual(len(source.read_text(encoding="utf-8")), 5000)
+                body = (package / slug / "SKILL.md").read_text(encoding="utf-8")
+                self.assertIn("name: " + slug, body)
+                for forbidden in (
+                    "AI-Science",
+                    "Barelief",
+                    "BDSP",
+                    "2.3.1",
+                    "SUP-",
+                    "vestcyber",
+                    "github.com/ArthurKoba/AI-Science",
+                ):
+                    self.assertNotIn(forbidden.lower(), source.read_text(encoding="utf-8").lower())
+                self.assertFalse(
+                    (ROOT / "plugins/arthur-koba-research/skills" / slug).exists()
+                )
+
+    def test_science_localization_is_opt_in_and_publications_are_consolidated(self) -> None:
+        science = ROOT / "plugins/arthur-koba-science/skills"
+        self.assertFalse((science / "scientific-publications").exists())
+        self.assertFalse((ROOT / "skills/scientific-publications.md").exists())
+        writing = (ROOT / "skills/scientific-writing.md").read_text(encoding="utf-8")
+        self.assertIn("Manuscript structure and publication formatting", writing)
+        locale = (ROOT / "skills/scientific-formatting-ru.md").read_text(encoding="utf-8")
+        self.assertIn("regional supplement", locale)
+        self.assertIn("GOST", locale)
+        chart = (ROOT / "skills/scientific-visualization/charts.md").read_text(encoding="utf-8")
+        self.assertNotIn("short Russian labels", chart)
+        self.assertNotIn("Cyrillic** letters", chart)
+        authoring = (ROOT / "skills/scientific-visualization/authoring.md").read_text(encoding="utf-8")
+        self.assertIn(".drawio", authoring)
+        self.assertIn("SVG", authoring)
+        self.assertIn(".xlsx", (ROOT / "skills/scientific-visualization/charts.md").read_text(encoding="utf-8"))
+
+    def test_science_preserves_editable_figures_and_project_specific_join_markers(self) -> None:
+        source = ROOT / "skills/scientific-visualization.md"
+        base = ROOT / "skills/scientific-visualization"
+        packaged = (
+            ROOT / "plugins/arthur-koba-science/skills/"
+            "scientific-visualization/references/skills"
+        )
+        files = {path.name for path in base.glob("*.md")}
+        self.assertEqual(
+            files,
+            {"authoring.md", "diagrams.md", "charts.md", "verification.md"},
+        )
         self.assertEqual(
             source.read_bytes(),
-            (science / "references/skills/scientific-visualization.md").read_bytes(),
+            (packaged / source.relative_to(ROOT / "skills")).read_bytes(),
         )
-        self.assertIn("Draw.io", source.read_text(encoding="utf-8"))
-        self.assertIn("block/functional diagram", source.read_text(encoding="utf-8"))
-        self.assertIn("Scientific charts", source.read_text(encoding="utf-8"))
-        self.assertFalse(
-            (ROOT / "plugins/arthur-koba-research/skills/scientific-visualization").exists()
-        )
+        for file in base.glob("*.md"):
+            self.assertLessEqual(len(file.read_text(encoding="utf-8")), 5000)
+            self.assertEqual(
+                file.read_bytes(),
+                (packaged / file.relative_to(ROOT / "skills")).read_bytes(),
+            )
+        diagrams = (base / "diagrams.md").read_text(encoding="utf-8")
+        self.assertIn("junction dot at a real merge", diagrams)
+        self.assertIn("when required", diagrams)
+        self.assertIn("notation forbids it", diagrams)
+        self.assertIn("crossing", diagrams.lower())
+        charts = (base / "charts.md").read_text(encoding="utf-8")
+        self.assertIn("Reproducible spreadsheet-first workflow", charts)
+        self.assertIn("MODEL EXAMPLE", charts)
+        self.assertIn("SVG", charts)
+        self.assertIn("Draw.io", (base / "authoring.md").read_text(encoding="utf-8"))
 
     def test_other_owns_domain_acquisition_and_on_demand_contributions(self) -> None:
         other = ROOT / "plugins/arthur-koba-other/skills"

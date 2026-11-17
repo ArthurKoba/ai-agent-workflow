@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "arthur-koba-science",
   "version": "1.0.0",
-  "description": "Editable functional diagrams, block schemes, Draw.io/SVG, plots and quantitative visualizations.",
+  "description": "Evidence-based scientific research, novelty and literature review, reproducible experiments, writing, mathematical notation, implementation, peer review and visualizations.",
   "author": {
     "name": "Arthur Koba"
   },
@@ -12,8 +12,8 @@
     "com.openai": {
       "interface": {
         "displayName": "Arthur Koba AI Agent Workflow · Science",
-        "shortDescription": "Scientific diagrams, Draw.io, charts and reproducible figures",
-        "longDescription": "Editable functional diagrams, block schemes, Draw.io/SVG, plots and quantitative visualizations. Includes 1 independent Skills.",
+        "shortDescription": "Research methods, novelty, papers, experiments and scientific figures",
+        "longDescription": "Evidence-based scientific research, novelty and literature review, reproducible experiments, writing, mathematical notation, implementation, peer review and visualizations. Includes 10 independent Skills.",
         "developerName": "Arthur Koba",
         "category": "Productivity",
         "capabilities": [
