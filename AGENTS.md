@@ -48,13 +48,13 @@ Task skills:
 - shell/SSH/UART/PowerShell/WSL/remote execution → `skills/terminal-operations.md`
 - any task that emits human-operated commands → `skills/terminal-operations.md` (mandatory)
 - service/deployment/infrastructure operations → `skills/services-deployment/README.md`
-- remote browser sessions / Chrome tabs / DevTools / extension permissions → `skills/remote-browser-session.md`
 - reusable service deployment examples/presets → `examples/services/README.md` after loading the relevant services-deployment skill
 - program analysis (EXE, BIOS/UEFI, firmware, libraries, drivers), behavior tracing and evidence → `skills/reverse-analysis.md`
 - OpenIPC migration/porting/contribution → `skills/openipc-porting.md`
 - context-efficient documentation/bootstrap/multi-agent workflow design → `skills/context-engineering.md`
 - chat/workflow/prompt audit → `skills/workflow-audit.md`
 - registrar/domain procurement, long-term cost, transfers and DNS continuity → `skills/domain-acquisition.md`
+- on-demand AI Agent Workflow marketplace discovery and contribution → `skills/workflow-marketplace.md`
 
 ## GitHub writer/reviewer identity contract
 

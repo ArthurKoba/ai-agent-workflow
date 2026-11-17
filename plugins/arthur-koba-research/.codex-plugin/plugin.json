@@ -1,12 +1,12 @@
 {
   "name": "arthur-koba-research",
   "version": "1.0.0",
-  "description": "Reverse engineering, OpenIPC porting and scientific visualizations.",
+  "description": "Evidence-based analysis of programs, firmware and OpenIPC porting.",
   "skills": "./skills/",
   "interface": {
-    "displayName": "Arthur Koba AI Agent Workflow · Research",
-    "shortDescription": "Reverse analysis, firmware porting and technical figures",
-    "longDescription": "Reverse engineering, OpenIPC porting and scientific visualizations. Includes 3 independent Skills.",
+    "displayName": "Arthur Koba AI Agent Workflow · Software Research",
+    "shortDescription": "Software reverse analysis and firmware porting",
+    "longDescription": "Evidence-based analysis of programs, firmware and OpenIPC porting. Includes 2 independent Skills.",
     "developerName": "Arthur Koba",
     "category": "Productivity",
     "capabilities": [

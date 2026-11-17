@@ -112,10 +112,9 @@ class MarketplaceContracts(unittest.TestCase):
             "arthur-koba-research": {
                 "reverse-analysis",
                 "openipc-porting",
-                "scientific-visualization",
             },
-            "arthur-koba-domains": {"domain-acquisition"},
-            "arthur-koba-browser": {"remote-browser-session"},
+            "arthur-koba-science": {"scientific-visualization"},
+            "arthur-koba-other": {"domain-acquisition", "workflow-marketplace"},
         }
         self.assertEqual(sections, expected)
 
@@ -158,9 +157,17 @@ class MarketplaceContracts(unittest.TestCase):
                 old = root / "plugins/ai-agent-workflow/skills/old/SKILL.md"
                 old.parent.mkdir(parents=True)
                 old.write_bytes(b"obsolete")
-                self.assertEqual(MARKET.update(check=False), (2, 1))
+                retired_browser = (
+                    root / "plugins/arthur-koba-browser/skills/"
+                    "remote-browser-session/SKILL.md"
+                )
+                retired_browser.parent.mkdir(parents=True)
+                retired_browser.write_bytes(b"retired browser")
+                self.assertEqual(MARKET.update(check=False), (2, 2))
                 self.assertFalse(old.exists())
                 self.assertFalse((root / "plugins/ai-agent-workflow").exists())
+                self.assertFalse(retired_browser.exists())
+                self.assertFalse((root / "plugins/arthur-koba-browser").exists())
                 self.assertEqual(MARKET.update(check=True), (0, 0))
                 target = root / "plugins/arthur-koba-backend/plugin.json"
                 target.write_text("changed")
@@ -221,19 +228,61 @@ class MarketplaceContracts(unittest.TestCase):
             (ROOT / "plugins/arthur-koba-development/skills/backend-engineering/SKILL.md").is_file()
         )
 
-    def test_remote_browser_skill_is_optional_provider_neutral(self) -> None:
-        folder = ROOT / "skills/remote-browser-session"
-        files = [ROOT / "skills/remote-browser-session.md", *folder.glob("*.md")]
-        self.assertEqual(len(files), 5)
-        content = "\n".join(file.read_text(encoding="utf-8") for file in files)
-        for file in files:
-            self.assertLessEqual(len(file.read_text(encoding="utf-8")), 5000)
-        for obsolete in ("Koba Web", "Koba_MCP_Bridge", "mcp__Koba", "bridge_tools(web)"):
-            self.assertNotIn(obsolete.lower(), content.lower())
-        self.assertIn("reusable", content)
-        self.assertIn("permission", content)
-        self.assertTrue(
-            (ROOT / "plugins/arthur-koba-browser/skills/remote-browser-session/SKILL.md").is_file()
+    def test_retired_browser_skill_and_plugin_do_not_return(self) -> None:
+        self.assertFalse((ROOT / "skills/remote-browser-session.md").exists())
+        self.assertFalse((ROOT / "skills/remote-browser-session").exists())
+        self.assertFalse((ROOT / "plugins/arthur-koba-browser").exists())
+        self.assertIn("arthur-koba-browser", MARKET.RETIRED_PLUGINS)
+        self.assertFalse((ROOT / "plugins/arthur-koba-domains").exists())
+        self.assertIn("arthur-koba-domains", MARKET.RETIRED_PLUGINS)
+        self.assertNotIn("remote-browser-session", {
+            slug for _, slug, _, _ in MARKET.SOURCES
+        })
+        self.assertNotIn("arthur-koba-browser", {
+            info["id"] for info in MARKET.GROUPS.values()
+        })
+        self.assertNotIn(
+            "remote-browser-session",
+            (ROOT / "skills/README.md").read_text(encoding="utf-8"),
+        )
+
+    def test_science_owns_editable_diagrams_charts_and_drawio(self) -> None:
+        source = ROOT / "skills/scientific-visualization.md"
+        science = (
+            ROOT / "plugins/arthur-koba-science/skills/"
+            "scientific-visualization"
+        )
+        self.assertTrue((science / "SKILL.md").is_file())
+        self.assertEqual(
+            source.read_bytes(),
+            (science / "references/skills/scientific-visualization.md").read_bytes(),
+        )
+        self.assertIn("Draw.io", source.read_text(encoding="utf-8"))
+        self.assertIn("block/functional diagram", source.read_text(encoding="utf-8"))
+        self.assertIn("Scientific charts", source.read_text(encoding="utf-8"))
+        self.assertFalse(
+            (ROOT / "plugins/arthur-koba-research/skills/scientific-visualization").exists()
+        )
+
+    def test_other_owns_domain_acquisition_and_on_demand_contributions(self) -> None:
+        other = ROOT / "plugins/arthur-koba-other/skills"
+        self.assertTrue((other / "domain-acquisition/SKILL.md").is_file())
+        marketplace = other / "workflow-marketplace"
+        self.assertTrue((marketplace / "SKILL.md").is_file())
+        source = ROOT / "skills/workflow-marketplace.md"
+        content = source.read_text(encoding="utf-8")
+        self.assertLessEqual(len(content), 5000)
+        self.assertEqual(
+            source.read_bytes(),
+            (marketplace / "references/skills/workflow-marketplace.md").read_bytes(),
+        )
+        self.assertIn("https://github.com/ArthurKoba/ai-agent-workflow", content)
+        self.assertIn(".agents/plugins/marketplace.json", content)
+        self.assertIn("on-demand", content)
+        self.assertIn("contribute", content.lower())
+        self.assertIn("not\nauthorization to schedule ongoing monitoring", content)
+        self.assertFalse(
+            (ROOT / "plugins/arthur-koba-devops/skills/domain-acquisition").exists()
         )
 
     def test_reverse_analysis_is_independent_of_engines_and_mcp(self) -> None:

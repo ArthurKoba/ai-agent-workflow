@@ -20,6 +20,8 @@ RETIRED_PLUGINS = (
     "arthur-koba-architecture",
     "arthur-koba-frontend",
     "arthur-koba-quality",
+    "arthur-koba-browser",
+    "arthur-koba-domains",
 )
 MARKETPLACE_TITLE = "Arthur Koba AI Agent Workflow"
 
@@ -46,23 +48,23 @@ GROUPS = {
         "short": "Agent orchestration, context and reusable Skills",
         "description": "Coordination, context engineering, Skill authoring and workflow audits.",
     },
-    "Research & Porting": {
+    "Software Research": {
         "id": "arthur-koba-research",
-        "title": "Research",
-        "short": "Reverse analysis, firmware porting and technical figures",
-        "description": "Reverse engineering, OpenIPC porting and scientific visualizations.",
+        "title": "Software Research",
+        "short": "Software reverse analysis and firmware porting",
+        "description": "Evidence-based analysis of programs, firmware and OpenIPC porting.",
     },
-    "Domain Management": {
-        "id": "arthur-koba-domains",
-        "title": "Domains",
-        "short": "Domain registration, transfers, renewals and DNS continuity",
-        "description": "Optional domain procurement, cost comparison and transfer planning.",
+    "Science": {
+        "id": "arthur-koba-science",
+        "title": "Science",
+        "short": "Scientific diagrams, Draw.io, charts and reproducible figures",
+        "description": "Editable functional diagrams, block schemes, Draw.io/SVG, plots and quantitative visualizations.",
     },
-    "Browser Access": {
-        "id": "arthur-koba-browser",
-        "title": "Browser Access",
-        "short": "Authorized remote browser sessions, tabs and extensions",
-        "description": "Optional session reuse, scoped browser permissions and safe recovery.",
+    "Other": {
+        "id": "arthur-koba-other",
+        "title": "Other",
+        "short": "Domain ownership and AI Agent Workflow updates",
+        "description": "Optional domain acquisition and on-demand Skill marketplace discovery and contributions.",
     },
 }
 
@@ -81,12 +83,12 @@ CURATED_DESCRIPTIONS = {
     "scientific-visualization": "Technical diagrams, scientific figures and measured plots",
     "terminal-operations": "Shell, PowerShell, SSH, serial and terminal operations",
     "services-deployment": "Services, Docker Compose, Coolify, environments and deployments",
-    "remote-browser-session": "Remote browser authorization, session reuse and safe recovery",
     "reverse-analysis": "Reverse engineering, firmware, binaries, tracing and evidence",
     "openipc-porting": "OpenIPC firmware porting and contribution workflows",
     "context-engineering": "Agent context management, source maps and progressive disclosure",
     "workflow-audit": "Agent workflow and prompt audits",
     "domain-acquisition": "Domain registration, transfers, pricing and continuity",
+    "workflow-marketplace": "Discover Arthur Koba AI Agent Workflow updates and contribute reusable skills",
 }
 
 

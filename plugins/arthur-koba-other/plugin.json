@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "arthur-koba-domains",
+  "name": "arthur-koba-other",
   "version": "1.0.0",
-  "description": "Optional domain procurement, cost comparison and transfer planning.",
+  "description": "Optional domain acquisition and on-demand Skill marketplace discovery and contributions.",
   "author": {
     "name": "Arthur Koba"
   },
@@ -11,9 +11,9 @@
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "Arthur Koba AI Agent Workflow · Domains",
-        "shortDescription": "Domain registration, transfers, renewals and DNS continuity",
-        "longDescription": "Optional domain procurement, cost comparison and transfer planning. Includes 1 independent Skills.",
+        "displayName": "Arthur Koba AI Agent Workflow · Other",
+        "shortDescription": "Domain ownership and AI Agent Workflow updates",
+        "longDescription": "Optional domain acquisition and on-demand Skill marketplace discovery and contributions. Includes 2 independent Skills.",
         "developerName": "Arthur Koba",
         "category": "Productivity",
         "capabilities": [

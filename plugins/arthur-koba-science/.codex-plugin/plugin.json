@@ -1,0 +1,16 @@
+{
+  "name": "arthur-koba-science",
+  "version": "1.0.0",
+  "description": "Editable functional diagrams, block schemes, Draw.io/SVG, plots and quantitative visualizations.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arthur Koba AI Agent Workflow · Science",
+    "shortDescription": "Scientific diagrams, Draw.io, charts and reproducible figures",
+    "longDescription": "Editable functional diagrams, block schemes, Draw.io/SVG, plots and quantitative visualizations. Includes 1 independent Skills.",
+    "developerName": "Arthur Koba",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ]
+  }
+}

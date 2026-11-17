@@ -53,10 +53,10 @@
       "category": "Productivity"
     },
     {
-      "name": "arthur-koba-domains",
+      "name": "arthur-koba-science",
       "source": {
         "source": "local",
-        "path": "./plugins/arthur-koba-domains"
+        "path": "./plugins/arthur-koba-science"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -65,10 +65,10 @@
       "category": "Productivity"
     },
     {
-      "name": "arthur-koba-browser",
+      "name": "arthur-koba-other",
       "source": {
         "source": "local",
-        "path": "./plugins/arthur-koba-browser"
+        "path": "./plugins/arthur-koba-other"
       },
       "policy": {
         "installation": "AVAILABLE",

@@ -29,21 +29,22 @@ package**, not separate installations.
 - skill creation, editing, splitting, merging and review → `skill-authoring.md` (mandatory)
 - workflow/chat/prompt audit → `workflow-audit.md`
 
-## Research & Porting
+## Software Research
 
 - program behavior analysis, reconstruction and evidence-driven analysis (EXE, BIOS/UEFI, firmware, drivers, libraries) → `reverse-analysis.md`
 - OpenIPC migration/porting/contribution → `openipc-porting.md`
-- scientific diagrams, vector SVG, Excel-like charts and reproducible figures → `scientific-visualization.md`
 
-## Domain Management
+## Science
+
+- scientific diagrams, block/functional flowcharts, Draw.io, vector SVG, charts and reproducible plots → `scientific-visualization.md`
+
+## Other
 
 - domain registration/purchase, renewal, transfer, cost and DNS continuity → `domain-acquisition.md`
+- find updated Arthur Koba AI Agent Workflow Skills and contribute general-purpose improvements → `workflow-marketplace.md`
 
-## Browser Access
-
-- operator-authorized browser sessions, tabs, DevTools and extension grants → `remote-browser-session.md`
-
-Domain Management and Browser Access are optional, specialized packages;
-they are neither prerequisites for software development nor bundled into DevOps.
-Skills may reference other source documents conditionally, but no package
-requires another package, an external service, Briareus or a Git clone.
+Other is optional: domain procurement and on-demand Skill catalog discovery
+are neither prerequisites for development nor bundled into DevOps. No
+periodic monitoring or automatic installs are implied. Skills may refer
+to other source documents conditionally, but no package requires another,
+an external service, Briareus or a Git clone.

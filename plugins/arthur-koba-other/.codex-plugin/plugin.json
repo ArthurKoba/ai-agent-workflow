@@ -1,0 +1,16 @@
+{
+  "name": "arthur-koba-other",
+  "version": "1.0.0",
+  "description": "Optional domain acquisition and on-demand Skill marketplace discovery and contributions.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arthur Koba AI Agent Workflow · Other",
+    "shortDescription": "Domain ownership and AI Agent Workflow updates",
+    "longDescription": "Optional domain acquisition and on-demand Skill marketplace discovery and contributions. Includes 2 independent Skills.",
+    "developerName": "Arthur Koba",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ]
+  }
+}
