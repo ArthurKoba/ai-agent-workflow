@@ -138,7 +138,7 @@ def _skill_file(slug: str, source: str, description: str) -> bytes:
     title = slug.replace("-", " ").title()
     content = (
         "---\n"
-        f"name: aiwf-{slug}\n"
+        f"name: {slug}\n"
         f"description: {json.dumps(description, ensure_ascii=False)}\n"
         "---\n\n"
         f"# {title}\n\n"
@@ -174,7 +174,7 @@ def generated_files() -> dict[Path, bytes]:
         "displayName": "AI Agent Workflow",
         "shortDescription": "Reusable agent workflows for engineering tasks",
         "longDescription": "A self-contained collection of 18 scoped Skills with locally bundled reference modules.",
-        "developerName": "AI Agent Workflow",
+        "developerName": "Arthur Koba",
         "category": "Productivity",
         "capabilities": ["Read"],
     }
@@ -183,7 +183,7 @@ def generated_files() -> dict[Path, bytes]:
         "name": "ai-agent-workflow",
         "version": "1.0.0",
         "description": "Task-specific engineering, development, testing, Git, and operations skills",
-        "author": {"name": "AI Agent Workflow"},
+        "author": {"name": "Arthur Koba"},
         "repository": "https://github.com/ArthurKoba/ai-agent-workflow",
         "skills": "./skills/",
         "extensions": {"com.openai": {"interface": interface}},
@@ -198,7 +198,7 @@ def generated_files() -> dict[Path, bytes]:
         "interface": interface,
     })
     for slug, source, description in SOURCES:
-        folder = PLUGIN / "skills" / ("aiwf-" + slug)
+        folder = PLUGIN / "skills" / slug
         files[folder / "SKILL.md"] = _skill_file(slug, source, description)
         for name, raw in _closure(source).items():
             files[folder / "references" / name] = raw
@@ -231,6 +231,19 @@ def update(*, check: bool) -> tuple[int, int]:
     if not check:
         for path in stale:
             (ROOT / path).unlink()
+        # Retire empty directories from the old `aiwf-` namespace without
+        # touching other plugins or live, non-generated project content.
+        old_skills = OUT / "skills"
+        if old_skills.is_dir():
+            for old in old_skills.glob("aiwf-*"):
+                if old.is_dir() and not old.is_symlink():
+                    for directory in sorted(
+                        (entry for entry in old.rglob("*") if entry.is_dir()),
+                        key=lambda entry: len(entry.parts),
+                        reverse=True,
+                    ):
+                        directory.rmdir()
+                    old.rmdir()
         for path in missing:
             file = ROOT / path
             file.parent.mkdir(parents=True, exist_ok=True)

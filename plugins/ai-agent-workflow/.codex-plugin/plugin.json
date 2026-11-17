@@ -7,7 +7,7 @@
     "displayName": "AI Agent Workflow",
     "shortDescription": "Reusable agent workflows for engineering tasks",
     "longDescription": "A self-contained collection of 18 scoped Skills with locally bundled reference modules.",
-    "developerName": "AI Agent Workflow",
+    "developerName": "Arthur Koba",
     "category": "Productivity",
     "capabilities": [
       "Read"

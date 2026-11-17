@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Task-specific engineering, development, testing, Git, and operations skills",
   "author": {
-    "name": "AI Agent Workflow"
+    "name": "Arthur Koba"
   },
   "repository": "https://github.com/ArthurKoba/ai-agent-workflow",
   "skills": "./skills/",
@@ -14,7 +14,7 @@
         "displayName": "AI Agent Workflow",
         "shortDescription": "Reusable agent workflows for engineering tasks",
         "longDescription": "A self-contained collection of 18 scoped Skills with locally bundled reference modules.",
-        "developerName": "AI Agent Workflow",
+        "developerName": "Arthur Koba",
         "category": "Productivity",
         "capabilities": [
           "Read"

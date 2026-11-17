@@ -29,13 +29,21 @@ class MarketplaceContracts(unittest.TestCase):
             manifest = json.loads((root / name).read_text())
             self.assertEqual(manifest["name"], "ai-agent-workflow")
             self.assertEqual(manifest["skills"], "./skills/")
+            if name == "plugin.json":
+                self.assertEqual(manifest["author"]["name"], "Arthur Koba")
+                interface = manifest["extensions"]["com.openai"]["interface"]
+            else:
+                interface = manifest["interface"]
+            self.assertEqual(interface["developerName"], "Arthur Koba")
+            self.assertNotIn("logo", interface)
         skills = list((root / "skills").glob("*/SKILL.md"))
         self.assertEqual(len(skills), len(MARKET.SOURCES))
+        self.assertFalse(list((root / "skills").glob("aiwf-*")))
         for slug, source, description in MARKET.SOURCES:
-            skill = root / "skills" / ("aiwf-" + slug) / "SKILL.md"
+            skill = root / "skills" / slug / "SKILL.md"
             body = skill.read_text()
             self.assertLessEqual(len(body), 5000)
-            self.assertIn("name: aiwf-" + slug, body)
+            self.assertIn("name: " + slug, body)
             self.assertIn(description, body)
             self.assertTrue((skill.parent / "references" / source).is_file())
 
