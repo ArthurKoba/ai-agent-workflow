@@ -15,6 +15,12 @@ ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_ROOT = Path("plugins")
 MANIFEST = ROOT / ".agents/plugins/marketplace.json"
 LEGACY_PLUGIN = "ai-agent-workflow"
+RETIRED_PLUGINS = (
+    "arthur-koba-backend",
+    "arthur-koba-architecture",
+    "arthur-koba-frontend",
+    "arthur-koba-quality",
+)
 MARKETPLACE_TITLE = "Arthur Koba AI Agent Workflow"
 
 # Each category is an independent installable plugin. Skills are assigned by
@@ -22,41 +28,23 @@ MARKETPLACE_TITLE = "Arthur Koba AI Agent Workflow"
 # The marketing title retains Arthur Koba's name, while the machine IDs are
 # stable, unique and not inferred from display text.
 GROUPS = {
-    "Backend Engineering": {
-        "id": "arthur-koba-backend",
-        "title": "Backend",
-        "short": "Backend services, APIs, persistence and implementation",
-        "description": "Language-neutral backend engineering for Rust, Python and other stacks.",
-    },
-    "Architecture & Project Setup": {
-        "id": "arthur-koba-architecture",
-        "title": "Architecture",
-        "short": "Software architecture and project quality foundations",
-        "description": "Architecture, DDD, project bootstrap, toolchains and quality gates.",
-    },
-    "Frontend & UI": {
-        "id": "arthur-koba-frontend",
-        "title": "Frontend",
-        "short": "Frontend implementation and interface design reviews",
-        "description": "Frontend engineering, UI architecture, accessibility and design review.",
-    },
-    "Testing & Review": {
-        "id": "arthur-koba-quality",
-        "title": "Quality",
-        "short": "Software testing and independent code review",
-        "description": "Designing tests, reviewing changes, verifying evidence and acceptance.",
+    "Development": {
+        "id": "arthur-koba-development",
+        "title": "Development",
+        "short": "Backend, frontend, architecture, testing and code review",
+        "description": "Complete language-neutral software development, including Rust/Python backends, UI, testing and review.",
     },
     "DevOps & Infrastructure": {
         "id": "arthur-koba-devops",
         "title": "DevOps",
-        "short": "Git, terminal, deployments and domain operations",
-        "description": "Git workflows, terminal practice, service deployments and domains.",
+        "short": "Git, terminal, services and deployments",
+        "description": "Git workflows, shell operations, infrastructure and service deployment.",
     },
     "Agent Workflows": {
         "id": "arthur-koba-agents",
         "title": "Agent Workflows",
-        "short": "Agent orchestration, context, reusable Skills and audits",
-        "description": "Coordination, context engineering, agent Skills and workflow auditing.",
+        "short": "Agent orchestration, context and reusable Skills",
+        "description": "Coordination, context engineering, Skill authoring and workflow audits.",
     },
     "Research & Porting": {
         "id": "arthur-koba-research",
@@ -64,13 +52,20 @@ GROUPS = {
         "short": "Reverse analysis, firmware porting and technical figures",
         "description": "Reverse engineering, OpenIPC porting and scientific visualizations.",
     },
-    "Browser Sessions": {
+    "Domain Management": {
+        "id": "arthur-koba-domains",
+        "title": "Domains",
+        "short": "Domain registration, transfers, renewals and DNS continuity",
+        "description": "Optional domain procurement, cost comparison and transfer planning.",
+    },
+    "Browser Access": {
         "id": "arthur-koba-browser",
-        "title": "Browser Sessions",
-        "short": "Safe browser sessions, authorization and extension grants",
-        "description": "Reusable browser sessions, scoped access and permission recovery.",
+        "title": "Browser Access",
+        "short": "Authorized remote browser sessions, tabs and extensions",
+        "description": "Optional session reuse, scoped browser permissions and safe recovery.",
     },
 }
+
 ALLOWED = frozenset({"skills", "docs", "audit", "context", "playbook", "examples"})
 CURATED_DESCRIPTIONS = {
     "backend-engineering": "Backend services and APIs across Rust, Python, Go and other languages",
@@ -283,7 +278,7 @@ def generated_files() -> dict[Path, bytes]:
 
 
 def _managed_plugin_names() -> tuple[str, ...]:
-    return (LEGACY_PLUGIN, *(meta["id"] for meta in GROUPS.values()))
+    return (LEGACY_PLUGIN, *RETIRED_PLUGINS, *(meta["id"] for meta in GROUPS.values()))
 
 
 def _current_files() -> set[Path]:

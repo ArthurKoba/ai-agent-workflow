@@ -1,0 +1,16 @@
+{
+  "name": "arthur-koba-development",
+  "version": "1.0.0",
+  "description": "Complete language-neutral software development, including Rust/Python backends, UI, testing and review.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arthur Koba AI Agent Workflow · Development",
+    "shortDescription": "Backend, frontend, architecture, testing and code review",
+    "longDescription": "Complete language-neutral software development, including Rust/Python backends, UI, testing and review. Includes 7 independent Skills.",
+    "developerName": "Arthur Koba",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ]
+  }
+}

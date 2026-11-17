@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "arthur-koba-browser",
   "version": "1.0.0",
-  "description": "Reusable browser sessions, scoped access and permission recovery.",
+  "description": "Optional session reuse, scoped browser permissions and safe recovery.",
   "author": {
     "name": "Arthur Koba"
   },
@@ -11,9 +11,9 @@
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "Arthur Koba AI Agent Workflow · Browser Sessions",
-        "shortDescription": "Safe browser sessions, authorization and extension grants",
-        "longDescription": "Reusable browser sessions, scoped access and permission recovery. Includes 1 independent Skills.",
+        "displayName": "Arthur Koba AI Agent Workflow · Browser Access",
+        "shortDescription": "Authorized remote browser sessions, tabs and extensions",
+        "longDescription": "Optional session reuse, scoped browser permissions and safe recovery. Includes 1 independent Skills.",
         "developerName": "Arthur Koba",
         "category": "Productivity",
         "capabilities": [

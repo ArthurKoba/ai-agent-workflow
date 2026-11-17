@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "arthur-koba-frontend",
+  "name": "arthur-koba-domains",
   "version": "1.0.0",
-  "description": "Frontend engineering, UI architecture, accessibility and design review.",
+  "description": "Optional domain procurement, cost comparison and transfer planning.",
   "author": {
     "name": "Arthur Koba"
   },
@@ -11,9 +11,9 @@
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "Arthur Koba AI Agent Workflow · Frontend",
-        "shortDescription": "Frontend implementation and interface design reviews",
-        "longDescription": "Frontend engineering, UI architecture, accessibility and design review. Includes 2 independent Skills.",
+        "displayName": "Arthur Koba AI Agent Workflow · Domains",
+        "shortDescription": "Domain registration, transfers, renewals and DNS continuity",
+        "longDescription": "Optional domain procurement, cost comparison and transfer planning. Includes 1 independent Skills.",
         "developerName": "Arthur Koba",
         "category": "Productivity",
         "capabilities": [

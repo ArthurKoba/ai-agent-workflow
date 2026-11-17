@@ -1,0 +1,16 @@
+{
+  "name": "arthur-koba-domains",
+  "version": "1.0.0",
+  "description": "Optional domain procurement, cost comparison and transfer planning.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arthur Koba AI Agent Workflow · Domains",
+    "shortDescription": "Domain registration, transfers, renewals and DNS continuity",
+    "longDescription": "Optional domain procurement, cost comparison and transfer planning. Includes 1 independent Skills.",
+    "developerName": "Arthur Koba",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ]
+  }
+}

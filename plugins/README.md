@@ -1,57 +1,60 @@
-# Arthur Koba AI Agent Workflow — selectable marketplace plugins
+# Arthur Koba AI Agent Workflow — selectable packages
 
-This independent GitHub repository owns the [marketplace
-manifest](../.agents/plugins/marketplace.json). Import it in ChatGPT
-from https://github.com/ArthurKoba/ai-agent-workflow, ref `main`,
-without selective paths. The marketplace contains **8 separately
-installable plugins with 19 distinct Skills**. Each plugin is useful by
-itself and bundles its own selected Skills and relevant reference
-documents; neither other plugins nor Briareus are prerequisites.
+The [marketplace manifest](../.agents/plugins/marketplace.json) is
+published from https://github.com/ArthurKoba/ai-agent-workflow, Git ref
+`main`. It offers **6 installable plugins, containing 19 distinct Skills**.
+The packages group tasks by *kind of work*, not by development phase.
 
-| Plugin | Included Skills | Recommended for |
+| Installable plugin | Included Skills | Who needs it |
 | --- | --- | --- |
-| Backend | `backend-engineering` | Backend/API/service developers, including Rust or Python |
-| Architecture | `software-architecture`, `project-bootstrap` | Software architects, new project/toolchain setup |
-| Frontend | `frontend-engineering`, `interface-design-review` | Frontend/UI developers and reviewers |
-| Quality | `software-testing`, `code-review` | Testers, QA and code reviewers |
-| DevOps | `git-workflow`, `terminal-operations`, `services-deployment`, `domain-acquisition` | Infrastructure operators and Git workflows |
-| Agent Workflows | `orchestration`, `context-engineering`, `skill-authoring`, `workflow-audit` | People creating and coordinating AI agents |
-| Research | `reverse-analysis`, `openipc-porting`, `scientific-visualization` | Reverse engineering, porting and technical research |
-| Browser Sessions | `remote-browser-session` | Optional remote browser/tab permission management |
+| **Development** | `backend-engineering`, `software-architecture`, `project-bootstrap`, `frontend-engineering`, `interface-design-review`, `software-testing`, `code-review` | Software development as a whole: Rust/Python/Go backend, frontend, architecture, testing, code review |
+| **DevOps** | `git-workflow`, `terminal-operations`, `services-deployment` | Git, terminal and infrastructure work |
+| **Agent Workflows** | `orchestration`, `context-engineering`, `skill-authoring`, `workflow-audit` | Building and orchestrating AI-agent workflows |
+| **Research** | `reverse-analysis`, `openipc-porting`, `scientific-visualization` | Program analysis, firmware porting and technical research |
+| **Domains** *(optional)* | `domain-acquisition` | Registrar price/availability research, buying, renewing, transferring domains, and DNS/mail continuity |
+| **Browser Access** *(optional)* | `remote-browser-session` | Reusing an authorized browser session, managing tab/DevTools/extension permissions and reconnection |
 
-## Upgrade from the old all-in-one package
+**Backend + architecture + frontend + quality are ONE Development
+installation.** These remain distinct task-routed Skills *inside* that
+single plugin; their reference modules are read conditionally.
+Backend is language-independent, and a Rust task does not imply Python
+or PostgreSQL requirements.
 
-The previous installable plugin `ai-agent-workflow` has been **retired from
-the marketplace**, not silently replaced in the client's installed apps.
-If that old plugin is still installed in ChatGPT, **uninstall it using
-the client's plugin management**, then install only the new categories
-you need. Otherwise old and new Skills may be exposed twice. Refreshing
-the marketplace alone does not uninstall an existing client plugin.
+The optional **Domains** plugin is not DevOps: it handles registrar
+procurement and domain ownership economics. The optional **Browser Access**
+plugin is not a browser or an automation tool: it governs safe authorization
+and reuse of an operator-controlled remote browser. Neither is required
+for normal development, DevOps, research or agent orchestration.
+Users who don't need them should not install them.
 
-Each category is a plugin card, not a separate Git repository; everything
-continues to be published under the one Arthur Koba marketplace.
-Skill frontmatter and each plugin's display name carry human-readable
-names. A generic plugin icon is independent from a Skill's folder
-and no personal logo is included in these packages.
+## Upgrading
 
-## Source of truth and publishing
+The former all-in-one plugin `ai-agent-workflow` and the earlier short-lived
+`arthur-koba-backend`, `arthur-koba-architecture`,
+`arthur-koba-frontend` and `arthur-koba-quality` plugin cards are **retired
+from the marketplace**, but ChatGPT may retain already installed copies.
+Uninstall retired copies in the client UI when replacing them with
+`arthur-koba-development`. Otherwise duplicate Skills may remain active.
+A marketplace refresh does not uninstall plugins from a user's account.
 
-The authoritative library remains under [skills](../skills/README.md).
-Each `##` section in that task map owns membership of exactly one package.
-The generator [build-plugin-marketplace.py](../scripts/build-plugin-marketplace.py)
-discovers Skills from that map, copies only their relevant reference closure,
-and fails closed if a category has no Skills, has an unknown name, or a Skill
-appears more than once. Generated files are tracked under
-`plugins/arthur-koba-*/`. **Do not edit generated copies by hand.**
+Each plugin is independently usable and includes its own local
+reference closure. No plugin requires Briareus, another package,
+credentials, running MCP Hands or a Git clone. The public package names
+retain the Arthur Koba AI Agent Workflow identity. No personal logo has
+been added.
 
-Run `python3 scripts/build-plugin-marketplace.py` before committing.
-The Git hook and CI validate deterministic output. An event-driven
-GitHub Actions publisher regenerates and commits generated packages on
-source changes without depending on Briareus, remote credentials,
-Docker rebuilds or recurring polling. GitHub publication does not
-prove the installed client has refreshed or activated any plugin.
+## Source authority
 
-Browser Sessions is optional and provider-neutral; it governs session
-reuse and permissions, not a legacy connector. Concrete provider APIs,
-endpoints and deployment troubleshooting belong to the selected provider's
-own project Skill, not this universal library.
+The task routes and plugin membership are owned by [the Skill
+Map](../skills/README.md). Each `##` section is an installable plugin;
+each entry is one Skill. The generator
+[build-plugin-marketplace.py](../scripts/build-plugin-marketplace.py)
+uses those routes, rejects unknown/empty/duplicate categories and
+regenerates only the managed files under `plugins/`. Do not modify
+generated copies manually.
+
+Regenerate via `python3 scripts/build-plugin-marketplace.py` when
+changing sources. Git hooks and CI check deterministic generated output;
+the event-driven publisher commits it to `main`. It does not rebuild
+Briareus or install plugins for users. ChatGPT UI refresh and activation
+are separate client-side steps.

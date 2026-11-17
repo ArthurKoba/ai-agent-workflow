@@ -29,7 +29,7 @@ def plugin_skill_paths() -> list[Path]:
 
 
 class MarketplaceContracts(unittest.TestCase):
-    def test_eight_independently_installable_plugins_contain_each_skill_once(self) -> None:
+    def test_six_independently_installable_plugins_contain_each_skill_once(self) -> None:
         marketplace = json.loads((ROOT / ".agents/plugins/marketplace.json").read_text())
         self.assertEqual(marketplace["name"], "ai-agent-workflow")
         self.assertEqual(
@@ -37,12 +37,14 @@ class MarketplaceContracts(unittest.TestCase):
             "Arthur Koba AI Agent Workflow",
         )
         entries = marketplace["plugins"]
-        self.assertEqual(len(entries), 8)
+        self.assertEqual(len(entries), 6)
         self.assertEqual(
             [entry["name"] for entry in entries],
             [info["id"] for info in MARKET.GROUPS.values()],
         )
         self.assertFalse((ROOT / "plugins/ai-agent-workflow").exists())
+        for retired in MARKET.RETIRED_PLUGINS:
+            self.assertFalse((ROOT / "plugins" / retired).exists())
         counts: Counter[str] = Counter()
         for entry in entries:
             self.assertEqual(entry["policy"]["installation"], "AVAILABLE")
@@ -87,15 +89,19 @@ class MarketplaceContracts(unittest.TestCase):
             for info in MARKET.GROUPS.values()
         }
         expected = {
-            "arthur-koba-backend": {"backend-engineering"},
-            "arthur-koba-architecture": {"software-architecture", "project-bootstrap"},
-            "arthur-koba-frontend": {"frontend-engineering", "interface-design-review"},
-            "arthur-koba-quality": {"software-testing", "code-review"},
+            "arthur-koba-development": {
+                "backend-engineering",
+                "software-architecture",
+                "project-bootstrap",
+                "frontend-engineering",
+                "interface-design-review",
+                "software-testing",
+                "code-review",
+            },
             "arthur-koba-devops": {
                 "git-workflow",
                 "terminal-operations",
                 "services-deployment",
-                "domain-acquisition",
             },
             "arthur-koba-agents": {
                 "orchestration",
@@ -108,6 +114,7 @@ class MarketplaceContracts(unittest.TestCase):
                 "openipc-porting",
                 "scientific-visualization",
             },
+            "arthur-koba-domains": {"domain-acquisition"},
             "arthur-koba-browser": {"remote-browser-session"},
         }
         self.assertEqual(sections, expected)
@@ -208,10 +215,10 @@ class MarketplaceContracts(unittest.TestCase):
             list((ROOT / "plugins").glob("*/skills/software-engineering/SKILL.md"))
         )
         self.assertTrue(
-            (ROOT / "plugins/arthur-koba-architecture/skills/software-architecture/SKILL.md").is_file()
+            (ROOT / "plugins/arthur-koba-development/skills/software-architecture/SKILL.md").is_file()
         )
         self.assertTrue(
-            (ROOT / "plugins/arthur-koba-backend/skills/backend-engineering/SKILL.md").is_file()
+            (ROOT / "plugins/arthur-koba-development/skills/backend-engineering/SKILL.md").is_file()
         )
 
     def test_remote_browser_skill_is_optional_provider_neutral(self) -> None:

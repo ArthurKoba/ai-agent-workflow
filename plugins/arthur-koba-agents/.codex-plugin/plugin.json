@@ -1,12 +1,12 @@
 {
   "name": "arthur-koba-agents",
   "version": "1.0.0",
-  "description": "Coordination, context engineering, agent Skills and workflow auditing.",
+  "description": "Coordination, context engineering, Skill authoring and workflow audits.",
   "skills": "./skills/",
   "interface": {
     "displayName": "Arthur Koba AI Agent Workflow · Agent Workflows",
-    "shortDescription": "Agent orchestration, context, reusable Skills and audits",
-    "longDescription": "Coordination, context engineering, agent Skills and workflow auditing. Includes 4 independent Skills.",
+    "shortDescription": "Agent orchestration, context and reusable Skills",
+    "longDescription": "Coordination, context engineering, Skill authoring and workflow audits. Includes 4 independent Skills.",
     "developerName": "Arthur Koba",
     "category": "Productivity",
     "capabilities": [
