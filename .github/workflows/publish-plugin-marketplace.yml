@@ -1,0 +1,56 @@
+name: Publish AI Agent Workflow Skills marketplace
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - 'docs/**'
+      - 'audit/**'
+      - 'context/**'
+      - 'playbook/**'
+      - 'examples/**'
+      - 'scripts/build-plugin-marketplace.py'
+      - '.github/workflows/publish-plugin-marketplace.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-agent-workflow-skills-main
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the canonical main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Build current task-specific native Skills
+        run: |
+          python3 scripts/build-plugin-marketplace.py
+          python3 scripts/build-plugin-marketplace.py --check
+
+      - name: Validate generated plugin and workflow contracts
+        run: |
+          python3 -m unittest discover -s tests -v
+          bash scripts/verify-workflow.sh
+          git diff --check
+
+      - name: Publish only generated marketplace files
+        run: |
+          git add -- .agents/plugins/marketplace.json plugins/ai-agent-workflow
+          if git diff --cached --quiet; then
+            echo "No native Skill changes to publish." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(skills): refresh generated marketplace"
+          git push origin HEAD:main
+          echo "Published updated AI Agent Workflow Skills to main." >> "$GITHUB_STEP_SUMMARY"

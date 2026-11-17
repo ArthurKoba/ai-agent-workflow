@@ -16,29 +16,58 @@ PLUGIN = Path("plugins/ai-agent-workflow")
 OUT = ROOT / PLUGIN
 MANIFEST = ROOT / ".agents/plugins/marketplace.json"
 ALLOWED = frozenset({"skills", "docs", "audit", "context", "playbook", "examples"})
-SOURCES = (
-    ("software-engineering", "skills/software-engineering/README.md", "Implementation, backend, Python, architecture, persistence and observability"),
-    ("frontend-engineering", "skills/frontend-engineering/README.md", "Frontend architecture, Vue, TypeScript, layouts, and accessible UI"),
-    ("software-testing", "skills/software-testing/README.md", "Design, select, and verify tests across product boundaries"),
-    ("project-bootstrap", "skills/project-bootstrap.md", "Project setup, toolchains, quality gates, hooks and CI"),
-    ("skill-authoring", "skills/skill-authoring.md", "Create, review, refactor and validate reusable agent skills"),
-    ("git-workflow", "skills/git-workflow.md", "Git, branches, commits, review, publication and issues"),
-    ("orchestration", "skills/orchestration/README.md", "Multi-agent coordination, PDCA, delegation and handoffs"),
-    ("code-review", "skills/code-review.md", "Independent technical reviews, evidence and acceptance"),
-    ("interface-design-review", "skills/interface-design-review.md", "Interface design review, accessibility and user journeys"),
-    ("scientific-visualization", "skills/scientific-visualization.md", "Technical diagrams, scientific figures and measured plots"),
-    ("terminal-operations", "skills/terminal-operations.md", "Shell, PowerShell, SSH, serial and terminal operations"),
-    ("services-deployment", "skills/services-deployment/README.md", "Services, Docker Compose, Coolify, environments and deployments"),
-    ("remote-browser-session", "skills/remote-browser-session.md", "Browser sessions, Chromium debugging and remote automation"),
-    ("reverse-analysis", "skills/reverse-analysis.md", "Reverse engineering, firmware, binaries, tracing and native analysis"),
-    ("openipc-porting", "skills/openipc-porting.md", "OpenIPC firmware porting and contribution workflows"),
-    ("context-engineering", "skills/context-engineering.md", "Agent context management, source maps and progressive disclosure"),
-    ("workflow-audit", "skills/workflow-audit.md", "Agent workflow and prompt audits"),
-    ("domain-acquisition", "skills/domain-acquisition.md", "Domain registration, transfers, pricing and continuity"),
-)
+CURATED_DESCRIPTIONS = {
+    'software-engineering': 'Implementation, backend, Python, architecture, persistence and observability',
+    'frontend-engineering': 'Frontend architecture, Vue, TypeScript, layouts, and accessible UI',
+    'software-testing': 'Design, select, and verify tests across product boundaries',
+    'project-bootstrap': 'Project setup, toolchains, quality gates, hooks and CI',
+    'skill-authoring': 'Create, review, refactor and validate reusable agent skills',
+    'git-workflow': 'Git, branches, commits, review, publication and issues',
+    'orchestration': 'Multi-agent coordination, PDCA, delegation and handoffs',
+    'code-review': 'Independent technical reviews, evidence and acceptance',
+    'interface-design-review': 'Interface design review, accessibility and user journeys',
+    'scientific-visualization': 'Technical diagrams, scientific figures and measured plots',
+    'terminal-operations': 'Shell, PowerShell, SSH, serial and terminal operations',
+    'services-deployment': 'Services, Docker Compose, Coolify, environments and deployments',
+    'remote-browser-session': 'Browser sessions, Chromium debugging and remote automation',
+    'reverse-analysis': 'Reverse engineering, firmware, binaries, tracing and native analysis',
+    'openipc-porting': 'OpenIPC firmware porting and contribution workflows',
+    'context-engineering': 'Agent context management, source maps and progressive disclosure',
+    'workflow-audit': 'Agent workflow and prompt audits',
+    'domain-acquisition': 'Domain registration, transfers, pricing and continuity',
+}
+
 LINK = re.compile(r"\[[^\]]+\]\(([^)\s]+)\)")
 CODE_PATH = re.compile(r"`([^`\s]+\.md(?:#[^`\s]*)?)`")
 
+
+
+def _discover_sources() -> tuple[tuple[str, str, str], ...]:
+    """Make the authoritative task map determine each installable Skill."""
+    found: list[tuple[str, str, str]] = []
+    for line in (ROOT / "skills/README.md").read_text(encoding="utf-8").splitlines():
+        if not line.startswith("- ") or "→" not in line:
+            continue
+        heading, route = line.split("→", 1)
+        pattern = chr(96) + r"([^" + chr(96) + r"]+\.md)" + chr(96)
+        match = re.search(pattern, route)
+        if match is None:
+            raise ValueError(f"Unroutable Skill map entry: {line}")
+        path = "skills/" + match.group(1)
+        entry = Path(path)
+        slug = entry.parent.name if entry.name == "README.md" else entry.stem
+        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
+            raise ValueError(f"Invalid Skill identifier: {slug}")
+        description = CURATED_DESCRIPTIONS.get(slug, heading[2:].strip())
+        found.append((slug, path, description))
+    if not found or len({slug for slug, _, _ in found}) != len(found):
+        raise ValueError("Empty or ambiguous Skill map")
+    if len({path for _, path, _ in found}) != len(found):
+        raise ValueError("Duplicate Skill source in map")
+    return tuple(found)
+
+
+SOURCES = _discover_sources()
 
 def _json(data: object) -> bytes:
     return (json.dumps(data, ensure_ascii=False, indent=2) + "\n").encode("utf-8")

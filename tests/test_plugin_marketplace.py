@@ -83,6 +83,32 @@ class MarketplaceContracts(unittest.TestCase):
         actual = {path.replace("skills/", "", 1) for _, path, _ in MARKET.SOURCES}
         self.assertEqual(routes, actual)
 
+    def test_new_owner_map_entry_is_discovered_without_manual_registration(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "skills").mkdir()
+            (root / "skills/README.md").write_text(
+                "- operational verification → " + chr(96) + "ops-validation.md" + chr(96) + "\n",
+                encoding="utf-8",
+            )
+            with patch.object(MARKET, "ROOT", root):
+                self.assertEqual(
+                    MARKET._discover_sources(),
+                    (("ops-validation", "skills/ops-validation.md", "operational verification"),),
+                )
+
+    def test_publisher_is_push_triggered_without_cross_repository_secret(self) -> None:
+        root = ROOT / ".github/workflows"
+        publisher = (root / "publish-plugin-marketplace.yml").read_text()
+        self.assertIn("workflow_dispatch:", publisher)
+        self.assertIn("branches: [main]", publisher)
+        self.assertIn("python3 scripts/build-plugin-marketplace.py", publisher)
+        self.assertIn("git push origin HEAD:main", publisher)
+        self.assertIn("if git diff --cached --quiet", publisher)
+        self.assertNotIn("BRIAREUS_DISPATCH_TOKEN", publisher)
+        self.assertNotIn("KobaProduction/Briareus", publisher)
+        self.assertFalse((root / "notify-briareus.yml").exists())
+
     def test_non_allowlisted_paths_are_rejected(self) -> None:
         for unsafe in ("prompts/accounts/universal.md", "../.git/config", "skills/absent.md"):
             with self.assertRaises(ValueError):

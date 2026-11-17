@@ -15,12 +15,18 @@ the top-level skills directory; do not edit generated copies. The plugin
 package does not carry credentials, project accounts, tools, registered Briareus
 MCP app IDs, or project-specific operating state.
 
-Regenerate after changing an owner document with:
+An event-driven GitHub Actions publisher regenerates and validates the
+native Skill package after relevant changes in the source library, then
+commits only generated marketplace files to main if they changed. It does
+not invoke Briareus, require a cross-repository secret, schedule polling,
+or rebuild any MCP image.
+
+For local development, regenerate before committing a changed owner file:
 
     python3 scripts/build-plugin-marketplace.py
 
-The existing pre-push and GitHub CI verification also check that generated
-package contents exactly match the authoritative library. The published
-Git branch is the delivery artifact; an installed marketplace's refresh
-cadence and automatic activation are client-product concerns, not an upstream
-GitHub Actions or Docker deployment.
+The tracked Git pre-push hook checks deterministic generated contents;
+CI first generates the package to validate the candidate source, and the
+publisher separately verifies and publishes the final Git version. The
+installed ChatGPT client's refresh cadence and activation remain client
+behavior and are not guaranteed by the GitHub push alone.

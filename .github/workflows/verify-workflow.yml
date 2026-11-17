@@ -15,6 +15,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Generate current native Skills for validation
+        run: python3 scripts/build-plugin-marketplace.py
       - name: Verify workflow routing and whitespace
         env:
           VERIFY_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
