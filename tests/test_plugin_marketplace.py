@@ -119,6 +119,47 @@ class MarketplaceContracts(unittest.TestCase):
         self.assertNotIn("KobaProduction/Briareus", publisher)
         self.assertFalse((root / "notify-briareus.yml").exists())
 
+    def test_reverse_analysis_is_independent_of_analysis_engines_and_mcp(self) -> None:
+        source_root = ROOT / "skills"
+        router = source_root / "reverse-analysis.md"
+        modules = source_root / "reverse-analysis"
+        files = [router, *sorted(modules.glob("*.md"))]
+        self.assertEqual(len(files), 11)
+        assert any(f.name == "script-methodology.md" for f in files)
+        assert any(f.name == "long-running-analysis.md" for f in files)
+        compiled = []
+        for file in files:
+            text = file.read_text(encoding="utf-8")
+            self.assertLessEqual(len(text), 5000, file.name)
+            for forbidden in (
+                "ghidra",
+                "radare2",
+                "mcp__",
+                "run_analysis_script",
+                "GHIDRA_MCP",
+                "job_start(",
+                "get_storage_info(",
+            ):
+                self.assertNotIn(forbidden.lower(), text.lower(), str(file))
+            compiled.append(text)
+        contents = "\n".join(compiled)
+        for essential in (
+            "CONFIRMED",
+            "LIKELY",
+            "UNKNOWN",
+            "CONTRADICTION",
+            "WITHDRAWN",
+            "canonical",
+            "materializ",
+            "decompil",
+            "read back",
+        ):
+            self.assertIn(essential.lower(), contents.lower())
+        packaged = ROOT / "plugins/ai-agent-workflow/skills/reverse-analysis/references"
+        for file in files:
+            path = file.relative_to(ROOT)
+            self.assertEqual(file.read_bytes(), (packaged / path).read_bytes())
+
     def test_non_allowlisted_paths_are_rejected(self) -> None:
         for unsafe in ("prompts/accounts/universal.md", "../.git/config", "skills/absent.md"):
             with self.assertRaises(ValueError):
