@@ -162,7 +162,7 @@ def generated_files() -> dict[Path, bytes]:
     files: dict[Path, bytes] = {}
     marketplace = {
         "name": "ai-agent-workflow",
-        "interface": {"displayName": "AI Agent Workflow"},
+        "interface": {"displayName": "Arthur Koba AI Agent Workflow"},
         "plugins": [{
             "name": "ai-agent-workflow",
             "source": {"source": "local", "path": "./plugins/ai-agent-workflow"},
@@ -171,7 +171,7 @@ def generated_files() -> dict[Path, bytes]:
         }],
     }
     interface = {
-        "displayName": "AI Agent Workflow",
+        "displayName": "Arthur Koba AI Agent Workflow",
         "shortDescription": "Reusable agent workflows for engineering tasks",
         "longDescription": "A self-contained collection of 18 scoped Skills with locally bundled reference modules.",
         "developerName": "Arthur Koba",

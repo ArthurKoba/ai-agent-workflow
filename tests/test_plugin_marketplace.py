@@ -25,6 +25,7 @@ class MarketplaceContracts(unittest.TestCase):
         marketplace = json.loads((ROOT / ".agents/plugins/marketplace.json").read_text())
         self.assertEqual(len(marketplace["plugins"]), 1)
         self.assertEqual(marketplace["plugins"][0]["name"], "ai-agent-workflow")
+        self.assertEqual(marketplace["interface"]["displayName"], "Arthur Koba AI Agent Workflow")
         for name in ("plugin.json", ".codex-plugin/plugin.json"):
             manifest = json.loads((root / name).read_text())
             self.assertEqual(manifest["name"], "ai-agent-workflow")
@@ -35,6 +36,7 @@ class MarketplaceContracts(unittest.TestCase):
             else:
                 interface = manifest["interface"]
             self.assertEqual(interface["developerName"], "Arthur Koba")
+            self.assertEqual(interface["displayName"], "Arthur Koba AI Agent Workflow")
             self.assertNotIn("logo", interface)
         skills = list((root / "skills").glob("*/SKILL.md"))
         self.assertEqual(len(skills), len(MARKET.SOURCES))

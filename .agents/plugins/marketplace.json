@@ -1,7 +1,7 @@
 {
   "name": "ai-agent-workflow",
   "interface": {
-    "displayName": "AI Agent Workflow"
+    "displayName": "Arthur Koba AI Agent Workflow"
   },
   "plugins": [
     {
