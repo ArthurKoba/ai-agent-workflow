@@ -26,7 +26,8 @@ jobs:
           GH_TOKEN: ${{ secrets.BRIAREUS_DISPATCH_TOKEN }}
           SOURCE_REPOSITORY: ${{ github.repository }}
           SOURCE_REF: ${{ github.ref }}
-          SOURCE_BEFORE: ${{ github.event.before || github.sha }}
+          # Manual dispatch means full refresh; comparing SHA with itself skips it.
+          SOURCE_BEFORE: ${{ github.event.before || '0000000000000000000000000000000000000000' }}
           SOURCE_AFTER: ${{ github.sha }}
           SOURCE_RUN_ID: ${{ github.run_id }}
         run: |
