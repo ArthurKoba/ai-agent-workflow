@@ -4,6 +4,19 @@ Universal operating system for AI engineering agents.
 
 This repository stores reusable agent hierarchy, skills, audit rules and system-evolution knowledge. It is not a project repository and not an infrastructure inventory.
 
+## Installable native Skills
+
+The GitHub marketplace at .agents/plugins/marketplace.json exposes one
+**AI Agent Workflow** plugin containing 18 independent, task-scoped Skills.
+Each Skill contains its own SKILL.md and a bundled, dependency-closed
+reference snapshot. Agents can use it without opening this Git repository.
+
+See [plugin installation and update instructions](plugins/README.md).
+The authoritative files remain under skills/; regenerate the plugin
+using scripts/build-plugin-marketplace.py whenever source rules change.
+The existing Git hooks and CI reject stale generated Skills. This library
+does not depend on Briareus or its MCP deployment to publish instructions.
+
 ## Runtime hierarchy
 
 There are only three instruction layers.

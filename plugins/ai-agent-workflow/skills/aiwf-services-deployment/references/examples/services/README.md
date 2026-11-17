@@ -1,0 +1,41 @@
+# Service Presets
+
+Reusable, sanitized service deployment templates owned by AI Agent Workflow. This catalog is an upstream **example source**, not a mutable production deployment repository. Use `../../skills/services-deployment/README.md` to select relevant deployment rules.
+
+## Reusable scenario guidance
+
+Choose a [deployment scenario](../../skills/services-deployment/README.md) for repository layout, resource boundaries, bootstrap, dependencies, identity, telemetry or cutover before authoring a new preset. Scenario examples are design patterns, **not** validated ready-to-run production packages. A new `examples/services/<name>/` preset is published as deployable only after generic Compose validation and version-specific orchestrator/runtime acceptance; otherwise label it an unvalidated illustration. Do not copy a vendor-specific bootstrap implementation into the universal skill.
+
+## New preset contract
+
+Each new Compose-based preset should provide both platform-neutral `docker-compose.yaml` and Coolify-aware `docker-compose.coolify.yaml` (`.yaml`, four letters). The owning README (which may cover several nested service directories) explains product/setup, prerequisites, required inputs, network/storage ownership, bootstrap and recovery; add `COOLIFY.md` or `VALIDATION.md` only when complexity justifies them. Compose inheritance / `include` / `extends` must be tested with the targeted parser; a filename alone does not prove effective merge or generated Coolify state. No real credentials, private domains, IPs, host paths, tokens or resource IDs.
+
+Classify presets by ownership and lifecycle: a shared infrastructure identity provider and a dedicated application identity provider are separate reusable scenarios. Group stable dependencies where their lifecycle permits; do not prescribe a container-per-resource split.
+
+## Distribution and improvement
+
+Copy a vetted preset into the owning infrastructure or application repository's `deploy/` hierarchy; record its source revision, make environment-specific adaptations there and point Coolify Watch Paths at those **owned copies**. Never have production follow this catalog's moving HEAD. Changes to the catalog must not implicitly redeploy a dependent infrastructure. Upstream updates are deliberate diffs with review, migration and runtime acceptance. When project work reveals a reusable improvement, contribute a generalized, non-sensitive correction and evidence back here.
+
+Existing proven presets below remain supported in their established, **single-Compose** form until each is separately migrated and validated. Do not bulk-rename or force a second Compose file into a validated deployment merely to satisfy the new-preset layout.
+
+## Source-ready examples awaiting Coolify runtime validation
+
+- `infisical/` — standalone Secrets Manager with dedicated PostgreSQL and Valkey, generic Compose and Coolify `extends` entrypoint. **Source validation only**; verify on the actual Coolify instance before relying on it for secrets.
+
+## Source-ready templates awaiting runtime acceptance
+
+- `zitadel/` — standalone and shared-dependency variants with one Coolify domain on an inline Caddy gateway. Caddy preserves Login V2 paths and proxies API requests to private ZITADEL Core over h2c. Native Core OTLP traces/metrics/logs are optionally configurable; Redis caching and Login PAT are retained. User login, gRPC and telemetry ingestion require runtime acceptance.
+
+## Source-ready mail server examples (runtime validation pending)
+
+- `stalwart/` — Stalwart Community v1 classic standalone, generic node and shared-dependency variants; automatic one-shot CLI bootstrap enabling OpenID Connect and OpenTelemetry independently when their ENV inputs are present (optional HTTPS Bearer authentication). **Source only:** inline builds, Coolify one-shot lifecycle, initial admin access and mail/SSO/OTLP acceptance are still required.
+
+## Existing presets
+
+- `jenkins/` — Jenkins controller with dedicated inbound builder and isolated TLS-protected Docker-in-Docker daemon.
+- `openvpn-gateway/` — host-network OpenVPN client gateway with orchestrator-managed profile storage and connection health.
+- `zoomies/` — Zoomies 1.3.4 rootless controller + embedded-agent preset, with verified clean deployment and DinD behavior.
+
+## Candidate examples (not yet validated or published)
+
+- Shared infrastructure ZITADEL and service-owned ZITADEL, each with its own resource, network, secrets and upgrade/rollback contract.

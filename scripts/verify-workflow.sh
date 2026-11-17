@@ -139,3 +139,5 @@ if stale:
     raise SystemExit('Obsolete role routes:\n' + '\n'.join(stale))
 print('Workflow maps, character limits, skill links, obsolete routes and whitespace verified')
 PY
+python3 scripts/build-plugin-marketplace.py --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
