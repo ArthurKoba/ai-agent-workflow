@@ -1,0 +1,16 @@
+{
+  "name": "arthur-koba-quality",
+  "version": "1.0.0",
+  "description": "Designing tests, reviewing changes, verifying evidence and acceptance.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arthur Koba AI Agent Workflow · Quality",
+    "shortDescription": "Software testing and independent code review",
+    "longDescription": "Designing tests, reviewing changes, verifying evidence and acceptance. Includes 2 independent Skills.",
+    "developerName": "Arthur Koba",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ]
+  }
+}

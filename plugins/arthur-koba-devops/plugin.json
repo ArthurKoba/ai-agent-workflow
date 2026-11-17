@@ -1,0 +1,25 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "arthur-koba-devops",
+  "version": "1.0.0",
+  "description": "Git workflows, terminal practice, service deployments and domains.",
+  "author": {
+    "name": "Arthur Koba"
+  },
+  "repository": "https://github.com/ArthurKoba/ai-agent-workflow",
+  "skills": "./skills/",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Arthur Koba AI Agent Workflow · DevOps",
+        "shortDescription": "Git, terminal, deployments and domain operations",
+        "longDescription": "Git workflows, terminal practice, service deployments and domains. Includes 4 independent Skills.",
+        "developerName": "Arthur Koba",
+        "category": "Productivity",
+        "capabilities": [
+          "Read"
+        ]
+      }
+    }
+  }
+}

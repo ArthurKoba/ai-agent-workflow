@@ -5,10 +5,94 @@
   },
   "plugins": [
     {
-      "name": "ai-agent-workflow",
+      "name": "arthur-koba-backend",
       "source": {
         "source": "local",
-        "path": "./plugins/ai-agent-workflow"
+        "path": "./plugins/arthur-koba-backend"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "arthur-koba-architecture",
+      "source": {
+        "source": "local",
+        "path": "./plugins/arthur-koba-architecture"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "arthur-koba-frontend",
+      "source": {
+        "source": "local",
+        "path": "./plugins/arthur-koba-frontend"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "arthur-koba-quality",
+      "source": {
+        "source": "local",
+        "path": "./plugins/arthur-koba-quality"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "arthur-koba-devops",
+      "source": {
+        "source": "local",
+        "path": "./plugins/arthur-koba-devops"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "arthur-koba-agents",
+      "source": {
+        "source": "local",
+        "path": "./plugins/arthur-koba-agents"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "arthur-koba-research",
+      "source": {
+        "source": "local",
+        "path": "./plugins/arthur-koba-research"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "arthur-koba-browser",
+      "source": {
+        "source": "local",
+        "path": "./plugins/arthur-koba-browser"
       },
       "policy": {
         "installation": "AVAILABLE",

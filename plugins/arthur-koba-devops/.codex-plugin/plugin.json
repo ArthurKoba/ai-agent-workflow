@@ -1,0 +1,16 @@
+{
+  "name": "arthur-koba-devops",
+  "version": "1.0.0",
+  "description": "Git workflows, terminal practice, service deployments and domains.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arthur Koba AI Agent Workflow · DevOps",
+    "shortDescription": "Git, terminal, deployments and domain operations",
+    "longDescription": "Git workflows, terminal practice, service deployments and domains. Includes 4 independent Skills.",
+    "developerName": "Arthur Koba",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ]
+  }
+}

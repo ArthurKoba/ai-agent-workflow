@@ -1,0 +1,16 @@
+{
+  "name": "arthur-koba-browser",
+  "version": "1.0.0",
+  "description": "Reusable browser sessions, scoped access and permission recovery.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arthur Koba AI Agent Workflow · Browser Sessions",
+    "shortDescription": "Safe browser sessions, authorization and extension grants",
+    "longDescription": "Reusable browser sessions, scoped access and permission recovery. Includes 1 independent Skills.",
+    "developerName": "Arthur Koba",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "arthur-koba-frontend",
+  "version": "1.0.0",
+  "description": "Frontend engineering, UI architecture, accessibility and design review.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arthur Koba AI Agent Workflow · Frontend",
+    "shortDescription": "Frontend implementation and interface design reviews",
+    "longDescription": "Frontend engineering, UI architecture, accessibility and design review. Includes 2 independent Skills.",
+    "developerName": "Arthur Koba",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ]
+  }
+}

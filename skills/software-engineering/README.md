@@ -1,6 +1,6 @@
 # Software Engineering
 
-Use this skill for implementation, refactoring, backend/application architecture, Python, persistence, observability and framework-specific engineering.
+Use this workflow for backend/application implementation and refactoring in any language. Architecture, Python, PostgreSQL, observability and framework-specific references are conditional; Rust and other languages follow the actual repository's toolchain and owner contracts, not Python defaults.
 
 ## Startup
 

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "arthur-koba-agents",
+  "version": "1.0.0",
+  "description": "Coordination, context engineering, agent Skills and workflow auditing.",
+  "author": {
+    "name": "Arthur Koba"
+  },
+  "repository": "https://github.com/ArthurKoba/ai-agent-workflow",
+  "skills": "./skills/",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Arthur Koba AI Agent Workflow · Agent Workflows",
+        "shortDescription": "Agent orchestration, context, reusable Skills and audits",
+        "longDescription": "Coordination, context engineering, agent Skills and workflow auditing. Includes 4 independent Skills.",
+        "developerName": "Arthur Koba",
+        "category": "Productivity",
+        "capabilities": [
+          "Read"
+        ]
+      }
+    }
+  }
+}

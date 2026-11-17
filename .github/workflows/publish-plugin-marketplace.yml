@@ -44,7 +44,7 @@ jobs:
 
       - name: Publish only generated marketplace files
         run: |
-          git add -- .agents/plugins/marketplace.json plugins/ai-agent-workflow
+          git add -A -- .agents/plugins/marketplace.json plugins/
           if git diff --cached --quiet; then
             echo "No native Skill changes to publish." >> "$GITHUB_STEP_SUMMARY"
             exit 0

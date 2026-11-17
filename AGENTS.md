@@ -35,7 +35,8 @@ Playbooks (decision/checklist guides, not additional runtime prompt layers):
 
 Task skills:
 - multi-agent coordination / PDCA / peer communication → `skills/orchestration/README.md`
-- implementation/refactoring/backend/Python/PostgreSQL → `skills/software-engineering/README.md`
+- backend implementation/refactoring across languages → `skills/backend-engineering.md`
+- software/service architecture and DDD → `skills/software-architecture.md`
 - frontend/Vue/TypeScript/FSD/UI/tables → `skills/frontend-engineering/README.md`
 - software test design, run profiles and suite audits → `skills/software-testing/README.md`
 - project bootstrap / toolchain / lint, types, hooks and CI setup → `skills/project-bootstrap.md`

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Produce self-contained AI Agent Workflow plugin Skills from the authoritative library."""
+"""Package selectable, self-contained Arthur Koba AI Agent Workflow plugin groups."""
 
 from __future__ import annotations
 
@@ -12,45 +12,110 @@ from pathlib import Path
 from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN = Path("plugins/ai-agent-workflow")
-OUT = ROOT / PLUGIN
+PLUGIN_ROOT = Path("plugins")
 MANIFEST = ROOT / ".agents/plugins/marketplace.json"
+LEGACY_PLUGIN = "ai-agent-workflow"
+MARKETPLACE_TITLE = "Arthur Koba AI Agent Workflow"
+
+# Each category is an independent installable plugin. Skills are assigned by
+# section in skills/README.md: there must be exactly one owner per Skill.
+# The marketing title retains Arthur Koba's name, while the machine IDs are
+# stable, unique and not inferred from display text.
+GROUPS = {
+    "Backend Engineering": {
+        "id": "arthur-koba-backend",
+        "title": "Backend",
+        "short": "Backend services, APIs, persistence and implementation",
+        "description": "Language-neutral backend engineering for Rust, Python and other stacks.",
+    },
+    "Architecture & Project Setup": {
+        "id": "arthur-koba-architecture",
+        "title": "Architecture",
+        "short": "Software architecture and project quality foundations",
+        "description": "Architecture, DDD, project bootstrap, toolchains and quality gates.",
+    },
+    "Frontend & UI": {
+        "id": "arthur-koba-frontend",
+        "title": "Frontend",
+        "short": "Frontend implementation and interface design reviews",
+        "description": "Frontend engineering, UI architecture, accessibility and design review.",
+    },
+    "Testing & Review": {
+        "id": "arthur-koba-quality",
+        "title": "Quality",
+        "short": "Software testing and independent code review",
+        "description": "Designing tests, reviewing changes, verifying evidence and acceptance.",
+    },
+    "DevOps & Infrastructure": {
+        "id": "arthur-koba-devops",
+        "title": "DevOps",
+        "short": "Git, terminal, deployments and domain operations",
+        "description": "Git workflows, terminal practice, service deployments and domains.",
+    },
+    "Agent Workflows": {
+        "id": "arthur-koba-agents",
+        "title": "Agent Workflows",
+        "short": "Agent orchestration, context, reusable Skills and audits",
+        "description": "Coordination, context engineering, agent Skills and workflow auditing.",
+    },
+    "Research & Porting": {
+        "id": "arthur-koba-research",
+        "title": "Research",
+        "short": "Reverse analysis, firmware porting and technical figures",
+        "description": "Reverse engineering, OpenIPC porting and scientific visualizations.",
+    },
+    "Browser Sessions": {
+        "id": "arthur-koba-browser",
+        "title": "Browser Sessions",
+        "short": "Safe browser sessions, authorization and extension grants",
+        "description": "Reusable browser sessions, scoped access and permission recovery.",
+    },
+}
 ALLOWED = frozenset({"skills", "docs", "audit", "context", "playbook", "examples"})
 CURATED_DESCRIPTIONS = {
-    'software-engineering': 'Implementation, backend, Python, architecture, persistence and observability',
-    'frontend-engineering': 'Frontend architecture, Vue, TypeScript, layouts, and accessible UI',
-    'software-testing': 'Design, select, and verify tests across product boundaries',
-    'project-bootstrap': 'Project setup, toolchains, quality gates, hooks and CI',
-    'skill-authoring': 'Create, review, refactor and validate reusable agent skills',
-    'git-workflow': 'Git, branches, commits, review, publication and issues',
-    'orchestration': 'Multi-agent coordination, PDCA, delegation and handoffs',
-    'code-review': 'Independent technical reviews, evidence and acceptance',
-    'interface-design-review': 'Interface design review, accessibility and user journeys',
-    'scientific-visualization': 'Technical diagrams, scientific figures and measured plots',
-    'terminal-operations': 'Shell, PowerShell, SSH, serial and terminal operations',
-    'services-deployment': 'Services, Docker Compose, Coolify, environments and deployments',
-    'remote-browser-session': 'Browser sessions, Chromium debugging and remote automation',
-    'reverse-analysis': 'Reverse engineering, firmware, binaries, tracing and native analysis',
-    'openipc-porting': 'OpenIPC firmware porting and contribution workflows',
-    'context-engineering': 'Agent context management, source maps and progressive disclosure',
-    'workflow-audit': 'Agent workflow and prompt audits',
-    'domain-acquisition': 'Domain registration, transfers, pricing and continuity',
+    "backend-engineering": "Backend services and APIs across Rust, Python, Go and other languages",
+    "software-architecture": "Language-neutral software architecture, DDD and ownership",
+    "frontend-engineering": "Frontend architecture, Vue, TypeScript, layouts and accessible UI",
+    "software-testing": "Design, select and verify tests across product boundaries",
+    "project-bootstrap": "Project setup, toolchains, quality gates, hooks and CI",
+    "skill-authoring": "Create, review, refactor and validate reusable agent skills",
+    "git-workflow": "Git, branches, commits, review, publication and issues",
+    "orchestration": "Multi-agent coordination, PDCA, delegation and handoffs",
+    "code-review": "Independent technical reviews, evidence and acceptance",
+    "interface-design-review": "Interface design review, accessibility and user journeys",
+    "scientific-visualization": "Technical diagrams, scientific figures and measured plots",
+    "terminal-operations": "Shell, PowerShell, SSH, serial and terminal operations",
+    "services-deployment": "Services, Docker Compose, Coolify, environments and deployments",
+    "remote-browser-session": "Remote browser authorization, session reuse and safe recovery",
+    "reverse-analysis": "Reverse engineering, firmware, binaries, tracing and evidence",
+    "openipc-porting": "OpenIPC firmware porting and contribution workflows",
+    "context-engineering": "Agent context management, source maps and progressive disclosure",
+    "workflow-audit": "Agent workflow and prompt audits",
+    "domain-acquisition": "Domain registration, transfers, pricing and continuity",
 }
+
 
 LINK = re.compile(r"\[[^\]]+\]\(([^)\s]+)\)")
 CODE_PATH = re.compile(r"`([^`\s]+\.md(?:#[^`\s]*)?)`")
 
 
 
-def _discover_sources() -> tuple[tuple[str, str, str], ...]:
-    """Make the authoritative task map determine each installable Skill."""
-    found: list[tuple[str, str, str]] = []
+def _discover_sources() -> tuple[tuple[str, str, str, str], ...]:
+    """The source task map owns both Skill discovery and plugin membership."""
+    found: list[tuple[str, str, str, str]] = []
+    group: str | None = None
     for line in (ROOT / "skills/README.md").read_text(encoding="utf-8").splitlines():
+        if line.startswith("## "):
+            group = line[3:].strip()
+            if group not in GROUPS:
+                raise ValueError(f"Unknown selectable marketplace section: {group}")
+            continue
         if not line.startswith("- ") or "→" not in line:
             continue
+        if group is None:
+            raise ValueError(f"Skill entry without marketplace section: {line}")
         heading, route = line.split("→", 1)
-        pattern = chr(96) + r"([^" + chr(96) + r"]+\.md)" + chr(96)
-        match = re.search(pattern, route)
+        match = re.search(r"`([^`]+\.md)`", route)
         if match is None:
             raise ValueError(f"Unroutable Skill map entry: {line}")
         path = "skills/" + match.group(1)
@@ -59,11 +124,14 @@ def _discover_sources() -> tuple[tuple[str, str, str], ...]:
         if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
             raise ValueError(f"Invalid Skill identifier: {slug}")
         description = CURATED_DESCRIPTIONS.get(slug, heading[2:].strip())
-        found.append((slug, path, description))
-    if not found or len({slug for slug, _, _ in found}) != len(found):
+        found.append((GROUPS[group]["id"], slug, path, description))
+    if not found or len({slug for _, slug, _, _ in found}) != len(found):
         raise ValueError("Empty or ambiguous Skill map")
-    if len({path for _, path, _ in found}) != len(found):
+    if len({path for _, _, path, _ in found}) != len(found):
         raise ValueError("Duplicate Skill source in map")
+    for meta in GROUPS.values():
+        if not any(group_id == meta["id"] for group_id, _, _, _ in found):
+            raise ValueError(f"Empty selectable plugin: {meta['id']}")
     return tuple(found)
 
 
@@ -158,61 +226,77 @@ def _skill_file(slug: str, source: str, description: str) -> bytes:
     return content.encode("utf-8")
 
 
+def _plugin_directory(name: str) -> Path:
+    return PLUGIN_ROOT / name
+
+
 def generated_files() -> dict[Path, bytes]:
     files: dict[Path, bytes] = {}
     marketplace = {
-        "name": "ai-agent-workflow",
-        "interface": {"displayName": "Arthur Koba AI Agent Workflow"},
-        "plugins": [{
-            "name": "ai-agent-workflow",
-            "source": {"source": "local", "path": "./plugins/ai-agent-workflow"},
+        "name": LEGACY_PLUGIN,
+        "interface": {"displayName": MARKETPLACE_TITLE},
+        "plugins": [],
+    }
+    for section, info in GROUPS.items():
+        plugin_id = info["id"]
+        sources = [(slug, path, desc) for gid, slug, path, desc in SOURCES if gid == plugin_id]
+        package = _plugin_directory(plugin_id)
+        marketplace["plugins"].append({
+            "name": plugin_id,
+            "source": {"source": "local", "path": "./" + package.as_posix()},
             "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
             "category": "Productivity",
-        }],
-    }
-    interface = {
-        "displayName": "Arthur Koba AI Agent Workflow",
-        "shortDescription": "Reusable agent workflows for engineering tasks",
-        "longDescription": "A self-contained collection of 18 scoped Skills with locally bundled reference modules.",
-        "developerName": "Arthur Koba",
-        "category": "Productivity",
-        "capabilities": ["Read"],
-    }
-    manifest = {
-        "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-        "name": "ai-agent-workflow",
-        "version": "1.0.0",
-        "description": "Task-specific engineering, development, testing, Git, and operations skills",
-        "author": {"name": "Arthur Koba"},
-        "repository": "https://github.com/ArthurKoba/ai-agent-workflow",
-        "skills": "./skills/",
-        "extensions": {"com.openai": {"interface": interface}},
-    }
+        })
+        interface = {
+            "displayName": MARKETPLACE_TITLE + " · " + info["title"],
+            "shortDescription": info["short"],
+            "longDescription": info["description"] + f" Includes {len(sources)} independent Skills.",
+            "developerName": "Arthur Koba",
+            "category": "Productivity",
+            "capabilities": ["Read"],
+        }
+        manifest = {
+            "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+            "name": plugin_id,
+            "version": "1.0.0",
+            "description": info["description"],
+            "author": {"name": "Arthur Koba"},
+            "repository": "https://github.com/ArthurKoba/ai-agent-workflow",
+            "skills": "./skills/",
+            "extensions": {"com.openai": {"interface": interface}},
+        }
+        files[package / "plugin.json"] = _json(manifest)
+        files[package / ".codex-plugin/plugin.json"] = _json({
+            "name": plugin_id,
+            "version": "1.0.0",
+            "description": manifest["description"],
+            "skills": "./skills/",
+            "interface": interface,
+        })
+        for slug, source, description in sources:
+            folder = package / "skills" / slug
+            files[folder / "SKILL.md"] = _skill_file(slug, source, description)
+            for name, raw in _closure(source).items():
+                files[folder / "references" / name] = raw
     files[Path(".agents/plugins/marketplace.json")] = _json(marketplace)
-    files[PLUGIN / "plugin.json"] = _json(manifest)
-    files[PLUGIN / ".codex-plugin/plugin.json"] = _json({
-        "name": "ai-agent-workflow",
-        "version": "1.0.0",
-        "description": manifest["description"],
-        "skills": "./skills/",
-        "interface": interface,
-    })
-    for slug, source, description in SOURCES:
-        folder = PLUGIN / "skills" / slug
-        files[folder / "SKILL.md"] = _skill_file(slug, source, description)
-        for name, raw in _closure(source).items():
-            files[folder / "references" / name] = raw
     return files
 
 
+def _managed_plugin_names() -> tuple[str, ...]:
+    return (LEGACY_PLUGIN, *(meta["id"] for meta in GROUPS.values()))
+
+
 def _current_files() -> set[Path]:
-    if OUT.is_symlink():
-        raise ValueError("Symlink plugin directory is forbidden")
     result: set[Path] = set()
-    if OUT.is_dir():
-        for file in OUT.rglob("*"):
+    for name in _managed_plugin_names():
+        output = ROOT / _plugin_directory(name)
+        if output.is_symlink():
+            raise ValueError(f"Symlink managed plugin directory: {output}")
+        if not output.is_dir():
+            continue
+        for file in output.rglob("*"):
             if file.is_symlink():
-                raise ValueError(f"Symlink in generated plugin: {file}")
+                raise ValueError(f"Symlink in managed plugin: {file}")
             if file.is_file():
                 result.add(file.relative_to(ROOT))
     if MANIFEST.is_file():
@@ -223,40 +307,41 @@ def _current_files() -> set[Path]:
 def update(*, check: bool) -> tuple[int, int]:
     expected = generated_files()
     current = _current_files()
-    missing = sorted(path for path, content in expected.items()
-                     if not (ROOT / path).is_file() or (ROOT / path).read_bytes() != content)
+    missing = sorted(
+        path for path, content in expected.items()
+        if not (ROOT / path).is_file() or (ROOT / path).read_bytes() != content
+    )
     stale = sorted(current - expected.keys())
     if check and (missing or stale):
         raise ValueError(f"Marketplace drift: {len(missing)} changed, {len(stale)} stale")
     if not check:
         for path in stale:
             (ROOT / path).unlink()
-        # Retire empty directories from the old `aiwf-` namespace without
-        # touching other plugins or live, non-generated project content.
-        old_skills = OUT / "skills"
-        if old_skills.is_dir():
-            for old in old_skills.glob("aiwf-*"):
-                if old.is_dir() and not old.is_symlink():
-                    for directory in sorted(
-                        (entry for entry in old.rglob("*") if entry.is_dir()),
-                        key=lambda entry: len(entry.parts),
-                        reverse=True,
-                    ):
-                        directory.rmdir()
-                    old.rmdir()
+        # Retire only empty directories within managed packages. In
+        # particular, do not clean unrelated plugins or source documents.
+        for name in _managed_plugin_names():
+            output = ROOT / _plugin_directory(name)
+            if output.is_dir():
+                directories = sorted(
+                    (item for item in output.rglob("*") if item.is_dir()),
+                    key=lambda item: len(item.parts),
+                    reverse=True,
+                )
+                for folder in (*directories, output):
+                    if not any(folder.iterdir()):
+                        folder.rmdir()
         for path in missing:
             file = ROOT / path
             file.parent.mkdir(parents=True, exist_ok=True)
             file.write_bytes(expected[path])
     return len(missing), len(stale)
 
-
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     changed, stale = update(check=args.check)
-    print(json.dumps({"skills": len(SOURCES), "changed": changed,
+    print(json.dumps({"plugins": len(GROUPS), "skills": len(SOURCES), "changed": changed,
                       "stale": stale, "check": args.check}))
 
 

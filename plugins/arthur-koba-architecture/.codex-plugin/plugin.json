@@ -1,0 +1,16 @@
+{
+  "name": "arthur-koba-architecture",
+  "version": "1.0.0",
+  "description": "Architecture, DDD, project bootstrap, toolchains and quality gates.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Arthur Koba AI Agent Workflow · Architecture",
+    "shortDescription": "Software architecture and project quality foundations",
+    "longDescription": "Architecture, DDD, project bootstrap, toolchains and quality gates. Includes 2 independent Skills.",
+    "developerName": "Arthur Koba",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ]
+  }
+}
