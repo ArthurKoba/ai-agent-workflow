@@ -49,7 +49,10 @@ For imported DOCX/MathType/OMML/PDF, distinguish:
 
 Visually compare original and independently regenerated
 complex equations, especially nested fractions, aligned
-multiline expressions, scripts, limits and delimiters.
+multiline expressions, scripts, limits and delimiters. Where
+editable mathematical output is required, check that the
+export contains genuine equation objects rather than raster
+facsimiles, and verify displayed numbering and line wrapping.
 Matching text tokens, math-object counts, XML existence,
 the source file hash or one cached preview does **not**
 establish equivalent mathematical structure. Unknown

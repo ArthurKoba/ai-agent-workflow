@@ -5,7 +5,7 @@
 - Both axes must carry the **quantity and unit** (e.g. Time, s; Frequency, Hz; Rate, min⁻¹), numeric ticks and an intelligible scale. Dimensionless measures must be clearly identified when needed. Check interval direction, unit conversions, decimal placement, legend values, normalization and uncertainty; never create a misleading truncation.
 - **No long prose or explanation inside the plot.** Normally omit plot titles: the figure caption below it supplies subject, dataset and method. For multiple panels, use the panel identifiers prescribed by the target venue and explain each panel in the caption.
 - A compact legend is allowed when multiple curves differ. Explain curve color, dash style or marker with concise labels in the document language; do not rely solely on red/green. Keep math symbols and short panel identifiers; move interpretations to prose.
-- Match visible figure labels, decimal separators and panel identifiers to the publication language and venue style; Russian localization is covered by Scientific Formatting — RU when applicable.
+- Match visible figure labels, decimal separators and panel identifiers to the publication language and venue style; Russian localization is covered by Scientific Formatting — Russian when applicable.
 
 ### Reproducible spreadsheet-first workflow
 

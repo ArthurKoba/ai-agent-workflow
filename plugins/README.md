@@ -13,7 +13,7 @@ package**. Each package is self-contained and installable without Briareus.
 | **DevOps** | `git-workflow`, `terminal-operations`, `services-deployment` | Git, terminals, infrastructure and deployments |
 | **Agent Workflows** | `orchestration`, `context-engineering`, `skill-authoring`, `workflow-audit` | Designing, maintaining and orchestrating AI agents |
 | **Software Research** | `reverse-analysis`, `openipc-porting` | Reverse engineering, firmware behavior and OpenIPC porting |
-| **Science** | `scientific-research-design`, `scientific-novelty`, `scientific-literature`, `scientific-experiments`, `scientific-implementation`, `scientific-writing`, `scientific-formatting-ru`, `scientific-mathematics`, `scientific-review`, `scientific-visualization` | Research design, scientific novelty, source review, reproducible experiments, implementation evidence, papers, equations, peer review and editable diagrams |
+| **Science** | `scientific-research-design`, `scientific-novelty`, `scientific-literature`, `scientific-experiments`, `scientific-implementation`, `scientific-writing`, `scientific-formatting-russian`, `scientific-mathematics`, `scientific-review`, `scientific-visualization` | Research design, scientific novelty, source review, reproducible experiments, implementation evidence, papers, equations, peer review and editable diagrams |
 | **Other** *(optional)* | `domain-acquisition`, `workflow-marketplace` | Domain purchase/renewal/transfer and discovering/contributing useful AI Agent Workflow updates |
 
 ## Science methods: one package, task-routed Skills
@@ -33,8 +33,8 @@ read only the matching methodological Skill as the task requires:
   algorithm, tested system and real adoption evidence;
 - `scientific-writing` — scientific articles, evidence-based prose,
   document structure, venue formatting and editorial review;
-- `scientific-formatting-ru` — Russian venue-specific standards,
-  typography and publication requirements (opt-in, not global);
+- `scientific-formatting-russian` — Russian publication standards,
+  typography and institution-specific requirements (opt-in, not global);
 - `scientific-mathematics` — formula definitions, domains,
   units, LaTeX fidelity and export checks;
 - `scientific-review` — independent science-content gates,

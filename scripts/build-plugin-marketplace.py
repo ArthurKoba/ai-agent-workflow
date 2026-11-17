@@ -86,7 +86,7 @@ CURATED_DESCRIPTIONS = {
     "scientific-experiments": "Research experiments, reproducibility, fair baselines and statistics",
     "scientific-implementation": "Scientific method implementation, validation and practical adoption",
     "scientific-writing": "Scientific articles, manuscript writing, editing and venue formatting",
-    "scientific-formatting-ru": "Russian venue-specific scientific formatting and style requirements",
+    "scientific-formatting-russian": "Russian venue-specific scientific formatting and style requirements",
     "scientific-mathematics": "Complete scientific formulas, notation, units and faithful export",
     "scientific-review": "Independent scientific content review and revision acceptance",
     "scientific-visualization": "Technical diagrams, scientific figures and measured plots",

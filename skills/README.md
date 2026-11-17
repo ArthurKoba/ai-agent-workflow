@@ -42,7 +42,7 @@ package**, not separate installations.
 - design reproducible experiments, compare baselines and validate measured results → `scientific-experiments.md`
 - connect research methods to real software/hardware implementations and adoption evidence → `scientific-implementation.md`
 - write, edit and format scientific articles and manuscripts for the target venue → `scientific-writing.md`
-- apply verified Russian publication and institutional formatting requirements (RU only) → `scientific-formatting-ru.md`
+- apply verified Russian publication and institutional formatting requirements → `scientific-formatting-russian.md`
 - verify mathematical notation, formulas, bounds, dimensions and faithful export → `scientific-mathematics.md`
 - review scientific claims and verify revisions, comments and final acceptance → `scientific-review.md`
 - scientific diagrams, block/functional flowcharts, Draw.io, vector SVG, charts and reproducible plots → `scientific-visualization.md`

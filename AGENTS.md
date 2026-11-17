@@ -50,7 +50,7 @@ Task skills:
 - experiment design, reproducibility, metrics and comparable results → `skills/scientific-experiments.md`
 - research implementations, integration evidence and practical adoption → `skills/scientific-implementation.md`
 - scientific prose, article structure, venue formatting and manuscript consistency → `skills/scientific-writing.md`
-- Russian venue-specific scientific document formatting (RU only) → `skills/scientific-formatting-ru.md`
+- Russian publication-specific scientific document formatting → `skills/scientific-formatting-russian.md`
 - scientific mathematical notation, formula semantics and export → `skills/scientific-mathematics.md`
 - scientific content review, remarks, revisions and acceptance → `skills/scientific-review.md`
 - scientific flowcharts, Draw.io/SVG diagrams, measured/calculated plots and spreadsheet-backed charts → `skills/scientific-visualization.md`

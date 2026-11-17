@@ -119,7 +119,7 @@ class MarketplaceContracts(unittest.TestCase):
                 "scientific-literature",
                 "scientific-experiments",
                 "scientific-implementation",
-                "scientific-formatting-ru",
+                "scientific-formatting-russian",
                 "scientific-writing",
                 "scientific-mathematics",
                 "scientific-review",
@@ -264,7 +264,7 @@ class MarketplaceContracts(unittest.TestCase):
             "scientific-literature",
             "scientific-experiments",
             "scientific-implementation",
-            "scientific-formatting-ru",
+            "scientific-formatting-russian",
             "scientific-writing",
             "scientific-mathematics",
             "scientific-review",
@@ -301,9 +301,10 @@ class MarketplaceContracts(unittest.TestCase):
         self.assertFalse((science / "scientific-publications").exists())
         self.assertFalse((ROOT / "skills/scientific-publications.md").exists())
         writing = (ROOT / "skills/scientific-writing.md").read_text(encoding="utf-8")
-        self.assertIn("Manuscript structure and publication formatting", writing)
-        locale = (ROOT / "skills/scientific-formatting-ru.md").read_text(encoding="utf-8")
-        self.assertIn("regional supplement", locale)
+        self.assertIn("## Plan the argument", writing)
+        self.assertIn("## Tables, figures and references", writing)
+        locale = (ROOT / "skills/scientific-formatting-russian.md").read_text(encoding="utf-8")
+        self.assertIn("## Establish the applicable profile", locale)
         self.assertIn("GOST", locale)
         chart = (ROOT / "skills/scientific-visualization/charts.md").read_text(encoding="utf-8")
         self.assertNotIn("short Russian labels", chart)
@@ -312,6 +313,7 @@ class MarketplaceContracts(unittest.TestCase):
         self.assertIn(".drawio", authoring)
         self.assertIn("SVG", authoring)
         self.assertIn(".xlsx", (ROOT / "skills/scientific-visualization/charts.md").read_text(encoding="utf-8"))
+        self.assertIn("denominators", (ROOT / "skills/scientific-review.md").read_text(encoding="utf-8"))
 
     def test_science_preserves_editable_figures_and_project_specific_join_markers(self) -> None:
         source = ROOT / "skills/scientific-visualization.md"

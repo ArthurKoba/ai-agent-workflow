@@ -1,79 +1,63 @@
-# Scientific Review — Content, Evidence and Revision Acceptance
+# Scientific Review — Claims, Evidence and Manuscript Acceptance
 
-Use for substantive manuscript review, answering editor/advisor
-comments, independently checking a research argument, or approving
-a final research deliverable. A reviewer must assess the
-**actual current revision**, not assume that prior source lint,
-a generated file or a checked-off list proves scientific correctness.
+Use when reviewing a scientific paper, research report, experiment,
+revision or author response. Inspect the actual target revision and
+the material needed to substantiate its claims; source lint, a previous
+approval or an attractive figure cannot establish scientific validity.
 
-## Choose the appropriate review depth
+## Scope the review
 
-Define genre, research objective, evidence types, actual revision,
-applicable venue requirements and the claimed completion level:
-draft, content-reviewed, technically valid or publication-ready.
-A short technical correction does not require a full doctoral
-dissertation audit; significant changes to the core result do.
+Identify the research question, claimed contributions, target venue,
+document revision and accessible evidence. Choose depth according to
+the claims being evaluated; do not apply dissertation procedures to
+an ordinary article. Report unavailable evidence without filling gaps.
 
-## Four content gates (IMRaD as a logical audit, not forced headings)
+## Review the argument
 
-- **Problem / Introduction:** Is the relevant limitation and
-  scientific question established by sources? Are objective,
-  novelty hypothesis and measurable criteria coherent?
-- **Method:** Are the author's new and borrowed elements
-  distinguished? Can a reader reconstruct definitions,
-  algorithm, inputs, comparator, settings and essential
-  experiment protocol?
-- **Results:** Does every completed task have an actual
-  result with appropriate evidence? Are numbers and metrics
-  traced to data? Is a proposed experiment incorrectly
-  described as completed?
-- **Discussion:** Does the conclusion explain the evidence
-  relative to the objective and nearest alternatives,
-  including negative outcomes, trade-offs and bounds?
-  Does the claim exceed the measured or proven scope?
+- **Problem and contribution:** Is the relevant gap supported by close
+  prior work? Is the research objective testable? Distinguish borrowed
+  ideas, new methods and unverified novelty claims.
+- **Method and reproducibility:** Can the stated procedure be reproduced
+  from definitions, assumptions, datasets, selection rules, parameters,
+  implementations, controls and environmental conditions? Separate
+  proposed, implemented and experimentally validated behavior.
+- **Numbers and comparisons:** Trace important values to primary data,
+  a cited source or an explicit computation. Check denominators,
+  sample counts, aggregation, uncertainty and units. Ensure baselines,
+  constraints, normalization and weights are comparable and justified;
+  do not optimize a comparison only to obtain a preferred winner.
+- **Results and discussion:** Check whether reported findings actually
+  answer the objective. Preserve negative outcomes, limits and
+  alternative explanations; do not infer general superiority from a
+  favorable scenario. Conclusions must not introduce unsupported claims.
+- **Tables and figures:** Verify values against source data, captions,
+  scales, omitted ranges and units. Switching between table and plot
+  formats must not conceal an unfavorable or unexplained result.
+  Review mathematical definitions and figure topology through their
+  dedicated skills when needed.
+- **Claim status:** Distinguish facts established by evidence, source
+  assertions, interpretations and hypotheses. A quotation, citation
+  identifier, author statement or repository file does not independently
+  prove the quoted claim or actual implementation.
 
-Apply only the relevant parts of these gates and follow
-the discipline's real genre format; IMRaD section titles
-or a text linter alone cannot pass this content review.
-Checking scientific novelty and literature still requires
-their own source verification.
+## Resolve comments on the correct revision
 
-## Deal with comments and resubmissions
+For each applicable comment, track original location and revision,
+meaning, intended change, revised location and verified outcome.
+Check dependent abstract, methods, equations, tables and conclusions,
+not only the edited sentence. Distinguish complete, partial, disputed,
+inapplicable and unverified responses. Do not infer instructions from
+colors or tracked changes without establishing their meaning.
+Recheck integrated work after substantive changes; a previous pass
+does not transfer automatically to a new manuscript version.
 
-1. Locate each original comment, its intended scope,
-   the source revision and any later clarification. Do
-   not infer deletion from color, formatting or silence.
-2. Track **original location → interpretation → intended
-   operation → new location/revision → verified outcome**.
-   Record complete, partial, rejected with grounds,
-   inapplicable with reason, or not yet checked.
-3. Compare the actual modified fragment and dependent
-   abstract, definitions, equations, figure captions,
-   results and conclusion. A removed paragraph may
-   have moved, and a new paragraph may reintroduce
-   the underlying error. Text diffs cannot find every
-   tracked change, figure or equation alteration.
-4. Validate source semantics, links/IDs and rendered
-   output separately. An old PASS, ACK of reading or
-   same-looking DOCX is not proof on a new revision.
-5. For multi-author work, use a single clearly identified
-   baseline and responsible file/section owners; check
-   the final integrated version before acceptance.
+## Verdict
 
-## Evidence ledger and verdict
+Report evidence-backed findings with a location, consequence, severity
+or priority, required correction and status. Keep scientific validity,
+reference/export integrity, visual presentation and publication status
+as separate assessments. Never certify inaccessible experiments or an
+unconfirmed submission.
 
-Use one concise record with: requirement/comment, current
-file/section and revision, supporting source/experiment,
-decision, changed area and remaining action. Do not
-create one issue or standalone report per checklist row
-unless project policy requires it.
-
-Distinguish **scientific validity**, **technical links and
-export correctness**, **layout/visual presentation**, and
-**publication status** as separate verdicts.
-Do not certify unavailable data, absent experiments,
-unknown indexing or an unpublished version.
-
-**Completion:** every in-scope substantive claim and
-comment has an evidence-backed status on the same
-current revision; unresolved work is explicit.
+**Complete when:** each in-scope substantive concern is verified on
+the same current revision, or explicitly remains unresolved.
