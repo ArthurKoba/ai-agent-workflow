@@ -1,6 +1,6 @@
 # Deployment Variable Glossary
 
-Load when creating or reviewing operator/Shared/secret names; skip for unchanged approved deployments. This owns the names below. Telemetry → `telemetry-variables.md`; parser → `coolify-variables.md`; ENV ownership → `environment-policy.md`; secrets → `coolify-secrets.md`. New keys and migrations need approval.
+Load when creating or reviewing operator/Shared/secret names; skip for unchanged approved deployments. This owns the names below. OIDC/OAuth → `oidc-variables.md`; telemetry → `telemetry-variables.md`; parser → `coolify-variables.md`; ENV ownership → `environment-policy.md`; secrets → `coolify-secrets.md`. New keys and migrations need approval.
 
 ## Naming and scope
 

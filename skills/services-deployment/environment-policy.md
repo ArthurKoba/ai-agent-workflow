@@ -1,6 +1,6 @@
 # Deployment Environment Policy
 
-Load when deciding whether a setting belongs in ENV, Compose, shared configuration, a secret provider or application-owned state. Names and templates are subject to explicit operator approval; the canonical cross-service variable glossary is pending agreement.
+Load when deciding whether a setting belongs in ENV, Compose, shared configuration, a secret provider or application-owned state. Names and templates are subject to explicit operator approval; see `variable-glossary.md`.
 
 ## ENV design gate — expose only genuine operator configuration
 
@@ -15,7 +15,7 @@ For every key identify:
 
 ### Naming
 
-For new or questionable operator keys load `variable-glossary.md` (OpenTelemetry → `telemetry-variables.md`). Do **not** load the glossary when deploying an already approved, unchanged configuration. Keep upstream image/SDK variables untouched; map approved short operator names to them only at a real boundary. Within one resource use concise keys; qualify the actual owner in multi-consumer and Shared/secret namespaces. Full words such as `USERNAME`, `PASSWORD`, `DATABASE` are preferred for our keys. Prefer environment Shared scopes to environment suffixes. New aliases and live renames require explicit approval.
+For new or questionable operator keys load `variable-glossary.md` (OpenTelemetry → `telemetry-variables.md`; OIDC/OAuth → `oidc-variables.md`). Do **not** load the glossary when deploying an already approved, unchanged configuration. Keep upstream image/SDK variables untouched; map approved short operator names to them only at a real boundary. Within one resource use concise keys; qualify the actual owner in multi-consumer and Shared/secret namespaces. Full words such as `USERNAME`, `PASSWORD`, `DATABASE` are preferred for our keys. Prefer environment Shared scopes to environment suffixes. New aliases and live renames require explicit approval.
 
 ### Required, default and internal
 - **Required operator input:** blank Required Coolify variable or protected secret (using its approved scoped key).

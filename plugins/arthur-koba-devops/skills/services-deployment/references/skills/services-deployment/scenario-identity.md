@@ -1,6 +1,6 @@
 # Scenario: Shared or Product-owned Identity Service
 
-Load when deciding where an OAuth/OIDC identity provider and its auxiliary gateway/login processes live. This is an **ownership/deployment pattern**, not a vendor-specific ZITADEL bootstrap guide; configuration, first-admin handling and migration details belong to the provider's owning runbook. Consult `scenario-infrastructure.md` or `scenario-application.md` depending on the chosen owner, and `coolify-networking.md` for public routes.
+Load when deciding where an OAuth/OIDC identity provider and its auxiliary gateway/login processes live. This is an **ownership/deployment pattern**, not a vendor-specific ZITADEL bootstrap guide; configuration, first-admin handling and migration details belong to the provider's owning runbook. Consult `scenario-infrastructure.md` or `scenario-application.md` depending on the chosen owner, and `coolify-networking.md` for public routes; `oidc-variables.md` owns client and resource-server ENV.
 
 ## Choose the owner
 

@@ -1,6 +1,6 @@
 # Credential Variable Naming
 
-Load only when choosing or reviewing password/token/key/secret names. Scope and conditional prefixes → `variable-glossary.md`; secret storage and permissions → `coolify-secrets.md`; whether a value belongs in deployment ENV → `environment-policy.md`. This is a naming contract, **not** a reason to create every listed variable. Match purpose and upstream requirements; expose only keys the operator genuinely owns.
+Load only when choosing or reviewing password/token/key/secret names. Scope and conditional prefixes → `variable-glossary.md`; secret storage and permissions → `coolify-secrets.md`; whether a value belongs in deployment ENV → `environment-policy.md`. OIDC/OAuth scenarios → `oidc-variables.md`. This is a naming contract, **not** a reason to create every listed variable. Match purpose and upstream requirements; expose only keys the operator genuinely owns.
 
 | Purpose | Canonical suffix / name | Example | Deployment rule |
 | --- | --- | --- | --- |
