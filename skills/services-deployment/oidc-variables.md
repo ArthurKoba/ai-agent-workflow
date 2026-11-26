@@ -11,11 +11,9 @@ Load for OAuth/OIDC clients, login, token verification and deployment keys. Stan
 | `OIDC_CLIENT_SECRET` | Confidential client using secret authentication | Protected secret |
 | `OIDC_CLIENT_PRIVATE_KEY` | Client authentication (`private_key_jwt`), not provider signing | Protected secret/file |
 | `OIDC_AUDIENCE` | Independent API audience, not necessarily login client ID | Resource server, non-secret |
-| `OIDC_INTROSPECTION_CLIENT_ID` | Separate introspection identity | Resource server, non-secret |
-| `OIDC_INTROSPECTION_CLIENT_SECRET` / `OIDC_INTROSPECTION_PRIVATE_KEY` | Introspection authentication | Protected; selected method only |
 | `OIDC_ROLES_ORGANIZATION_ID` | External organization ID if authorization is organization-bound | Resource-specific, non-secret |
 
-Pure OAuth: `OAUTH_ISSUER_URL`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` or `OAUTH_CLIENT_PRIVATE_KEY` as applicable. No parallel OIDC/OAUTH aliases for one identity/issuer. Non-discoverable providers may need explicit endpoints. Omit redundant `PANEL`, `WEB`, `UI` or service prefixes; qualify distinct identities or ambiguous Shared ownership. Required inputs have no fabricated defaults. Admin/provisioning credentials are independently scoped, not reused from login/introspection.
+Pure OAuth: `OAUTH_ISSUER_URL`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` or `OAUTH_CLIENT_PRIVATE_KEY` as applicable. No parallel OIDC/OAUTH aliases for one identity/issuer. Non-discoverable providers may need explicit endpoints. Name credentials by registered identity, not OAuth operations (introspection, exchange, revocation). One client uses `OIDC_CLIENT_ID` and its selected credential, even for introspection only. Qualify independent identities when they coexist in a resource or Shared scope. Never merge registrations or privileges for naming. Required inputs have no fabricated defaults. Admin/provisioning credentials are independently scoped, not reused from login/introspection.
 
 ## Scenarios
 
@@ -24,7 +22,7 @@ Pure OAuth: `OAUTH_ISSUER_URL`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET` or `OAU
 | Public web/SPA/native, code + PKCE or supported device grant | Issuer + client ID; no secret |
 | Confidential web/BFF, code + PKCE | Issuer + client ID + secret/private key |
 | API/Gateway/MCP, JWT validation | Issuer + independent audience if needed; no secret for JWKS |
-| API, RFC 7662 introspection | Trusted issuer/endpoint + resource/audience policy + credentials if required |
+| API, RFC 7662 introspection | Issuer + audience policy + client ID and credential if required |
 | OAuth machine-to-machine | OAuth issuer/endpoint + client ID + credential; client credentials, not user login |
 | Generic multi-provider integrations | Per-connection registration, scopes, credentials and tokens |
 
